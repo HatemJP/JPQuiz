@@ -1,0 +1,188 @@
+:root {
+    --bg-color: #e0f2fe;
+    --card-bg: #ffffff;
+    --text-color: #93c5fd;
+    --primary-color: #60a5fa;
+    --accent-color: #38bdf8;
+    --hint-color: #60a5fa;
+    --muted: #6b7280;
+    --input-bg: #f9fafb;
+    --input-border: #dbeafe;
+    --input-border-focus: #dbeafe;
+    --input-box-shadow: rgba(59, 130, 246, 0.12);
+    --placeholder-color: #93c5fd;
+    --button-bg: #dbeafe;
+    --button-hover-bg: #60a5fa;
+    --button-hover-color: #ffffff;
+}
+
+body.theme-sakura {
+    --bg-color: #fff0f5;
+    --card-bg: #ffffff;
+    --text-color: #f4a8b1;
+    --primary-color: #f4a8b1;
+    --accent-color: #d97b82;
+    --hint-color: #f4a8b1;
+    --muted: #a67878;
+    --input-bg: #fff5f7;
+    --input-border: #f9d7dc;
+    --input-border-focus: #f9d7dc;
+    --input-box-shadow: rgba(244, 168, 177, 0.2);
+    --placeholder-color: #f4a8b1;
+    --button-bg: #fde8ea;
+    --button-hover-bg: #f4a8b1;
+    --button-hover-color: #ffffff;
+}
+
+body.theme-pastel {
+    --bg-color: #e6f2f0;
+    --card-bg: #ffffff;
+    --text-color: #a5ccc3;
+    --primary-color: #72c7b8;
+    --accent-color: #a2d2ec;
+    --hint-color: #72c7b8;
+    --muted: #a0b8b5;
+    --input-bg: #f4fbfa;
+    --input-border: #b7d9d3;
+    --input-border-focus: #b7d9d3;
+    --input-box-shadow: rgba(114, 199, 184, 0.25);
+    --placeholder-color: #9ac3bf;
+    --button-bg: #d7ece8;
+    --button-hover-bg: #72c7b8;
+    --button-hover-color: #ffffff;
+}
+
+body.theme-dark {
+    --bg-color: #121212;
+    --card-bg: #1f1f1f;
+    --text-color: #f4f1de;
+    --primary-color: #ef8354;
+    --accent-color: #ffd6a5;
+    --hint-color: #f4a261;
+    --muted: #8d8d8d;
+    --input-bg: #292929;
+    --input-border: #444444;
+    --input-border-focus: rgba(239, 131, 84, 0.3);
+    --input-box-shadow: rgba(239, 131, 84, 0.3);
+    --placeholder-color: #bfbfbf;
+    --button-bg: #3a3a3a;
+    --button-hover-bg: #ef8354;
+    --button-hover-color: #ffffff;
+}
+
+.theme-toggle {
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 0.3rem 0.7rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.theme-toggle:hover {
+    background-color: var(--primary-color);
+    color: var(--button-hover-color);
+}
+
+.theme-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.theme-modal.active {
+    display: flex;
+}
+
+.theme-box {
+    background: var(--card-bg);
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-height: 360px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.theme-box h2 {
+    transform: translateY(-80%);
+}
+
+.theme-options {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.theme-option {
+    flex: 1 1 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    background: #f9fafb;
+    padding: 1rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-dark .theme-option {
+    background: var(--card-bg);
+    color: var(--text-color);
+    box-shadow: 0 2px 8px rgba(239, 131, 84, 0.2);
+}
+
+body.theme-dark .theme-option:hover {
+    background: var(--button-hover-bg);
+    color: var(--button-hover-color);
+    box-shadow: 0 6px 16px rgba(239, 131, 84, 0.5);
+}
+
+.theme-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.theme-option.selected {
+    border-color: var(--primary-color);
+    background: var(--button-bg);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--input-box-shadow);
+}
+
+
+.theme-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #ccc;
+}
+
+.theme-swatch.blue {
+    background: #60a5fa;
+}
+
+.theme-swatch.pink {
+    background: #f4a8b1;
+}
+
+.theme-swatch.pastel {
+    background: #72c7b8;
+}
+
+.theme-swatch.dark {
+    background: #3a3a3a;
+}

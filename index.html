@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>漢字冒険 - Kanji Quest</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="themes.css">
+</head>
+
+<body class="theme-light">
+  <header>
+    <h1>漢字冒険</h1>
+    <button class="theme-toggle" onclick="document.querySelector('.theme-modal').classList.add('active')">切り替え</button>
+  </header>
+
+  <div class="container">
+    <div class="scoreboard">
+      <div class="score-item" id="correct-score-item">
+        <div class="score-label">正解</div>
+        <div class="score-value" id="correct-score">0</div>
+      </div>
+      <div class="score-item" id="wrong-score-item">
+        <div class="score-label">間違い</div>
+        <div class="score-value" id="wrong-score">0</div>
+      </div>
+      <div class="score-item" id="total-score-item">
+        <div class="score-label">総数</div>
+        <div class="score-value" id="total-score">9000</div>
+      </div>
+    </div>
+
+    <div class="kanji-container">
+      <div class="ruby-wrapper">
+        <div class="furigana">しょう</div>
+        <div class="kanji-char">瀟</div>
+      </div>
+      <div class="ruby-wrapper">
+        <div class="furigana">しゃ</div>
+        <div class="kanji-char">洒</div>
+      </div>
+    </div>
+
+    <input type="text" placeholder="読み方を入力..." />
+    <div class="controls">
+      <button>ヒント</button>
+      <button>辞書</button>
+      <button>答える</button>
+    </div>
+  </div>
+
+  <div class="theme-modal">
+    <div class="theme-box">
+      <h2>テーマを選択</h2>
+      <div class="theme-options">
+        <button class="theme-option" id="blue" onclick="setTheme('theme-light')">
+          <div class="theme-swatch blue"></div> 青
+        </button>
+        <button class="theme-option" id="sakura" onclick="setTheme('theme-sakura')">
+          <div class="theme-swatch pink"></div> 桜
+        </button>
+        <button class="theme-option" id="pastel" onclick="setTheme('theme-pastel')">
+          <div class="theme-swatch pastel"></div> 緑
+        </button>
+        <button class="theme-option" id="dark" onclick="setTheme('theme-dark')">
+          <div class="theme-swatch dark"></div> 闇
+        </button>
+      </div>
+    </div>
+  </div>
+  <script>
+
+    const THEME_KEY = 'kanjiQuestTheme';
+    
+    function setTheme(themeName) {
+      document.body.className = themeName;
+      localStorage.setItem(THEME_KEY, themeName);
+      document.querySelector('.theme-modal').classList.remove('active');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      if (savedTheme) document.body.className = savedTheme;
+
+      const hintButton = document.querySelector('.controls button:nth-child(1)');
+      const furiganaElements = [...document.querySelectorAll('.furigana')];
+      let currentHintIndex = 0;
+
+      furiganaElements.forEach(el => el.style.visibility = 'hidden');
+
+      hintButton.addEventListener('click', () => {
+        if (currentHintIndex >= furiganaElements.length) {
+          furiganaElements.forEach(el => el.style.visibility = 'hidden');
+          currentHintIndex = 0;
+        } else {
+          furiganaElements[currentHintIndex].style.visibility = 'visible';
+          currentHintIndex++;
+        }
+        hintButton.blur();
+      });
+
+      const jishoButton = document.querySelector('.controls button:nth-child(2)');
+      const kanjiChars = [...document.querySelectorAll('.kanji-char')].map(el => el.textContent).join('');
+      jishoButton.addEventListener('click', () => {
+        const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(kanjiChars)}`;
+        window.open(url, '_blank');
+        jishoButton.blur();
+      });
+
+      const correctScoreElement = document.getElementById("correct-score");
+      const wrongScoreElement = document.getElementById("wrong-score");
+      const answerButton = document.querySelector('.controls button:nth-child(3)');
+
+      let score = {
+        correct: parseInt(localStorage.getItem("kanjiScoreCorrect")) || 0,
+        wrong: parseInt(localStorage.getItem("kanjiScoreWrong")) || 0
+      };
+
+      function updateScoreboard() {
+        correctScoreElement.textContent = score.correct;
+        wrongScoreElement.textContent = score.wrong;
+        localStorage.setItem("kanjiScoreCorrect", score.correct);
+        localStorage.setItem("kanjiScoreWrong", score.wrong);
+      }
+
+      answerButton.addEventListener("click", () => {
+        const isCorrect = 0; // sample
+        if (isCorrect) score.correct++;
+        else score.wrong++;
+        updateScoreboard();
+        answerButton.blur();
+      });
+
+      updateScoreboard();
+    });
+
+    document.querySelector('.theme-modal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) e.currentTarget.classList.remove('active');
+    });
+  </script>
+</body>
+
+</html>
