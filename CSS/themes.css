@@ -70,7 +70,25 @@ body.theme-dark {
     --button-hover-color: #ffffff;
 }
 
-.theme-toggle {
+body.theme-ink-wash {
+    --bg-color: #181818;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --primary-color: #cfcfcf;
+    --accent-color: #a3d2ca;
+    --hint-color: #b5c9c3;
+    --muted: #707070;
+    --input-bg: #2a2a2a;
+    --input-border: #444444;
+    --input-border-focus: rgba(163, 210, 202, 0.4);
+    --input-box-shadow: rgba(163, 210, 202, 0.3);
+    --placeholder-color: #999999;
+    --button-bg: #242424;
+    --button-hover-bg: #a3d2ca;
+    --button-hover-color: #181818;
+}
+
+.settings-toggle {
     cursor: pointer;
     background: transparent;
     border: 2px solid var(--primary-color);
@@ -81,7 +99,7 @@ body.theme-dark {
     font-size: 0.9rem;
 }
 
-.theme-toggle:hover {
+.settings-toggle:hover {
     background-color: var(--primary-color);
     color: var(--button-hover-color);
 }
@@ -159,9 +177,8 @@ body.theme-dark .theme-option:hover {
     border-color: var(--primary-color);
     background: var(--button-bg);
     color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--input-box-shadow);
+    box-shadow: 0 0 0 3px var(red);
 }
-
 
 .theme-swatch {
     width: 32px;

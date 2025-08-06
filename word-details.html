@@ -4,19 +4,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>漢字冒険 - Kanji Quest</title>
+  <title>漢字冒険 - Word Detail</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
     rel="stylesheet" />
-  <link rel="shortcut icon" href="Assets/japanese-gate.png" type="image/x-icon" />
-  <link rel="stylesheet" href="CSS/style.css" />
-  <link rel="stylesheet" href="CSS/themes.css" />
+  <link rel="shortcut icon" href="Assets/japanese-gate.png" type="image/x-icon">
+  <link rel="stylesheet" href="CSS/style.css">
+  <link rel="stylesheet" href="CSS/themes.css">
   <link rel="stylesheet" href="CSS/animation.css" />
   <script src="JS/animate.js"></script>
-  <script src="JS/script.js"></script>
+  <script src="JS/sakura.js"></script>
+  <script src="JS/script.js" defer></script>
 </head>
 
-<body class="theme-dark-sakura">
+<body class="theme-light">
   <header>
     <h1>漢字冒険</h1>
     <button class="settings-toggle"
@@ -41,24 +42,22 @@
 
     <div class="kanji-container">
       <div class="ruby-wrapper">
-        <div class="furigana">しょう</div>
+        <div class="furigana" style="visibility: visible;">しょう</div>
         <div class="kanji-char">瀟</div>
       </div>
       <div class="ruby-wrapper">
-        <div class="furigana">しゃ</div>
+        <div class="furigana" style="visibility: visible;">しゃ</div>
         <div class="kanji-char">洒</div>
       </div>
     </div>
 
-    <input type="text" placeholder="読み方を入力..." />
-    <div class="controls">
-      <button>ヒント</button>
-      <button>辞書</button>
-      <button>答える</button>
+    <div class="meaning-box">
+      <h2>瀟洒 <span>（しょうしゃ）</span></h2>
+      <p class="definition">意味：洗練されていて上品で粋な様子。</p>
+      <p class="example">例文：彼女の部屋は瀟洒なインテリアで飾られていた。</p>
     </div>
   </div>
 
-  <!-- Theme Modal (existing) -->
   <div class="theme-modal">
     <div class="theme-box">
       <h2>テーマを選択</h2>
@@ -81,8 +80,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Settings Modal -->
   <div class="settings-modal">
     <div class="settings-box">
       <h2>設定</h2>
