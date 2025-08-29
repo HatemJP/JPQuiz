@@ -1,9 +1,7 @@
+/* ================= Snow Animation ================= */
 .snow-animation {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     pointer-events: none;
     z-index: 2000;
     overflow: hidden;
@@ -11,10 +9,166 @@
 
 .snow-particle {
     position: absolute;
-    background: radial-gradient(circle at center, #fff 0%, #ffffffcc 50%, transparent 100%);
+    background: radial-gradient(circle at center, #ffffff 0%, #ffffffcc 60%, transparent 100%);
     border-radius: 50%;
-    opacity: 0.85;
+    opacity: 0;
     will-change: transform, top, opacity;
-    transition: opacity 0.2s ease-out;
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+    transition: opacity 1s ease;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
+/* ================= Sakura Animation ================= */
+.sakura-animation {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2000;
+    overflow: hidden;
+}
+
+.sakura-petal {
+    position: absolute;
+    width: 4px;
+    /* much smaller width */
+    height: 8px;
+    /* taller height for realistic petal shape */
+    background: radial-gradient(ellipse at center, #f8b7d4 60%, #d88ab8 90%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    /* realistic petal curve */
+    transform: rotate(var(--rotate, 0deg));
+    /* allow random rotation in JS */
+    box-shadow: 0 0 4px 1px #f8b7d4aa;
+    opacity: 0;
+    will-change: transform, top, opacity;
+    transition: opacity 1s ease;
+    filter: drop-shadow(0 0 2px #f8b7d4cc);
+}
+
+/* ================= Animation Toggle Button ================= */
+#toggle-animation-btn {
+    position: relative;
+    overflow: hidden;
+    background: var(--button-bg);
+    color: var(--primary-color);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--input-box-shadow);
+    transition:
+        transform 0.6s ease-in-out,
+        background 1s ease-in-out,
+        box-shadow 0.6s ease-in-out;
+    z-index: 0;
+    user-select: none;
+}
+
+#toggle-animation-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px var(--input-box-shadow);
+}
+
+/* Snow & Sakura animation states with gradient transition and instant text color */
+#toggle-animation-btn.snow-retrigger {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: #fff;
+    /* instantly change text to white */
+    box-shadow: 0 0 20px var(--accent-color), 0 0 40px rgba(255, 255, 255, 0.2);
+    transform: scale(1.06);
+    animation: gradient-smooth 3s ease-in-out infinite alternate,
+        toggle-pulse 3s ease-in-out infinite;
+}
+
+#toggle-animation-btn.sakura-retrigger {
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    color: #fff;
+    /* instantly change text to white */
+    box-shadow: 0 0 20px var(--accent-color), 0 0 40px rgba(255, 255, 255, 0.2);
+    transform: scale(1.06);
+    animation: gradient-smooth 3s ease-in-out infinite alternate-reverse,
+        toggle-pulse 3s ease-in-out infinite;
+}
+
+/* Default state when no animation */
+#toggle-animation-btn:not(.snow-retrigger):not(.sakura-retrigger) {
+    background-color: var(--button-bg);
+    color: var(--primary-color);
+    transform: scale(1);
+    box-shadow: 0 4px 12px var(--input-box-shadow);
+    animation: none;
+}
+
+/* Subtle pulse for Snow and Sakura button states */
+@keyframes toggle-pulse {
+    0% {
+        transform: scale(1.05);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+/* Smooth gradient transition */
+@keyframes gradient-smooth {
+    0% {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    }
+
+    50% {
+        background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    }
+
+    100% {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    }
+}
+
+/* Optional Glow Animations */
+@keyframes snow-glow {
+    0% {
+        box-shadow: 0 0 12px var(--accent-color);
+    }
+
+    50% {
+        box-shadow: 0 0 24px var(--accent-color);
+    }
+
+    100% {
+        box-shadow: 0 0 12px var(--accent-color);
+    }
+}
+
+@keyframes sakura-glow {
+    0% {
+        box-shadow: 0 0 12px var(--accent-color);
+    }
+
+    50% {
+        box-shadow: 0 0 24px var(--accent-color);
+    }
+
+    100% {
+        box-shadow: 0 0 12px var(--accent-color);
+    }
+}
+
+/* Optional Container Pulse */
+@keyframes container-pulse {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-2px) scale(1.005);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+    }
 }

@@ -5,6 +5,248 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>漢字冒険 - Kanji Quest</title>
+  <style>
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    /* FAB wrapper */
+    .action-btn-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Main action button */
+    .settings-btn {
+      font-size: 1.6rem;
+      color: var(--primary-color);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .settings-btn:hover {
+      color: var(--accent-color);
+    }
+
+    /* Animation when menu is open (clicked) */
+    .settings-btn.menu-open {
+      color: var(--accent-color);
+      transform: rotate(90deg) scale(1.0);
+    }
+
+    /* Sub-actions hidden by default */
+    .sub-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      position: absolute;
+      top: 60px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Show sub-actions when wrapper active */
+    .action-btn-wrapper.active .sub-actions {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* Sub-action buttons */
+    .sub-action {
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      background: var(--card-bg);
+      border: none;
+      border-radius: 12px;
+      padding: 0.6rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .sub-action:hover {
+      color: var(--accent-color);
+      transform: scale(1.2);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .loader .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      animation: bounce 0.6s infinite alternate;
+    }
+
+    .loader .dot1 {
+      animation-delay: 0s;
+    }
+
+    .loader .dot2 {
+      animation-delay: 0.2s;
+    }
+
+    .loader .dot3 {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-15px);
+      }
+    }
+
+    .loading-text {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      color: var(--accent-color);
+      font-size: 1.2rem;
+      letter-spacing: 0.05em;
+    }
+
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, var(--bg-color), var(--card-bg));
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-orbit {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 1rem;
+      animation: rotateOrbit 2s linear infinite;
+    }
+
+    .loader-orbit .dot {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      box-shadow: 0 0 15px var(--accent-color), 0 0 30px var(--accent-color);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(0deg) translateX(50px);
+    }
+
+    .loader-orbit .dot1 {
+      animation: orbit 2s linear infinite;
+      animation-delay: 0s;
+    }
+
+    .loader-orbit .dot2 {
+      animation: orbit 2s linear infinite;
+      animation-delay: 0.2s;
+    }
+
+    .loader-orbit .dot3 {
+      animation: orbit 2s linear infinite;
+      animation-delay: 0.4s;
+    }
+
+    .loader-orbit .dot4 {
+      animation: orbit 2s linear infinite;
+      animation-delay: 0.6s;
+    }
+
+    .loader-orbit .dot5 {
+      animation: orbit 2s linear infinite;
+      animation-delay: 0.8s;
+    }
+
+    @keyframes rotateOrbit {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes orbit {
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg) translateX(50px);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg) translateX(50px);
+      }
+    }
+
+    .loading-text {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      color: var(--accent-color);
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 10px var(--accent-color), 0 0 20px rgba(255, 255, 255, 0.1);
+      animation: fadePulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes fadePulse {
+
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem("kanjiQuestTheme") || "theme-tsukizumi";
+      document.documentElement.classList.add(savedTheme);
+    })();
+  </script>
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
     rel="stylesheet" />
@@ -12,41 +254,87 @@
   <link rel="stylesheet" href="CSS/style.css" />
   <link rel="stylesheet" href="CSS/themes.css" />
   <link rel="stylesheet" href="CSS/animation.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="JS/animate.js"></script>
-  <script src="JS/script.js"></script>
+  <script src="JS/script.js" defer></script>
 </head>
 
-<body class="theme-dark-sakura">
-  <header>
-    <h1>漢字冒険</h1>
-    <button class="settings-toggle"
-      onclick="document.querySelector('.settings-modal').classList.add('active')">設定</button>
+<body>
+  <!-- Modern Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader-orbit">
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+      <div class="dot dot3"></div>
+      <div class="dot dot4"></div>
+      <div class="dot dot5"></div>
+    </div>
+    <p class="loading-text">漢字冒険を読み込み中...</p>
+  </div>
+
+  <header class="main-navbar">
+    <div class="navbar-left">
+      <h1 class="app-title"><a href="index.html">漢字冒険</a></h1>
+    </div>
+
+    <div class="navbar-right">
+      <div class="action-btn-wrapper">
+        <!-- Main action button -->
+        <button class="settings-btn" id="main-action-btn">
+          <i class="fas fa-cog"></i>
+        </button>
+
+        <!-- Sub-actions -->
+        <div class="sub-actions">
+          <button class="sub-action" onclick="openThemeModal()">
+            <i class="fas fa-palette"></i>
+          </button>
+          <button class="sub-action" onclick="navigateTo('#')">
+            <i class="fas fa-user"></i>
+          </button>
+          <button class="sub-action" onclick="navigateTo('index.html')">
+            <i class="fas fa-home"></i>
+          </button>
+          <button class="sub-action" onclick="navigateTo('heatmap.html')">
+            <i class="fas fa-fire"></i>
+          </button>
+          <button class="sub-action" onclick="navigateTo('player-records.html')">
+            <i class="fas fa-trophy"></i>
+          </button>
+          <button class="sub-action" onclick="navigateTo('#')">
+            <i class="fas fa-sliders-h"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div class="container">
     <div class="scoreboard">
       <div class="score-item" id="correct-score-item">
-        <div class="score-label">正解</div>
+        <div class="score-label">正答</div>
         <div class="score-value" id="correct-score">0</div>
       </div>
       <div class="score-item" id="wrong-score-item">
-        <div class="score-label">間違い</div>
+        <div class="score-label">誤答</div>
         <div class="score-value" id="wrong-score">0</div>
       </div>
       <div class="score-item" id="total-score-item">
-        <div class="score-label">総数</div>
+        <div class="score-label">問題</div>
         <div class="score-value" id="total-score">9000</div>
       </div>
     </div>
 
-    <div class="kanji-container">
-      <div class="ruby-wrapper">
-        <div class="furigana">しょう</div>
-        <div class="kanji-char">瀟</div>
-      </div>
-      <div class="ruby-wrapper">
-        <div class="furigana">しゃ</div>
-        <div class="kanji-char">洒</div>
+    <div class="kanji-card">
+      <div class="kanji-container">
+        <div class="ruby-wrapper">
+          <ruby class="kanji-char">
+            漢<rt class="furigana">かん</rt>
+          </ruby>
+          <ruby class="kanji-char">
+            字<rt class="furigana">じ</rt>
+          </ruby>
+        </div>
       </div>
     </div>
 
@@ -58,44 +346,60 @@
     </div>
   </div>
 
-  <!-- Theme Modal (existing) -->
+  <!-- Theme Modal -->
   <div class="theme-modal">
     <div class="theme-box">
       <h2>テーマを選択</h2>
       <div class="theme-options">
-        <button class="theme-option" id="blue" onclick="setTheme('theme-light')">
+        <button class="theme-option" id="tsukizumi" data-theme="theme-tsukizumi" onclick="setTheme('theme-tsukizumi')">
+          <div class="theme-swatch tsukizumi"></div> 月墨
+        </button>
+        <button class="theme-option" id="uminami" data-theme="theme-uminami" onclick="setTheme('theme-uminami')">
+          <div class="theme-swatch uminami"></div> 海青
+        </button>
+        <button class="theme-option" id="new-dark" data-theme="theme-new-dark" onclick="setTheme('theme-new-dark')">
+          <div class="theme-swatch new-dark"></div> 闇
+        </button>
+        <button class="theme-option" id="orange" data-theme="theme-orange" onclick="setTheme('theme-orange')">
+          <div class="theme-swatch orange"></div> 橙
+        </button>
+        <button class="theme-option" id="sakura" data-theme="theme-sakura" onclick="setTheme('theme-sakura')">
+          <div class="theme-swatch sakura"></div> 桜
+        </button>
+        <button class="theme-option" id="blue" data-theme="theme-blue" onclick="setTheme('theme-blue')">
           <div class="theme-swatch blue"></div> 青
-        </button>
-        <button class="theme-option" id="sakura" onclick="setTheme('theme-sakura')">
-          <div class="theme-swatch pink"></div> 桜
-        </button>
-        <button class="theme-option" id="pastel" onclick="setTheme('theme-pastel')">
-          <div class="theme-swatch pastel"></div> 緑
-        </button>
-        <button class="theme-option" id="dark" onclick="setTheme('theme-dark')">
-          <div class="theme-swatch dark"></div> 闇
-        </button>
-        <button class="theme-option" id="ink-wash" onclick="setTheme('theme-ink-wash')">
-          <div class="theme-swatch" style="background: #a3d2ca;"></div> 墨絵
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Settings Modal -->
-  <div class="settings-modal">
-    <div class="settings-box">
-      <h2>設定</h2>
-      <div class="settings-options">
-        <button class="settings-option" onclick="openThemeModal()">テーマを変更</button>
-        <button class="settings-option" id="toggle-snow-btn" onclick="toggleSnowAnimation()">
-          雪舞
-        </button>
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-sections">
+        <div class="footer-section">
+          <ul>
+            <li><a href="index.html">初頁</a></li>
+            <li><a href="HTML/heatmap.html">熱図</a></li>
+            <li><a href="HTML/player-records.html">記録</a></li>
+            <li><a href="#">自己</a></li>
+            <li><a href="#">試練</a></li>
+          </ul>
+        </div>
       </div>
-      <button class="close-settings" onclick="closeSettingsModal()">閉じる</button>
+
+      <div class="footer-bottom">
+        <p>© 2025 漢字冒険 - Kanji Quest. All Rights Reserved.</p>
+      </div>
     </div>
-  </div>
-  <div class="snow-animation"></div>
+  </footer>
+
+  <script>
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loading-screen');
+      setTimeout(() => loader.classList.add('hidden'), 1500); // fade out smoothly
+    });
+  </script>
+
 </body>
 
 </html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>漢字冒険 - Heatmap</title>
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("kanjiQuestTheme") || "theme-tsukizumi";
+            document.documentElement.classList.add(savedTheme);
+        })();
+    </script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <link rel="shortcut icon" href="../Assets/japanese-gate.png" type="image/x-icon" />
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <link rel="stylesheet" href="../CSS/themes.css" />
+    <link rel="stylesheet" href="../CSS/animation.css" />
+
+    <script src="../JS/animate.js"></script>
+    <script src="../JS/script.js" defer></script>
+
+    <style>
+        html,
+        body {
+            height: auto;
+            overflow-y: auto;
+        }
+
+        .container {
+            padding: 1rem 2rem;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+        }
+
+        /* Date selector */
+        .date-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .date-selector button {
+            padding: 0.5rem 1rem;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .date-selector button:hover {
+            background: var(--primary-color);
+            color: var(--button-hover-color);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>漢字冒険</h1>
+        <button class="header-btn" onclick="window.location.href='../index.html'">戻る</button>
+    </header>
+
+    <div class="container">
+        <h2 style="color: var(--primary-color); font-weight: 700; margin-bottom: 1rem;">熱図</h2>
+        <p style="color: var(--text-color); font-size: 1rem;">
+            熱図の進捗を確認したい月を選択して下さい。
+        </p>
+        <div class="date-selector" id="month-selector"></div>
+    </div>
+
+    <div class="snow-animation"></div>
+    <div class="sakura-animation"></div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <ul>
+                        <li><a href="../index.html">初頁</a></li>
+                        <li><a href="heatmap.html">熱図</a></li>
+                        <li><a href="player-records.html">記録</a></li>
+                        <li><a href="#">自己</a></li>
+                        <li><a href="#">試練</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 漢字冒険 - Kanji Quest. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Generate 12 months
+        const months = [
+            "1月", "2月", "3月", "4月", "5月", "6月",
+            "7月", "8月", "9月", "10月", "11月", "12月"
+        ];
+
+        // Populate month buttons
+        const monthSelector = document.getElementById('month-selector');
+        months.forEach(month => {
+            const btn = document.createElement('button');
+            btn.textContent = month;
+            btn.addEventListener('click', () => {
+                alert(`${month} が選択されました！`);
+            });
+            monthSelector.appendChild(btn);
+        });
+    </script>
+</body>
+
+</html>

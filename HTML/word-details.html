@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>漢字冒険 - Word Detail</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="shortcut icon" href="../Assets/japanese-gate.png" type="image/x-icon" />
+  <link rel="stylesheet" href="../CSS/style.css" />
+  <link rel="stylesheet" href="../CSS/themes.css" />
+  <link rel="stylesheet" href="../CSS/animation.css" />
+
+  <script src="../JS/animate.js"></script>
+  <script src="../JS/script.js" defer></script>
+
+  <style>
+    ruby.kanji-char {
+      font-size: 5rem !important;
+    }
+
+    .kanji-container {
+      cursor: pointer;
+      margin-top: -1rem;
+    }
+
+    ruby.kanji-char:hover {
+      cursor: pointer;
+    }
+
+    .container {
+      margin: 5rem auto;
+      text-align: center;
+      max-width: 800px;
+      padding: 3rem 2rem;
+      border-radius: 20px;
+
+      /* Modern gradient glassy look */
+      background: linear-gradient(135deg,
+          var(--card-gradient-color),
+          var(--card-bg));
+      border: 1px solid var(--card-border-color);
+      box-shadow: 0 12px 28px var(--card-shadow-color),
+        0 4px 12px rgba(0, 0, 0, 0.25);
+
+      /* Frosted effect */
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      transition: all 0.4s ease;
+    }
+
+    /* Subtle hover "lift" */
+    .container:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35),
+        0 6px 16px var(--card-shadow-color);
+    }
+
+    .progress-badge {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-color);
+      padding: 0.8rem 2rem;
+      border-radius: 999px;
+      margin: 0rem auto 2rem auto;
+      min-width: 160px;
+      background: var(--card-bg);
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 4px var(--card-gradient-color);
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      border-radius: 999px;
+      z-index: 1;
+      transition: width 1.5s ease-in-out;
+    }
+
+    /* Light theme progress-fill overrides */
+    body.theme-sakura .progress-fill {
+      background: linear-gradient(90deg,
+          rgba(244, 168, 177, 0.2),
+          /* very soft pink */
+          rgba(217, 123, 130, 0.2)
+          /* very light accent pink */
+        );
+    }
+
+    body.theme-blue .progress-fill {
+      background: linear-gradient(90deg,
+          rgba(96, 165, 250, 0.15),
+          /* very soft blue */
+          rgba(56, 189, 248, 0.15)
+          /* very light accent blue */
+        );
+    }
+
+    body.theme-tsukizumi .progress-fill {
+      background: var(--accent-color);
+    }
+
+    .progress-badge span {
+      position: relative;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    .progress-badge::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.05), 0 0 40px rgba(0, 0, 0, 0.05);
+      z-index: 0;
+    }
+
+    .meaning-box {
+      background: linear-gradient(135deg, var(--card-gradient-color), var(--card-bg));
+      border: 1px solid var(--card-border-color);
+      box-shadow: 0 4px 12px var(--card-shadow-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: -0rem;
+      text-align: center;
+    }
+
+    .definition,
+    .example {
+      margin-bottom: 1rem;
+    }
+
+    .vocab-examples {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .vocab-word {
+      position: relative;
+      background: var(--vocab-bg, var(--primary-color));
+      color: var(--vocab-color, var(--text-color));
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 12px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease, opacity 0.6s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      animation: fadeIn 0.6s forwards;
+    }
+
+    .vocab-word:hover {
+      transform: scale(1.08) translateY(-2px);
+      background: var(--vocab-hover-bg, var(--accent-color));
+      color: var(--vocab-hover-color, #fff);
+      box-shadow: var(--vocab-hover-shadow, 0 6px 12px rgba(0, 0, 0, 0.25));
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .vocab-word::after {
+      content: attr(data-meaning);
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-bg);
+      color: var(--text-color);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+
+    .vocab-word:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    .vocab-word:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .vocab-word:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .vocab-word:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>漢字冒険</h1>
+    <button class="header-btn" onclick="window.location.href='../index.html'">戻る</button>
+  </header>
+
+  <div class="container">
+    <div class="kanji-container">
+      <div class="ruby-wrapper">
+        <ruby class="kanji-char">漢<rt class="furigana">かん</rt></ruby>
+        <ruby class="kanji-char">字<rt class="furigana">じ</rt></ruby>
+      </div>
+    </div>
+
+    <div class="progress-badge" id="progressBadge">
+      <div class="progress-fill" id="progressFill"></div>
+      <span>進行度: 0%</span>
+    </div>
+
+    <!-- Meaning Box -->
+    <div class="meaning-box">
+      <h2>漢字 <span>（かんじ）</span></h2>
+      <p class="definition">意味：漢字は日本語の文章で意味を表す文字です。</p>
+      <p class="example">例文：小学生の時に沢山の漢字を覚えました。</p>
+      <div class="vocab-examples">
+        <div class="vocab-word" data-meaning="伝統的な漢方医学">漢方</div>
+        <div class="vocab-word" data-meaning="漢字の学習に関する学問">学漢</div>
+        <div class="vocab-word" data-meaning="中国の古典的な詩">漢詩</div>
+        <div class="vocab-word" data-meaning="古代中国の文章や文法">漢文</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <p>© 2025 漢字冒険 - Kanji Quest. All Rights Reserved.</p>
+      <div class="footer-links">
+        <a href="../index.html">初頁</a>
+        <a href="heatmap.html">熱図</a>
+        <a href="player-records.html">記録</a>
+        <a href="#">自己紹介</a>
+        <a href="#">試練</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.querySelector('#progressBadge span');
+
+    const userProgress = 58; // percent
+
+    setTimeout(() => {
+      progressFill.style.width = `${userProgress}%`;
+      progressText.textContent = `進行度: ${userProgress}%`;
+    }, 300);
+  </script>
+</body>
+
+</html>

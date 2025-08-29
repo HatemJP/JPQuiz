@@ -1,76 +1,6 @@
-:root {
-    --bg-color: #e0f2fe;
-    --card-bg: #ffffff;
-    --text-color: #93c5fd;
-    --primary-color: #60a5fa;
-    --accent-color: #38bdf8;
-    --hint-color: #60a5fa;
-    --muted: #6b7280;
-    --input-bg: #f9fafb;
-    --input-border: #dbeafe;
-    --input-border-focus: #dbeafe;
-    --input-box-shadow: rgba(59, 130, 246, 0.12);
-    --placeholder-color: #93c5fd;
-    --button-bg: #dbeafe;
-    --button-hover-bg: #60a5fa;
-    --button-hover-color: #ffffff;
-}
-
-body.theme-sakura {
-    --bg-color: #fff0f5;
-    --card-bg: #ffffff;
-    --text-color: #f4a8b1;
-    --primary-color: #f4a8b1;
-    --accent-color: #d97b82;
-    --hint-color: #f4a8b1;
-    --muted: #a67878;
-    --input-bg: #fff5f7;
-    --input-border: #f9d7dc;
-    --input-border-focus: #f9d7dc;
-    --input-box-shadow: rgba(244, 168, 177, 0.2);
-    --placeholder-color: #f4a8b1;
-    --button-bg: #fde8ea;
-    --button-hover-bg: #f4a8b1;
-    --button-hover-color: #ffffff;
-}
-
-body.theme-pastel {
-    --bg-color: #e6f2f0;
-    --card-bg: #ffffff;
-    --text-color: #a5ccc3;
-    --primary-color: #72c7b8;
-    --accent-color: #a2d2ec;
-    --hint-color: #72c7b8;
-    --muted: #a0b8b5;
-    --input-bg: #f4fbfa;
-    --input-border: #b7d9d3;
-    --input-border-focus: #b7d9d3;
-    --input-box-shadow: rgba(114, 199, 184, 0.25);
-    --placeholder-color: #9ac3bf;
-    --button-bg: #d7ece8;
-    --button-hover-bg: #72c7b8;
-    --button-hover-color: #ffffff;
-}
-
-body.theme-dark {
-    --bg-color: #121212;
-    --card-bg: #1f1f1f;
-    --text-color: #f4f1de;
-    --primary-color: #ef8354;
-    --accent-color: #ffd6a5;
-    --hint-color: #f4a261;
-    --muted: #8d8d8d;
-    --input-bg: #292929;
-    --input-border: #444444;
-    --input-border-focus: rgba(239, 131, 84, 0.3);
-    --input-box-shadow: rgba(239, 131, 84, 0.3);
-    --placeholder-color: #bfbfbf;
-    --button-bg: #3a3a3a;
-    --button-hover-bg: #ef8354;
-    --button-hover-color: #ffffff;
-}
-
-body.theme-ink-wash {
+/* Tsukizumi Dark Theme (root) */
+body.theme-tsukizumi {
+    /* Basic */
     --bg-color: #181818;
     --card-bg: #1e1e1e;
     --text-color: #e0e0e0;
@@ -78,30 +8,210 @@ body.theme-ink-wash {
     --accent-color: #a3d2ca;
     --hint-color: #b5c9c3;
     --muted: #707070;
+
+    /* Input */
     --input-bg: #2a2a2a;
     --input-border: #444444;
     --input-border-focus: rgba(163, 210, 202, 0.4);
     --input-box-shadow: rgba(163, 210, 202, 0.3);
     --placeholder-color: #999999;
+
+    /* Button */
     --button-bg: #242424;
-    --button-hover-bg: #a3d2ca;
+    --button-hover-bg: var(--accent-color);
     --button-hover-color: #181818;
+
+    /* Card */
+    --card-gradient-color: rgba(163, 210, 202, 0.02);
+    --card-border-color: rgba(163, 210, 202, 0.05);
+    --card-shadow-color: rgba(163, 210, 202, 0.05);
+
+    /* Vocab Word */
+    --vocab-bg: var(--accent-color);
+    --vocab-color: #fff;
+    --vocab-hover-bg: rgba(163, 210, 202, 0.85);
+    --vocab-hover-color: #fff;
+    --vocab-hover-shadow: none;
 }
 
-.settings-toggle {
-    cursor: pointer;
-    background: transparent;
-    border: 2px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 0.3rem 0.7rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    font-size: 0.9rem;
+/* Uminami Dark Theme */
+body.theme-uminami {
+    /* Basic */
+    --bg-color: #0a0f14;
+    --card-bg: #111a21;
+    --text-color: #e0f7fa;
+    --primary-color: #4dd0e1;
+    --accent-color: #26c6da;
+    --hint-color: #80deea;
+    --muted: #7a8d99;
+
+    /* Input */
+    --input-bg: #16222a;
+    --input-border: #2a3a47;
+    --input-border-focus: rgba(77, 208, 225, 0.3);
+    --input-box-shadow: rgba(77, 208, 225, 0.25);
+    --placeholder-color: #99b7c4;
+
+    /* Button */
+    --button-bg: #1e2b35;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #0a0f14;
+
+    /* Card */
+    --card-gradient-color: rgba(102, 204, 255, 0.02);
+    --card-border-color: rgba(102, 204, 255, 0.05);
+    --card-shadow-color: rgba(102, 204, 255, 0.05);
+
+    /* Vocab Word */
+    --vocab-bg: var(--primary-color);
+    --vocab-color: var(--text-color);
+    --vocab-hover-bg: var(--accent-color);
+    --vocab-hover-color: #fff;
+    --vocab-hover-shadow: none;
 }
 
-.settings-toggle:hover {
-    background-color: var(--primary-color);
-    color: var(--button-hover-color);
+/* New-Dark Theme */
+body.theme-new-dark {
+    /* Basic */
+    --bg-color: #0f111a;
+    --card-bg: #1a1f2b;
+    --text-color: #cfd6e8;
+    --primary-color: #7f9cf5;
+    --accent-color: #5a78d6;
+    --hint-color: #a3bffa;
+    --muted: #707a8c;
+
+    /* Input */
+    --input-bg: #1f2435;
+    --input-border: #3b4261;
+    --input-border-focus: rgba(127, 156, 245, 0.4);
+    --input-box-shadow: rgba(127, 156, 245, 0.35);
+    --placeholder-color: #8fa3d1;
+
+    /* Button */
+    --button-bg: #262b44;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #0f111a;
+
+    /* Card */
+    --card-gradient-color: rgba(127, 156, 245, 0.12);
+    --card-border-color: rgba(127, 156, 245, 0.25);
+    --card-shadow-color: rgba(90, 120, 214, 0.25);
+
+    /* Vocab Word */
+    --vocab-bg: var(--primary-color);
+    --vocab-color: var(--text-color);
+    --vocab-hover-bg: var(--accent-color);
+    --vocab-hover-color: #ffffff;
+    --vocab-hover-shadow: none;
+}
+
+/* Orange Dark Theme */
+body.theme-orange {
+    /* Basic */
+    --bg-color: #121212;
+    --card-bg: #1f1f1f;
+    --text-color: #f4f1de;
+    --primary-color: #ef8354;
+    --accent-color: #ffd6a5;
+    --hint-color: #f4a261;
+    --muted: #8d8d8d;
+
+    /* Input */
+    --input-bg: #292929;
+    --input-border: #444444;
+    --input-border-focus: rgba(239, 131, 84, 0.3);
+    --input-box-shadow: rgba(239, 131, 84, 0.3);
+    --placeholder-color: #bfbfbf;
+
+    /* Button */
+    --button-bg: #3a3a3a;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #ffffff;
+
+    /* Card */
+    --card-gradient-color: rgba(239, 131, 84, 0.05);
+    --card-border-color: rgba(239, 131, 84, 0.1);
+    --card-shadow-color: rgba(239, 131, 84, 0.12);
+
+    /* Vocab Word */
+    --vocab-bg: var(--primary-color);
+    --vocab-color: var(--text-color);
+    --vocab-hover-bg: #f4a261;
+    --vocab-hover-color: #fff;
+    --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Sakura Light Theme */
+body.theme-sakura {
+    /* Basic */
+    --bg-color: #fff0f5;
+    --card-bg: #ffffff;
+    --text-color: #f4a8b1;
+    --primary-color: #f4a8b1;
+    --accent-color: #d97b82;
+    --hint-color: #f4a8b1;
+    --muted: #a67878;
+
+    /* Input */
+    --input-bg: #fff5f7;
+    --input-border: #f9d7dc;
+    --input-border-focus: #f9d7dc;
+    --input-box-shadow: rgba(244, 168, 177, 0.2);
+    --placeholder-color: #f4a8b1;
+
+    /* Button */
+    --button-bg: #fde8ea;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #ffffff;
+
+    /* Card */
+    --card-gradient-color: rgba(255, 243, 248, 0.35);
+    --card-border-color: rgba(244, 168, 177, 0.25);
+    --card-shadow-color: rgba(244, 168, 177, 0.25);
+
+    /* Vocab Word */
+    --vocab-bg: rgba(244, 168, 177, 0.15);
+    --vocab-color: #f4a8b1;
+    --vocab-hover-bg: rgba(244, 168, 177, 0.25);
+    --vocab-hover-color: #f4a8b1;
+    --vocab-hover-shadow: none;
+}
+
+/* Soft Blue Light Theme */
+body.theme-blue {
+    /* Basic */
+    --bg-color: #e0f2fe;
+    --card-bg: #ffffff;
+    --text-color: #93c5fd;
+    --primary-color: #60a5fa;
+    --accent-color: #38bdf8;
+    --hint-color: #60a5fa;
+    --muted: #6b7280;
+
+    /* Input */
+    --input-bg: #f9fafb;
+    --input-border: #dbeafe;
+    --input-border-focus: #dbeafe;
+    --input-box-shadow: rgba(59, 130, 246, 0.12);
+    --placeholder-color: #93c5fd;
+
+    /* Button */
+    --button-bg: #dbeafe;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #ffffff;
+
+    /* Card */
+    --card-gradient-color: rgba(240, 248, 255, 0.35);
+    --card-border-color: rgba(59, 130, 246, 0.18);
+    --card-shadow-color: rgba(59, 130, 246, 0.18);
+
+    /* Vocab Word */
+    --vocab-bg: rgba(96, 165, 250, 0.12);
+    --vocab-color: #60a5fa;
+    --vocab-hover-bg: rgba(96, 165, 250, 0.22);
+    --vocab-hover-color: var(--primary-color);
+    --vocab-hover-shadow: none;
 }
 
 .theme-modal {
@@ -156,30 +266,58 @@ body.theme-ink-wash {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-body.theme-dark .theme-option {
+/* Modern styling for all "dark" themes (ordered: tsukizumi → uminami → new-dark → orange) */
+body.theme-tsukizumi .theme-option,
+body.theme-uminami .theme-option,
+body.theme-new-dark .theme-option,
+body.theme-orange .theme-option {
     background: var(--card-bg);
     color: var(--text-color);
-    box-shadow: 0 2px 8px rgba(239, 131, 84, 0.2);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
 }
 
-body.theme-dark .theme-option:hover {
-    background: var(--button-hover-bg);
-    color: var(--button-hover-color);
-    box-shadow: 0 6px 16px rgba(239, 131, 84, 0.5);
+body.theme-tsukizumi .theme-option:hover,
+body.theme-uminami .theme-option:hover,
+body.theme-new-dark .theme-option:hover,
+body.theme-orange .theme-option:hover {
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+    transform: translateY(-5px);
+}
+
+/* Modern styling for all light themes (ordered: sakura → blue) */
+body.theme-sakura .theme-option,
+body.theme-blue .theme-option {
+    background: var(--card-bg);
+    color: black;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+body.theme-sakura .theme-option:hover,
+body.theme-blue .theme-option:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
 }
 
 .theme-option:hover {
+    background-color: var(--primary-color);
+    color: var(--button-hover-color);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .theme-option.selected {
+    background: var(--primary-color);
+    color: var(--button-hover-color);
     border-color: var(--primary-color);
-    background: var(--button-bg);
-    color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(red);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
 }
 
+/* Theme Swatches (ordered: tsukizumi → uminami → new-dark → orange → sakura → blue) */
 .theme-swatch {
     width: 32px;
     height: 32px;
@@ -188,18 +326,26 @@ body.theme-dark .theme-option:hover {
     box-shadow: 0 0 0 2px #ccc;
 }
 
+.theme-swatch.tsukizumi {
+    background: linear-gradient(135deg, #000000, #a3d2ca);
+}
+
+.theme-swatch.uminami {
+    background: linear-gradient(135deg, #000000, #4dd0e1);
+}
+
+.theme-swatch.new-dark {
+    background: linear-gradient(135deg, #0f111a, #1a1f2b);
+}
+
+.theme-swatch.orange {
+    background: linear-gradient(135deg, #000000, #ef8354);
+}
+
+.theme-swatch.sakura {
+    background: linear-gradient(135deg, #ffffff, #f4a8b1);
+}
+
 .theme-swatch.blue {
-    background: #60a5fa;
-}
-
-.theme-swatch.pink {
-    background: #f4a8b1;
-}
-
-.theme-swatch.pastel {
-    background: #72c7b8;
-}
-
-.theme-swatch.dark {
-    background: #3a3a3a;
+    background: linear-gradient(135deg, #ffffff, #60a5fa);
 }
