@@ -357,7 +357,7 @@ body.theme-orange .container {
 .ruby-wrapper {
     display: flex;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 0rem;
     text-align: center;
 }
 

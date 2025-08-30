@@ -8,9 +8,10 @@ const themeModal = document.querySelector(".theme-modal");
 const toggleBtn = document.getElementById("toggle-animation-btn");
 const wandBtn = document.getElementById("wand-action");
 
+let currentHintIndex = 0; // global for hints
+
 /* ========= Animation Logic ========= */
 function startAnimation(state) {
-  // Stop all animations first
   document.body.classList.remove("snow-active", "sakura-active");
 
   if (state === 1) {
@@ -37,7 +38,6 @@ function syncAnimationButtons(state) {
 
   if (!toggleIcon || !wandIcon) return;
 
-  // fade out
   toggleIcon.classList.add("fade-out");
   wandIcon.classList.add("fade-out");
 
@@ -72,7 +72,7 @@ function toggleAnimation() {
 toggleBtn?.addEventListener("click", toggleAnimation);
 wandBtn?.addEventListener("click", toggleAnimation);
 
-// Toggle sub-actions on click
+// Toggle sub-actions
 mainActionBtn?.addEventListener("click", () => {
   if (!mainActionBtn.disabled) {
     actionWrapper.classList.toggle("active");
@@ -149,6 +149,82 @@ function setTheme(themeName) {
   closeThemeModal();
 }
 
+/* ========= Hint Button Logic ========= */
+function resetHints() {
+  const furiganaElements = document.querySelectorAll(
+    ".kanji-container .furigana"
+  );
+  furiganaElements.forEach((el) => (el.style.visibility = "hidden"));
+  currentHintIndex = 0;
+}
+
+function showNextHint() {
+  const furiganaElements = document.querySelectorAll(
+    ".kanji-container .furigana"
+  );
+  if (furiganaElements.length === 0) return;
+
+  if (currentHintIndex >= furiganaElements.length) {
+    resetHints();
+  } else {
+    furiganaElements[currentHintIndex].style.visibility = "visible";
+    currentHintIndex++;
+  }
+}
+
+/* ========= Kanji Quiz Logic ========= */
+const answerBtn = document.getElementById("answer-btn");
+const kanjiContainer = document.getElementById("kanji-container");
+const answerInput = document.getElementById("answer-input");
+
+// Example word list (kanji + furigana)
+const words = [
+  { kanji: "漢字", furigana: ["かん", "じ"] },
+  { kanji: "日本", furigana: ["に", "ほん"] },
+  { kanji: "学習", furigana: ["がく", "しゅう"] },
+  { kanji: "冒険", furigana: ["ぼう", "けん"] },
+];
+let currentIndex = 0;
+
+// Function to render a kanji word
+function renderWord(wordObj) {
+  const rubyWrapper = kanjiContainer.querySelector(".ruby-wrapper");
+  rubyWrapper.innerHTML = "";
+  for (let i = 0; i < wordObj.kanji.length; i++) {
+    const ruby = document.createElement("ruby");
+    ruby.className = "kanji-char";
+    ruby.innerHTML =
+      wordObj.kanji[i] + `<rt class="furigana">${wordObj.furigana[i]}</rt>`;
+    rubyWrapper.appendChild(ruby);
+  }
+  resetHints();
+}
+
+// Initialize first word
+renderWord(words[currentIndex]);
+
+answerBtn?.addEventListener("click", () => {
+  // Animate kanji flying out
+  kanjiContainer.classList.add("correct-animate");
+
+  // After animation, reset and show next word with slide-in
+  setTimeout(() => {
+    kanjiContainer.classList.remove("correct-animate");
+    answerInput.value = "";
+
+    // Increment word index
+    currentIndex = (currentIndex + 1) % words.length;
+    renderWord(words[currentIndex]);
+
+    // Animate slide-in
+    kanjiContainer.classList.add("new-word");
+    setTimeout(() => {
+      kanjiContainer.classList.remove("new-word");
+    }, 700);
+  }, 900); // match throw animation duration
+});
+
+/* ========= DOMContentLoaded ========= */
 window.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const savedTheme = localStorage.getItem(THEME_KEY);
@@ -160,17 +236,9 @@ window.addEventListener("DOMContentLoaded", () => {
     btn.classList.toggle("selected", btn.dataset.theme === savedTheme);
   });
 
-  const furiganaElements = [...document.querySelectorAll(".furigana")];
-  let currentHintIndex = 0;
-  const hintButton = document.querySelector(".controls button:nth-child(1)");
+  const hintButton = document.getElementById("hint-btn");
   hintButton?.addEventListener("click", () => {
-    if (currentHintIndex >= furiganaElements.length) {
-      furiganaElements.forEach((el) => (el.style.visibility = "hidden"));
-      currentHintIndex = 0;
-    } else {
-      furiganaElements[currentHintIndex].style.visibility = "visible";
-      currentHintIndex++;
-    }
+    showNextHint();
     hintButton.blur();
   });
 
@@ -195,16 +263,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  answerButton?.addEventListener("click", () => {
-    alert("答えるボタンの機能は未だ実装されていません。");
-    answerButton.blur();
-  });
-
   themeModal?.addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closeThemeModal();
   });
 
-  const kanjiContainer = document.querySelector(".kanji-container");
   kanjiContainer?.addEventListener("click", () => {
     body.classList.add("transition-out");
     setTimeout(() => {
@@ -234,12 +296,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
   adjustKanjiLayout();
 
-  const observer = kanjiContainer
-    ? new MutationObserver(adjustKanjiLayout)
-    : null;
-  observer?.observe(kanjiContainer, { childList: true, subtree: true });
+  if (kanjiContainer) {
+    const observer = new MutationObserver(() => {
+      adjustKanjiLayout();
+      resetHints(); // reset hints whenever kanji content changes
+    });
+    observer.observe(kanjiContainer, { childList: true, subtree: true });
+  }
 });
 
+/* ========= Kanji Layout ========= */
 function adjustKanjiLayout() {
   const kanjiCard = document.querySelector(".kanji-card");
   const kanjiContainer = document.querySelector(".kanji-container");
@@ -263,7 +329,7 @@ function adjustKanjiLayout() {
 
 window.addEventListener("resize", adjustKanjiLayout);
 
-/* Optional scoring system
+/* Optional scoring system (commented out)
 const correctScoreElement = document.getElementById("correct-score");
 const wrongScoreElement = document.getElementById("wrong-score");
 
