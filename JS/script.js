@@ -12,13 +12,14 @@ const kanjiContainer = document.getElementById("kanji-container");
 const answerInput = document.getElementById("answer-input");
 const answerBtn = document.getElementById("answer-btn");
 const hintButton = document.getElementById("hint-btn");
+const dictionaryBtn = document.getElementById("dictionary-btn");
 
-// Example word list
+// Example word list with per-kanji characters and furigana
 const words = [
-  { kanji: "漢字", furigana: ["かん", "じ"] },
-  { kanji: "日本", furigana: ["に", "ほん"] },
-  { kanji: "学習", furigana: ["がく", "しゅう"] },
-  { kanji: "冒険", furigana: ["ぼう", "けん"] },
+  { kanji: ["漢", "字"], furigana: ["かん", "じ"] },
+  { kanji: ["日", "本"], furigana: ["に", "ほん"] },
+  { kanji: ["学", "習"], furigana: ["がく", "しゅう"] },
+  { kanji: ["冒", "険"], furigana: ["ぼう", "けん"] },
 ];
 let currentIndex = 0;
 
@@ -45,7 +46,6 @@ function syncAnimationButtons(state) {
 
   const toggleIcon = toggleBtn?.querySelector("i");
   const wandIcon = wandBtn?.querySelector("i");
-
   if (!toggleIcon || !wandIcon) return;
 
   toggleIcon.classList.add("fade-out");
@@ -123,18 +123,15 @@ function showNextHint() {
   );
   if (furiganaElements.length === 0) return;
 
-  // If all hints have been shown, reset and stop here
   if (currentHintIndex >= furiganaElements.length) {
     resetHints();
-    return; // stop, don't show any hint this click
+    return;
   }
 
-  // Show the next hint
   const hintEl = furiganaElements[currentHintIndex];
-  hintEl.classList.remove("show-hint"); // reset animation
+  hintEl.classList.remove("show-hint");
   void hintEl.offsetWidth; // force reflow
   hintEl.classList.add("show-hint");
-
   currentHintIndex++;
 }
 
@@ -145,14 +142,12 @@ function renderWord(wordObj) {
   for (let i = 0; i < wordObj.kanji.length; i++) {
     const ruby = document.createElement("ruby");
     ruby.className = "kanji-char";
-    ruby.innerHTML =
-      wordObj.kanji[i] + `<rt class="furigana">${wordObj.furigana[i]}</rt>`;
+    ruby.innerHTML = `${wordObj.kanji[i]}<rt class="furigana">${wordObj.furigana[i]}</rt>`;
     rubyWrapper.appendChild(ruby);
   }
   resetHints();
 }
 
-// Initialize first word
 renderWord(words[currentIndex]);
 
 answerBtn?.addEventListener("click", () => {
@@ -167,6 +162,25 @@ answerBtn?.addEventListener("click", () => {
     kanjiContainer.classList.add("new-word");
     setTimeout(() => kanjiContainer.classList.remove("new-word"), 700);
   }, 900);
+});
+
+dictionaryBtn?.addEventListener("click", () => {
+  const rubyWrapper = kanjiContainer.querySelector(".ruby-wrapper");
+  if (!rubyWrapper) return;
+
+  const kanjiText = Array.from(rubyWrapper.querySelectorAll(".kanji-char"))
+    .map((r) => {
+      // Get only the first child text node (the kanji itself)
+      return r.firstChild.textContent.trim();
+    })
+    .join("");
+
+  if (kanjiText) {
+    const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
+      kanjiText
+    )}`;
+    window.open(url, "_blank");
+  }
 });
 
 /* ========= DOMContentLoaded ========= */
@@ -250,7 +264,7 @@ function adjustKanjiLayout() {
 
 window.addEventListener("resize", adjustKanjiLayout);
 
-/* ========= Event Listeners ========= */
+/* ========= Animation Buttons ========= */
 toggleBtn?.addEventListener("click", toggleAnimation);
 wandBtn?.addEventListener("click", toggleAnimation);
 
