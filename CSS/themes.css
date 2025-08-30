@@ -70,33 +70,45 @@ body.theme-uminami {
     --vocab-hover-shadow: none;
 }
 
-/* New-Dark Theme */
+/* Ultra-Dark New-Dark Theme */
 body.theme-new-dark {
     /* Basic */
-    --bg-color: #0f111a;
-    --card-bg: #1a1f2b;
-    --text-color: #cfd6e8;
+    --bg-color: #0a0c14;
+    /* darker background */
+    --card-bg: #141823;
+    /* darker card background */
+    --text-color: #d0d4e0;
+    /* slightly softer text for contrast */
     --primary-color: #7f9cf5;
+    /* keep highlight colors */
     --accent-color: #5a78d6;
-    --hint-color: #a3bffa;
-    --muted: #707a8c;
+    --hint-color: #8fa3d1;
+    /* softer hint color */
+    --muted: #5a6070;
+    /* darker muted color */
 
     /* Input */
-    --input-bg: #1f2435;
-    --input-border: #3b4261;
-    --input-border-focus: rgba(127, 156, 245, 0.4);
-    --input-box-shadow: rgba(127, 156, 245, 0.35);
-    --placeholder-color: #8fa3d1;
+    --input-bg: #161a28;
+    /* darker input fields */
+    --input-border: #2c334e;
+    /* darker border */
+    --input-border-focus: rgba(127, 156, 245, 0.35);
+    --input-box-shadow: rgba(127, 156, 245, 0.3);
+    --placeholder-color: #6d7aa0;
+    /* darker placeholder */
 
     /* Button */
-    --button-bg: #262b44;
+    --button-bg: #1c2033;
+    /* darker buttons */
     --button-hover-bg: var(--primary-color);
-    --button-hover-color: #0f111a;
+    --button-hover-color: #0a0c14;
 
     /* Card */
-    --card-gradient-color: rgba(127, 156, 245, 0.12);
-    --card-border-color: rgba(127, 156, 245, 0.25);
-    --card-shadow-color: rgba(90, 120, 214, 0.25);
+    --card-gradient-color: rgba(127, 156, 245, 0.08);
+    /* subtler gradient */
+    --card-border-color: rgba(127, 156, 245, 0.18);
+    --card-shadow-color: rgba(90, 120, 214, 0.15);
+    /* softer shadow */
 
     /* Vocab Word */
     --vocab-bg: var(--primary-color);
@@ -335,7 +347,7 @@ body.theme-blue .theme-option:hover {
 }
 
 .theme-swatch.new-dark {
-    background: linear-gradient(135deg, #0f111a, #1a1f2b);
+    background: linear-gradient(135deg, #000000, #7f9cf5);
 }
 
 .theme-swatch.orange {

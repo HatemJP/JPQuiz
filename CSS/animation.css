@@ -69,11 +69,10 @@
     box-shadow: 0 8px 20px var(--input-box-shadow);
 }
 
-/* Snow & Sakura animation states with gradient transition and instant text color */
+/* Snow & Sakura animation states with gradient transition */
 #toggle-animation-btn.snow-retrigger {
     background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     color: #fff;
-    /* instantly change text to white */
     box-shadow: 0 0 20px var(--accent-color), 0 0 40px rgba(255, 255, 255, 0.2);
     transform: scale(1.06);
     animation: gradient-smooth 3s ease-in-out infinite alternate,
@@ -83,7 +82,6 @@
 #toggle-animation-btn.sakura-retrigger {
     background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
     color: #fff;
-    /* instantly change text to white */
     box-shadow: 0 0 20px var(--accent-color), 0 0 40px rgba(255, 255, 255, 0.2);
     transform: scale(1.06);
     animation: gradient-smooth 3s ease-in-out infinite alternate-reverse,
@@ -97,6 +95,33 @@
     transform: scale(1);
     box-shadow: 0 4px 12px var(--input-box-shadow);
     animation: none;
+}
+
+#wand-action.snow-retrigger {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: #fff;
+    box-shadow: 0 0 20px var(--accent-color), 0 0 40px rgba(255, 255, 255, 0.2);
+    animation: gradient-smooth 3s ease-in-out infinite alternate,
+        toggle-pulse 3s ease-in-out infinite;
+}
+
+/* Sakura active */
+#wand-action.sakura-retrigger {
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    color: #fff;
+    box-shadow: 0 0 20px var(--accent-color), 0 0 40px rgba(255, 255, 255, 0.2);
+    animation: gradient-smooth 3s ease-in-out infinite alternate-reverse,
+        toggle-pulse 3s ease-in-out infinite;
+}
+
+/* Icon morphing */
+#wand-action i {
+    transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+#wand-action i.fade-out {
+    opacity: 0;
+    transform: scale(0.6) rotate(-20deg);
 }
 
 /* Subtle pulse for Snow and Sakura button states */
@@ -129,7 +154,48 @@
     }
 }
 
-/* Optional Glow Animations */
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes rotateOrbit {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes orbit {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg) translateX(50px);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg) translateX(50px);
+    }
+}
+
+@keyframes fadePulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
 @keyframes snow-glow {
     0% {
         box-shadow: 0 0 12px var(--accent-color);
@@ -158,7 +224,6 @@
     }
 }
 
-/* Optional Container Pulse */
 @keyframes container-pulse {
     0% {
         transform: translateY(0) scale(1);
@@ -170,5 +235,29 @@
 
     100% {
         transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scoreboard-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

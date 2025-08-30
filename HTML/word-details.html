@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>漢字冒険 - Word Detail</title>
+  <title>漢字冒険 - 単語詳細</title>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
@@ -37,19 +37,14 @@
       max-width: 800px;
       padding: 3rem 2rem;
       border-radius: 20px;
-
-      /* Modern gradient glassy look */
       background: linear-gradient(135deg,
           var(--card-gradient-color),
           var(--card-bg));
       border: 1px solid var(--card-border-color);
       box-shadow: 0 12px 28px var(--card-shadow-color),
         0 4px 12px rgba(0, 0, 0, 0.25);
-
-      /* Frosted effect */
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-
       transition: all 0.4s ease;
     }
 
@@ -173,18 +168,6 @@
       box-shadow: var(--vocab-hover-shadow, 0 6px 12px rgba(0, 0, 0, 0.25));
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     .vocab-word::after {
       content: attr(data-meaning);
       position: absolute;
@@ -224,8 +207,10 @@
 </head>
 
 <body>
-  <header>
-    <h1>漢字冒険</h1>
+  <header class="main-navbar">
+    <div class="navbar-left">
+      <h1 class="app-title"><a href="index.html">漢字冒険</a></h1>
+    </div>
     <button class="header-btn" onclick="window.location.href='../index.html'">戻る</button>
   </header>
 
@@ -256,16 +241,22 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-container">
-      <p>© 2025 漢字冒険 - Kanji Quest. All Rights Reserved.</p>
-      <div class="footer-links">
-        <a href="../index.html">初頁</a>
-        <a href="heatmap.html">熱図</a>
-        <a href="player-records.html">記録</a>
-        <a href="#">自己紹介</a>
-        <a href="#">試練</a>
+      <div class="footer-sections">
+        <div class="footer-section">
+          <ul>
+            <li><a href="index.html">初頁</a></li>
+            <li><a href="HTML/heatmap.html">熱図</a></li>
+            <li><a href="HTML/player-records.html">記録</a></li>
+            <li><a href="#">自己</a></li>
+            <li><a href="#">試練</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 漢字冒険 - Kanji Quest. All Rights Reserved.</p>
       </div>
     </div>
   </footer>
@@ -274,12 +265,24 @@
     const progressFill = document.getElementById('progressFill');
     const progressText = document.querySelector('#progressBadge span');
 
-    const userProgress = 58; // percent
+    const userProgress = 90; // target percent
+    let currentProgress = 0; // start percent
+    const duration = 1500; // total animation time in ms
+    const intervalTime = 15; // update every 15ms
+    const step = (userProgress / (duration / intervalTime));
 
-    setTimeout(() => {
-      progressFill.style.width = `${userProgress}%`;
-      progressText.textContent = `進行度: ${userProgress}%`;
-    }, 300);
+    // Remove CSS transition for manual control
+    progressFill.style.transition = 'none';
+
+    const progressInterval = setInterval(() => {
+      currentProgress += step;
+      if (currentProgress >= userProgress) {
+        currentProgress = userProgress;
+        clearInterval(progressInterval);
+      }
+      progressFill.style.width = `${currentProgress}%`;
+      progressText.textContent = `進行度: ${Math.floor(currentProgress)}%`;
+    }, intervalTime);
   </script>
 </body>
 

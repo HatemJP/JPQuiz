@@ -1,9 +1,76 @@
 const THEME_KEY = "kanjiQuestTheme";
-let currentAnimationState = 0;
+let currentAnimationState = 0; // 0 = none, 1 = snow, 2 = sakura
 
 const mainActionBtn = document.getElementById("main-action-btn");
 const actionWrapper = mainActionBtn?.closest(".action-btn-wrapper");
 const themeModal = document.querySelector(".theme-modal");
+
+const toggleBtn = document.getElementById("toggle-animation-btn");
+const wandBtn = document.getElementById("wand-action");
+
+/* ========= Animation Logic ========= */
+function startAnimation(state) {
+  // Stop all animations first
+  document.body.classList.remove("snow-active", "sakura-active");
+
+  if (state === 1) {
+    document.body.classList.add("snow-active");
+    window.startSnow?.();
+    window.stopSakura?.();
+  } else if (state === 2) {
+    document.body.classList.add("sakura-active");
+    window.startSakura?.();
+    window.stopSnow?.();
+  } else {
+    window.stopSnow?.();
+    window.stopSakura?.();
+  }
+}
+
+/* ========= Sync Button States ========= */
+function syncAnimationButtons(state) {
+  toggleBtn?.classList.remove("snow-retrigger", "sakura-retrigger");
+  wandBtn?.classList.remove("snow-retrigger", "sakura-retrigger");
+
+  const toggleIcon = toggleBtn?.querySelector("i");
+  const wandIcon = wandBtn?.querySelector("i");
+
+  if (!toggleIcon || !wandIcon) return;
+
+  // fade out
+  toggleIcon.classList.add("fade-out");
+  wandIcon.classList.add("fade-out");
+
+  setTimeout(() => {
+    if (state === 1) {
+      toggleBtn.classList.add("snow-retrigger");
+      wandBtn.classList.add("snow-retrigger");
+      toggleIcon.className = "fas fa-snowflake";
+      wandIcon.className = "fas fa-snowflake";
+    } else if (state === 2) {
+      toggleBtn.classList.add("sakura-retrigger");
+      wandBtn.classList.add("sakura-retrigger");
+      toggleIcon.className = "fas fa-seedling";
+      wandIcon.className = "fas fa-seedling";
+    } else {
+      toggleIcon.className = "fas fa-magic";
+      wandIcon.className = "fa-solid fa-wand-magic-sparkles";
+    }
+    toggleIcon.classList.remove("fade-out");
+    wandIcon.classList.remove("fade-out");
+  }, 300);
+}
+
+/* ========= Toggle Function ========= */
+function toggleAnimation() {
+  currentAnimationState = (currentAnimationState + 1) % 3;
+  startAnimation(currentAnimationState);
+  syncAnimationButtons(currentAnimationState);
+}
+
+/* ========= Event Listeners ========= */
+toggleBtn?.addEventListener("click", toggleAnimation);
+wandBtn?.addEventListener("click", toggleAnimation);
 
 // Toggle sub-actions on click
 mainActionBtn?.addEventListener("click", () => {
@@ -80,31 +147,6 @@ function setTheme(themeName) {
   });
 
   closeThemeModal();
-}
-
-function toggleAnimation() {
-  const toggleBtn = document.getElementById("toggle-animation-btn");
-  if (!toggleBtn) return;
-
-  currentAnimationState = (currentAnimationState + 1) % 3;
-
-  toggleBtn.classList.remove("snow-retrigger", "sakura-retrigger");
-
-  if (currentAnimationState === 1) {
-    window.startSnow?.();
-    window.stopSakura?.();
-    toggleBtn.classList.add("snow-retrigger");
-    toggleBtn.textContent = "雪舞";
-  } else if (currentAnimationState === 2) {
-    window.startSakura?.();
-    window.stopSnow?.();
-    toggleBtn.classList.add("sakura-retrigger");
-    toggleBtn.textContent = "桜舞";
-  } else {
-    window.stopSnow?.();
-    window.stopSakura?.();
-    toggleBtn.textContent = "舞";
-  }
 }
 
 window.addEventListener("DOMContentLoaded", () => {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>漢字冒険 - Player Records</title>
+    <title>漢字冒険 - プレイヤー記録</title>
 
     <script>
         (function () {
@@ -24,16 +24,17 @@
     <script src="../JS/animate.js"></script>
     <script src="../JS/script.js" defer></script>
 
-    <!-- ✨ Self-contained styles for the scoreboard only -->
     <style>
-        /* Container */
-        .pr-wrapper {
-            max-width: 1100px;
-            margin: 24px auto 96px;
+        .scoreboard-wrapper {
+            max-width: 1200px;
+            width: 50%;
+            margin: 2rem auto 4rem;
             padding: 0 16px;
+            max-height: 100vh;
+            margin-top: 2rem;
         }
 
-        .pr-card {
+        .scoreboard-card {
             background: color-mix(in srgb, var(--card-bg, #1f1f1f) 88%, transparent);
             backdrop-filter: blur(8px);
             border: 1px solid color-mix(in srgb, var(--card-bg, #1f1f1f), #ffffff 12%);
@@ -42,7 +43,7 @@
             overflow: clip;
         }
 
-        .pr-header {
+        .scoreboard-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -51,13 +52,13 @@
             border-bottom: 1px solid color-mix(in srgb, var(--card-bg, #1f1f1f), #ffffff 10%);
         }
 
-        .pr-title {
+        .scoreboard-title {
             display: flex;
             align-items: baseline;
             gap: 10px;
         }
 
-        .pr-title h2 {
+        .scoreboard-title h2 {
             font-family: 'Outfit', 'Noto Sans JP', system-ui, sans-serif;
             font-weight: 700;
             letter-spacing: .2px;
@@ -66,22 +67,15 @@
             margin: 0;
         }
 
-        .pr-sub {
-            color: var(--muted, #8d8d8d);
-            font-size: 12px;
-        }
-
-        /* Controls */
-        .pr-controls {
+        .scoreboard-controls {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             align-items: center;
         }
 
-        .pr-input,
-        .pr-select,
-        .pr-button {
+        .scoreboard-input,
+        .scoreboard-button {
             height: 38px;
             padding: 8px 12px;
             border-radius: 12px;
@@ -92,17 +86,44 @@
             transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
         }
 
-        .pr-input::placeholder {
+        .scoreboard-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            padding: 8px 32px 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%23f4f1de' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+        }
+
+        .scoreboard-select:hover,
+        .scoreboard-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .scoreboard-input::placeholder {
             color: var(--placeholder-color, #bfbfbf);
         }
 
-        .pr-input:focus,
-        .pr-select:focus {
-            border-color: var(--input-border-focus, rgba(239, 131, 84, .3));
-            box-shadow: 0 0 0 6px var(--input-box-shadow, rgba(239, 131, 84, .1));
+        .scoreboard-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow:
+                0 0 0 4px rgba(var(--primary-color-rgb), 0.15),
+                0 0 20px 4px rgba(var(--primary-color-rgb), 0.25),
+                inset 0 1px 5px rgba(255, 255, 255, 0.2);
+            transform: scale(1.01);
         }
 
-        .pr-button {
+        .scoreboard-button {
             border: 1px solid color-mix(in srgb, var(--primary-color, #ef8354), #ffffff 10%);
             background: linear-gradient(180deg,
                     color-mix(in srgb, var(--primary-color, #ef8354) 82%, transparent),
@@ -112,20 +133,35 @@
             cursor: pointer;
         }
 
-        .pr-button:hover {
+        .scoreboard-button:hover {
             transform: translateY(-1px);
         }
 
-        /* Table-like list */
-        .pr-list {
+        .scoreboard-input::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background-color: var(--accent-color);
+            mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="4" x2="16" y2="16" stroke="white" stroke-width="2"/><line x1="16" y1="4" x2="4" y2="16" stroke="white" stroke-width="2"/></svg>') no-repeat center / contain;
+            cursor: pointer;
+        }
+
+        /* Optional hover effect */
+        .scoreboard-input::-webkit-search-cancel-button:hover {
+            background-color: var(--primary-color);
+        }
+
+        .scoreboard-list {
             display: grid;
             grid-template-columns: 1fr;
         }
 
-        .pr-row {
+        .scoreboard-row {
             position: relative;
             display: grid;
-            grid-template-columns: 64px 1.1fr 0.8fr 0.8fr 0.8fr 120px;
+            grid-template-columns: 64px 1.4fr 1fr 1fr 120px;
+            /* adjusted for removed column */
             gap: 12px;
             align-items: center;
             padding: 14px 20px;
@@ -133,8 +169,7 @@
             isolation: isolate;
         }
 
-        /* Animated score glow behind row */
-        .pr-row::before {
+        .scoreboard-row::before {
             content: "";
             position: absolute;
             inset: 0;
@@ -148,16 +183,16 @@
             z-index: 0;
         }
 
-        .pr-row:hover::before {
+        .scoreboard-row:hover::before {
             opacity: .65;
             transform: translateY(0);
         }
 
-        .pr-row+.pr-row {
+        .scoreboard-row+.scoreboard-row {
             border-top: 1px dashed color-mix(in srgb, var(--card-bg, #1f1f1f), #ffffff 8%);
         }
 
-        .pr-rank {
+        .scoreboard-rank {
             font-weight: 800;
             font-size: 18px;
             color: var(--accent-color, #ffd6a5);
@@ -165,14 +200,14 @@
             width: 44px;
         }
 
-        .pr-player {
+        .scoreboard-player {
             display: flex;
             align-items: center;
             gap: 12px;
             min-width: 0;
         }
 
-        .pr-avatar {
+        .scoreboard-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -188,7 +223,7 @@
             transform: translateZ(0);
         }
 
-        .pr-name {
+        .scoreboard-name {
             font-weight: 700;
             color: var(--text-color, #f4f1de);
             white-space: nowrap;
@@ -196,13 +231,17 @@
             text-overflow: ellipsis;
         }
 
-        .pr-badges {
+        .scoreboard-badges {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
         }
 
-        .pr-badge {
+        .scoreboard-badges span {
+            color: var(--accent-color);
+        }
+
+        .scoreboard-badge {
             font-size: 11px;
             padding: 4px 8px;
             border-radius: 999px;
@@ -210,22 +249,22 @@
             background: color-mix(in srgb, var(--accent-color, #ffd6a5) 22%, transparent);
             color: color-mix(in srgb, var(--accent-color, #ffd6a5) 65%, #000);
             font-weight: 700;
+            margin-top: 7px;
         }
 
-        .pr-metric {
+        .scoreboard-metric {
             color: var(--text-color, #f4f1de);
             font-variant-numeric: tabular-nums;
             opacity: .95;
         }
 
-        .pr-metric small {
+        .scoreboard-metric small {
             color: var(--muted, #8d8d8d);
             font-size: 11px;
             display: block;
         }
 
-        /* Score pill with progress */
-        .pr-score {
+        .scoreboard-score {
             justify-self: end;
             display: inline-grid;
             grid-auto-flow: column;
@@ -239,12 +278,12 @@
                     color-mix(in srgb, var(--primary-color, #ef8354) 10%, #000 10%));
         }
 
-        .pr-score-value {
+        .scoreboard-score-value {
             font-weight: 900;
             letter-spacing: .4px;
         }
 
-        .pr-bar {
+        .scoreboard-bar {
             position: relative;
             width: 80px;
             height: 8px;
@@ -253,7 +292,7 @@
             overflow: hidden;
         }
 
-        .pr-bar>span {
+        .scoreboard-bar>span {
             position: absolute;
             inset: 0 100% 0 0;
             border-radius: inherit;
@@ -263,25 +302,11 @@
             transition: inset .9s cubic-bezier(.2, .8, .2, 1);
         }
 
-        /* Row entrance animation */
-        @keyframes pr-fade-up {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .scoreboard-row {
+            animation: scoreboard-fade-up .5s both;
         }
 
-        .pr-row {
-            animation: pr-fade-up .5s both;
-        }
-
-        /* Sticky header row labels (mobile hidden) */
-        .pr-head {
+        .scoreboard-head {
             position: sticky;
             top: 0;
             z-index: 1;
@@ -290,32 +315,33 @@
                     color-mix(in srgb, var(--card-bg, #1f1f1f) 92%, transparent));
             border-bottom: 1px solid color-mix(in srgb, var(--card-bg, #1f1f1f), #ffffff 10%);
             backdrop-filter: blur(6px);
+            display: grid;
+            grid-template-columns: 64px 1.4fr 1fr 1fr 120px;
+            /* adjusted columns */
         }
 
-        .pr-head span {
+        .scoreboard-head span {
             color: var(--muted, #8d8d8d);
             font-size: 12px;
             font-weight: 700;
         }
 
-        /* Mobile */
         @media (max-width: 820px) {
-            .pr-row {
+            .scoreboard-row {
                 grid-template-columns: 44px 1fr auto;
                 gap: 10px;
             }
 
-            .pr-hide-md {
+            .scoreboard-hide-md {
                 display: none;
             }
 
-            .pr-score {
+            .scoreboard-score {
                 justify-self: start;
             }
         }
 
-        /* Tiny hover lift */
-        .pr-row:hover {
+        .scoreboard-row:hover {
             transform: translateY(-1px);
             transition: transform .15s ease;
         }
@@ -323,46 +349,41 @@
 </head>
 
 <body>
-    <header>
-        <h1>漢字冒険</h1>
+    <header class="main-navbar">
+        <div class="navbar-left">
+            <h1 class="app-title"><a href="index.html">漢字冒険</a></h1>
+        </div>
         <button class="header-btn" onclick="window.location.href='../index.html'">戻る</button>
     </header>
 
-    <div class="snow-animation"></div>
-    <div class="sakura-animation"></div>
-
-    <!-- ⭐ Player Records / Scoreboard (add-on, non-breaking) -->
-    <main class="pr-wrapper" aria-label="Player Records">
-        <section class="pr-card" id="playerRecords">
-            <div class="pr-header">
-                <div class="pr-title">
+    <main class="scoreboard-wrapper" aria-label="Player Records">
+        <section class="scoreboard-card" id="scoreboard">
+            <div class="scoreboard-header">
+                <div class="scoreboard-title">
                     <h2>記録盤</h2>
-                    <span class="pr-sub">プレイヤーの成績と進捗</span>
                 </div>
-                <div class="pr-controls">
-                    <input id="prSearch" class="pr-input" type="search" placeholder="プレイヤー検索…"
+                <div class="scoreboard-controls">
+                    <input id="scoreboardSearch" class="scoreboard-input" type="search" placeholder="プレイヤー検索…"
                         aria-label="Search players" />
-                    <select id="prSort" class="pr-select" aria-label="Sort by">
+                    <select id="scoreboardSort" class="scoreboard-select" aria-label="Sort by">
                         <option value="score">スコア順</option>
                         <option value="streak">連続日数順</option>
                         <option value="accuracy">正答率順</option>
                         <option value="time">最終プレイ順</option>
                     </select>
-                    <button id="prRefresh" class="pr-button" type="button">更新</button>
+                    <button id="scoreboardRefresh" class="scoreboard-button" type="button">更新</button>
                 </div>
             </div>
 
-            <!-- Column labels -->
-            <div class="pr-row pr-head pr-hide-md">
-                <span class="pr-rank">#</span>
-                <span>プレイヤー</span>
+            <div class="scoreboard-row scoreboard-head scoreboard-hide-md">
+                <span class="scoreboard-rank">#</span>
+                <span style="text-align: center; margin-right: 100px;">プレイヤー</span>
                 <span>連続日数</span>
                 <span>正答率</span>
-                <span>総プレイ</span>
-                <span class="pr-hide-md" style="text-align:right;">スコア</span>
+                <span class="scoreboard-hide-md" style="text-align:center; margin-right: 20px;">スコア</span>
             </div>
 
-            <div class="pr-list" id="prList" role="list"></div>
+            <div class="scoreboard-list" id="scoreboardList" role="list"></div>
         </section>
     </main>
 
@@ -388,29 +409,24 @@
 
     <script>
         (function () {
-            // If your app provides real data, set window.playerRecords before this script runs.
-            // Each item: { name, score(0-1000+), streak, accuracy(0-100), plays, lastPlayed ISO }
-            const sample = [
-                { name: "Timmy", score: 982, streak: 21, accuracy: 97, plays: 412, lastPlayed: "2025-08-22T20:11:00Z" },
-                { name: "BlazingJess", score: 951, streak: 15, accuracy: 94, plays: 366, lastPlayed: "2025-08-23T00:20:00Z" },
-                { name: "KanaKaiser", score: 905, streak: 9, accuracy: 92, plays: 295, lastPlayed: "2025-08-21T17:00:00Z" },
-                { name: "SakuraDrift", score: 880, streak: 13, accuracy: 89, plays: 332, lastPlayed: "2025-08-22T10:45:00Z" },
-                { name: "YomiSensei", score: 842, streak: 7, accuracy: 91, plays: 251, lastPlayed: "2025-08-19T14:12:00Z" },
-                { name: "OnyomiPro", score: 799, streak: 11, accuracy: 88, plays: 220, lastPlayed: "2025-08-20T19:31:00Z" },
-                { name: "KunReader", score: 752, streak: 4, accuracy: 85, plays: 198, lastPlayed: "2025-08-18T09:27:00Z" },
-                { name: "RadicalAce", score: 706, streak: 5, accuracy: 82, plays: 173, lastPlayed: "2025-08-17T22:08:00Z" }
+            const samplePlayers = [
+                { name: "Anna", score: 982, streak: 21, accuracy: 97, lastPlayed: "2025-08-22T20:11:00Z" },
+                { name: "Timmy", score: 951, streak: 15, accuracy: 94, lastPlayed: "2025-08-23T00:20:00Z" },
+                { name: "Pinchobo", score: 905, streak: 9, accuracy: 92, lastPlayed: "2025-08-21T17:00:00Z" },
+                { name: "Moe", score: 880, streak: 13, accuracy: 89, lastPlayed: "2025-08-22T10:45:00Z" },
+                { name: "Jim", score: 842, streak: 7, accuracy: 91, lastPlayed: "2025-08-19T14:12:00Z" },
+                { name: "Emily", score: 799, streak: 11, accuracy: 88, lastPlayed: "2025-08-20T19:31:00Z" },
             ];
 
-            const data = Array.isArray(window.playerRecords) ? window.playerRecords : sample;
+            const players = Array.isArray(window.playerRecords) ? window.playerRecords : samplePlayers;
 
-            const list = document.getElementById('prList');
-            const search = document.getElementById('prSearch');
-            const sortSel = document.getElementById('prSort');
-            const btn = document.getElementById('prRefresh');
+            const listEl = document.getElementById('scoreboardList');
+            const searchEl = document.getElementById('scoreboardSearch');
+            const sortEl = document.getElementById('scoreboardSort');
+            const refreshBtn = document.getElementById('scoreboardRefresh');
 
-            const fmt = {
+            const format = {
                 percent(v) { return `${Math.round(v)}%`; },
-                number(v) { return v.toLocaleString(); },
                 days(v) { return `${v}日`; },
                 timeago(iso) {
                     try {
@@ -428,60 +444,56 @@
                 return name.split(/\s+/).map(p => p[0]?.toUpperCase()).join('').slice(0, 2) || "?";
             }
 
-            function paint(rows) {
-                list.innerHTML = "";
-                rows.forEach((p, i) => {
+            function renderScoreboard(rows) {
+                listEl.innerHTML = "";
+                rows.forEach((player, i) => {
                     const row = document.createElement('div');
-                    row.className = 'pr-row';
-                    row.style.setProperty('--barX', `${Math.min(100, (p.score % 1000) / 10)}%`);
+                    row.className = 'scoreboard-row';
+                    row.style.setProperty('--barX', `${Math.min(100, (player.score % 1000) / 10)}%`);
                     row.style.animationDelay = `${i * 40}ms`;
 
                     const rank = document.createElement('div');
-                    rank.className = 'pr-rank';
+                    rank.className = 'scoreboard-rank';
                     rank.textContent = i + 1;
 
-                    const player = document.createElement('div');
-                    player.className = 'pr-player';
-                    player.innerHTML = `
-            <div class="pr-avatar" aria-hidden="true">${initials(p.name)}</div>
-            <div style="min-width:0">
-              <div class="pr-name">${p.name}</div>
-              <div class="pr-badges">
-                <span class="pr-badge">最終: ${fmt.timeago(p.lastPlayed)}</span>
-              </div>
-            </div>
-          `;
+                    const playerEl = document.createElement('div');
+                    playerEl.className = 'scoreboard-player';
+                    playerEl.innerHTML = `
+                        <div class="scoreboard-avatar" aria-hidden="true">${initials(player.name)}</div>
+                        <div style="min-width:0">
+                            <div class="scoreboard-name">${player.name}</div>
+                            <div class="scoreboard-badges">
+                                <span class="scoreboard-badge">最終: ${format.timeago(player.lastPlayed)}</span>
+                            </div>
+                        </div>
+                    `;
 
                     const streak = document.createElement('div');
-                    streak.className = 'pr-metric pr-hide-md';
-                    streak.innerHTML = `<strong>${fmt.days(p.streak)}</strong><small>連続</small>`;
+                    streak.className = 'scoreboard-metric scoreboard-hide-md';
+                    streak.innerHTML = `<strong>${format.days(player.streak)}</strong><small>連続</small>`;
 
                     const acc = document.createElement('div');
-                    acc.className = 'pr-metric pr-hide-md';
-                    acc.innerHTML = `<strong>${fmt.percent(p.accuracy)}</strong><small>正答率</small>`;
-
-                    const plays = document.createElement('div');
-                    plays.className = 'pr-metric pr-hide-md';
-                    plays.innerHTML = `<strong>${fmt.number(p.plays)}</strong><small>総プレイ</small>`;
+                    acc.className = 'scoreboard-metric scoreboard-hide-md';
+                    acc.innerHTML = `<strong>${format.percent(player.accuracy)}</strong><small>正答率</small>`;
 
                     const score = document.createElement('div');
-                    score.className = 'pr-score';
-                    const pct = Math.max(0, Math.min(100, (p.score / 1000) * 100));
+                    score.className = 'scoreboard-score';
+                    const pct = Math.max(0, Math.min(100, (player.score / 1000) * 100));
                     score.innerHTML = `
-            <span class="pr-score-value">${fmt.number(p.score)}</span>
-            <div class="pr-bar" role="progressbar" aria-valuenow="${Math.round(pct)}" aria-valuemin="0" aria-valuemax="100">
-              <span style="inset: 0 ${100 - pct}% 0 0"></span>
-            </div>
-          `;
+                        <span class="scoreboard-score-value">${player.score}</span>
+                        <div class="scoreboard-bar" role="progressbar" aria-valuenow="${Math.round(pct)}" aria-valuemin="0" aria-valuemax="100">
+                            <span style="inset: 0 ${100 - pct}% 0 0"></span>
+                        </div>
+                    `;
 
-                    row.append(rank, player, streak, acc, plays, score);
-                    list.appendChild(row);
+                    row.append(rank, playerEl, streak, acc, score);
+                    listEl.appendChild(row);
                 });
             }
 
-            function sortBy(key, rows) {
-                const copy = [...rows];
-                switch (key) {
+            function sortPlayers(byKey, dataList) {
+                const copy = [...dataList];
+                switch (byKey) {
                     case 'streak': copy.sort((a, b) => b.streak - a.streak); break;
                     case 'accuracy': copy.sort((a, b) => b.accuracy - a.accuracy); break;
                     case 'time': copy.sort((a, b) => new Date(b.lastPlayed) - new Date(a.lastPlayed)); break;
@@ -490,40 +502,37 @@
                 return copy;
             }
 
-            let current = sortBy(sortSel.value, data);
-            paint(current);
+            let currentPlayers = sortPlayers(sortEl.value, players);
+            renderScoreboard(currentPlayers);
 
-            // Interactions
-            sortSel.addEventListener('change', () => {
-                current = sortBy(sortSel.value, current);
-                paint(current);
+            sortEl.addEventListener('change', () => {
+                currentPlayers = sortPlayers(sortEl.value, currentPlayers);
+                renderScoreboard(currentPlayers);
             });
 
-            search.addEventListener('input', () => {
-                const q = search.value.trim().toLowerCase();
-                const filtered = (q ? current.filter(p => p.name.toLowerCase().includes(q)) : current);
-                paint(filtered);
+            searchEl.addEventListener('input', () => {
+                const query = searchEl.value.trim().toLowerCase();
+                const filtered = (query ? currentPlayers.filter(p => p.name.toLowerCase().includes(query)) : currentPlayers);
+                renderScoreboard(filtered);
             });
 
-            btn.addEventListener('click', () => {
-                // Cute refresh wiggle
-                btn.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 500, easing: 'ease' });
-                // Re-apply sort (useful if external data was updated)
-                current = sortBy(sortSel.value, Array.isArray(window.playerRecords) ? window.playerRecords : data);
-                paint(current);
+            refreshBtn.addEventListener('click', () => {
+                refreshBtn.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 500, easing: 'ease' });
+                currentPlayers = sortPlayers(sortEl.value, Array.isArray(window.playerRecords) ? window.playerRecords : players);
+                renderScoreboard(currentPlayers);
             });
 
-            // Animate progress bars on first reveal
-            const io = new IntersectionObserver((entries) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(e => {
                     if (e.isIntersecting) {
-                        e.target.querySelectorAll('.pr-bar > span').forEach(span => {
+                        e.target.querySelectorAll('.scoreboard-bar > span').forEach(span => {
                             span.style.transitionDuration = '900ms';
                         });
                     }
                 });
             }, { threshold: 0.2 });
-            io.observe(document.getElementById('playerRecords'));
+
+            observer.observe(document.getElementById('scoreboard'));
         })();
     </script>
 </body>

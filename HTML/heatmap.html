@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>漢字冒険 - Heatmap</title>
+    <title>漢字冒険 - 熱図</title>
 
     <script>
         (function () {
@@ -60,15 +60,17 @@
 
         .date-selector button:hover {
             background: var(--primary-color);
-            color: var(--button-hover-color);
+            color: #fff;
             transform: scale(1.05);
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>漢字冒険</h1>
+    <header class="main-navbar">
+        <div class="navbar-left">
+            <h1 class="app-title"><a href="index.html">漢字冒険</a></h1>
+        </div>
         <button class="header-btn" onclick="window.location.href='../index.html'">戻る</button>
     </header>
 
@@ -79,9 +81,6 @@
         </p>
         <div class="date-selector" id="month-selector"></div>
     </div>
-
-    <div class="snow-animation"></div>
-    <div class="sakura-animation"></div>
 
     <footer class="site-footer">
         <div class="footer-container">
