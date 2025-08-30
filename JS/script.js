@@ -1,31 +1,18 @@
 const THEME_KEY = "kanjiQuestTheme";
 let currentAnimationState = 0; // 0 = none, 1 = snow, 2 = sakura
-let currentHintIndex = 0; // global for hints
 
 const mainActionBtn = document.getElementById("main-action-btn");
 const actionWrapper = mainActionBtn?.closest(".action-btn-wrapper");
 const themeModal = document.querySelector(".theme-modal");
+
 const toggleBtn = document.getElementById("toggle-animation-btn");
 const wandBtn = document.getElementById("wand-action");
 
-const kanjiContainer = document.getElementById("kanji-container");
-const answerInput = document.getElementById("answer-input");
-const answerBtn = document.getElementById("answer-btn");
-const hintButton = document.getElementById("hint-btn");
-const dictionaryBtn = document.getElementById("dictionary-btn");
-
-// Example word list with per-kanji characters and furigana
-const words = [
-  { kanji: ["漢", "字"], furigana: ["かん", "じ"] },
-  { kanji: ["日", "本"], furigana: ["に", "ほん"] },
-  { kanji: ["学", "習"], furigana: ["がく", "しゅう"] },
-  { kanji: ["冒", "険"], furigana: ["ぼう", "けん"] },
-];
-let currentIndex = 0;
-
 /* ========= Animation Logic ========= */
 function startAnimation(state) {
+  // Stop all animations first
   document.body.classList.remove("snow-active", "sakura-active");
+
   if (state === 1) {
     document.body.classList.add("snow-active");
     window.startSnow?.();
@@ -40,14 +27,17 @@ function startAnimation(state) {
   }
 }
 
+/* ========= Sync Button States ========= */
 function syncAnimationButtons(state) {
   toggleBtn?.classList.remove("snow-retrigger", "sakura-retrigger");
   wandBtn?.classList.remove("snow-retrigger", "sakura-retrigger");
 
   const toggleIcon = toggleBtn?.querySelector("i");
   const wandIcon = wandBtn?.querySelector("i");
+
   if (!toggleIcon || !wandIcon) return;
 
+  // fade out
   toggleIcon.classList.add("fade-out");
   wandIcon.classList.add("fade-out");
 
@@ -71,13 +61,52 @@ function syncAnimationButtons(state) {
   }, 300);
 }
 
+/* ========= Toggle Function ========= */
 function toggleAnimation() {
   currentAnimationState = (currentAnimationState + 1) % 3;
   startAnimation(currentAnimationState);
   syncAnimationButtons(currentAnimationState);
 }
 
-/* ========= Theme Modal ========= */
+/* ========= Event Listeners ========= */
+toggleBtn?.addEventListener("click", toggleAnimation);
+wandBtn?.addEventListener("click", toggleAnimation);
+
+// Toggle sub-actions on click
+mainActionBtn?.addEventListener("click", () => {
+  if (!mainActionBtn.disabled) {
+    actionWrapper.classList.toggle("active");
+    mainActionBtn.classList.toggle(
+      "menu-open",
+      actionWrapper.classList.contains("active")
+    );
+  }
+});
+
+// Close sub-actions when any option is clicked
+document.querySelectorAll(".sub-action").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    actionWrapper?.classList.remove("active");
+    mainActionBtn?.classList.remove("menu-open");
+  });
+});
+
+// Close sub-actions when clicking outside
+document.addEventListener("click", (event) => {
+  if (
+    !actionWrapper?.contains(event.target) &&
+    !themeModal?.contains(event.target)
+  ) {
+    actionWrapper?.classList.remove("active");
+    mainActionBtn?.classList.remove("menu-open");
+  }
+});
+
+function navigateTo(url) {
+  if (url === "index.html") window.location.href = "../index.html";
+  else window.location.href = `HTML/${url}`;
+}
+
 function openThemeModal() {
   actionWrapper?.classList.remove("active");
   mainActionBtn?.classList.remove("menu-open");
@@ -89,6 +118,21 @@ function closeThemeModal() {
   themeModal?.classList.remove("active");
   if (mainActionBtn) mainActionBtn.disabled = false;
 }
+
+window.addEventListener("scroll", () => {
+  const navbar = document.querySelector(".main-navbar");
+  const container = document.querySelector(".container");
+
+  if (!navbar) return;
+
+  if (window.scrollY === 0) {
+    navbar.classList.remove("hidden");
+    container?.classList.remove("hidden");
+  } else {
+    navbar.classList.add("hidden");
+    container?.classList.add("hidden");
+  }
+});
 
 function setTheme(themeName) {
   const body = document.body;
@@ -105,145 +149,100 @@ function setTheme(themeName) {
   closeThemeModal();
 }
 
-/* ========= Hint Logic ========= */
-function resetHints() {
-  const furiganaElements = document.querySelectorAll(
-    ".kanji-container .furigana"
-  );
-  furiganaElements.forEach((el) => {
-    el.style.visibility = "hidden";
-    el.classList.remove("show-hint");
-  });
-  currentHintIndex = 0;
-}
-
-function showNextHint() {
-  const furiganaElements = document.querySelectorAll(
-    ".kanji-container .furigana"
-  );
-  if (furiganaElements.length === 0) return;
-
-  if (currentHintIndex >= furiganaElements.length) {
-    resetHints();
-    return;
-  }
-
-  const hintEl = furiganaElements[currentHintIndex];
-  hintEl.classList.remove("show-hint");
-  void hintEl.offsetWidth; // force reflow
-  hintEl.classList.add("show-hint");
-  currentHintIndex++;
-}
-
-/* ========= Kanji Quiz Logic ========= */
-function renderWord(wordObj) {
-  const rubyWrapper = kanjiContainer.querySelector(".ruby-wrapper");
-  rubyWrapper.innerHTML = "";
-  for (let i = 0; i < wordObj.kanji.length; i++) {
-    const ruby = document.createElement("ruby");
-    ruby.className = "kanji-char";
-    ruby.innerHTML = `${wordObj.kanji[i]}<rt class="furigana">${wordObj.furigana[i]}</rt>`;
-    rubyWrapper.appendChild(ruby);
-  }
-  resetHints();
-}
-
-renderWord(words[currentIndex]);
-
-answerBtn?.addEventListener("click", () => {
-  kanjiContainer.classList.add("correct-animate");
-
-  setTimeout(() => {
-    kanjiContainer.classList.remove("correct-animate");
-    answerInput.value = "";
-    currentIndex = (currentIndex + 1) % words.length;
-    renderWord(words[currentIndex]);
-
-    kanjiContainer.classList.add("new-word");
-    setTimeout(() => kanjiContainer.classList.remove("new-word"), 700);
-  }, 900);
-});
-
-dictionaryBtn?.addEventListener("click", () => {
-  const rubyWrapper = kanjiContainer.querySelector(".ruby-wrapper");
-  if (!rubyWrapper) return;
-
-  const kanjiText = Array.from(rubyWrapper.querySelectorAll(".kanji-char"))
-    .map((r) => {
-      // Get only the first child text node (the kanji itself)
-      return r.firstChild.textContent.trim();
-    })
-    .join("");
-
-  if (kanjiText) {
-    const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
-      kanjiText
-    )}`;
-    window.open(url, "_blank");
-  }
-});
-
-/* ========= DOMContentLoaded ========= */
 window.addEventListener("DOMContentLoaded", () => {
+  const body = document.body;
   const savedTheme = localStorage.getItem(THEME_KEY);
-  if (savedTheme && !document.body.classList.contains(savedTheme)) {
-    document.body.classList.add(savedTheme);
+  if (savedTheme && !body.classList.contains(savedTheme)) {
+    body.classList.add(savedTheme);
   }
 
   document.querySelectorAll(".theme-option").forEach((btn) => {
     btn.classList.toggle("selected", btn.dataset.theme === savedTheme);
   });
 
+  const furiganaElements = [...document.querySelectorAll(".furigana")];
+  let currentHintIndex = 0;
+  const hintButton = document.querySelector(".controls button:nth-child(1)");
   hintButton?.addEventListener("click", () => {
-    showNextHint();
+    if (currentHintIndex >= furiganaElements.length) {
+      furiganaElements.forEach((el) => (el.style.visibility = "hidden"));
+      currentHintIndex = 0;
+    } else {
+      furiganaElements[currentHintIndex].style.visibility = "visible";
+      currentHintIndex++;
+    }
     hintButton.blur();
   });
 
-  document.querySelectorAll(".sub-action").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      actionWrapper?.classList.remove("active");
-      mainActionBtn?.classList.remove("menu-open");
-    });
-  });
+  const jishoButton = document.querySelector(".controls button:nth-child(2)");
+  const answerButton = document.querySelector(".controls button:nth-child(3)");
 
-  mainActionBtn?.addEventListener("click", () => {
-    if (!mainActionBtn.disabled) {
-      actionWrapper.classList.toggle("active");
-      mainActionBtn.classList.toggle(
-        "menu-open",
-        actionWrapper.classList.contains("active")
-      );
+  const isDetailPage = window.location.pathname.includes("word-details");
+  const isIndexPage =
+    window.location.pathname.includes("index.html") ||
+    window.location.pathname.endsWith("/");
+
+  jishoButton?.addEventListener("click", () => {
+    if (isIndexPage) {
+      const kanjiChars = [...document.querySelectorAll(".kanji-char")]
+        .map((el) => el.childNodes[0].nodeValue.trim())
+        .join("");
+      const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
+        kanjiChars
+      )}`;
+      window.open(url, "_blank");
+      jishoButton.blur();
     }
   });
 
-  document.addEventListener("click", (event) => {
-    if (
-      !actionWrapper?.contains(event.target) &&
-      !themeModal?.contains(event.target)
-    ) {
-      actionWrapper?.classList.remove("active");
-      mainActionBtn?.classList.remove("menu-open");
-    }
+  answerButton?.addEventListener("click", () => {
+    alert("答えるボタンの機能は未だ実装されていません。");
+    answerButton.blur();
   });
 
   themeModal?.addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closeThemeModal();
   });
 
+  const kanjiContainer = document.querySelector(".kanji-container");
+  kanjiContainer?.addEventListener("click", () => {
+    body.classList.add("transition-out");
+    setTimeout(() => {
+      if (isDetailPage) window.location.href = "../index.html";
+      else if (isIndexPage) window.location.href = "HTML/word-details.html";
+    }, 400);
+  });
+
+  if (isDetailPage) {
+    document.querySelectorAll(".kanji-char").forEach((kanjiEl) => {
+      kanjiEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const kanjiChars = [...document.querySelectorAll(".kanji-char")]
+          .map((el) => el.childNodes[0].nodeValue.trim())
+          .join("");
+        const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
+          kanjiChars
+        )}`;
+        window.open(url, "_blank");
+      });
+    });
+  } else if (isIndexPage) {
+    document.querySelectorAll(".kanji-char").forEach((kanjiEl) => {
+      kanjiEl.addEventListener("click", (e) => e.stopPropagation());
+    });
+  }
+
   adjustKanjiLayout();
 
-  if (kanjiContainer) {
-    const observer = new MutationObserver(() => {
-      adjustKanjiLayout();
-      resetHints();
-    });
-    observer.observe(kanjiContainer, { childList: true, subtree: true });
-  }
+  const observer = kanjiContainer
+    ? new MutationObserver(adjustKanjiLayout)
+    : null;
+  observer?.observe(kanjiContainer, { childList: true, subtree: true });
 });
 
-/* ========= Kanji Layout ========= */
 function adjustKanjiLayout() {
   const kanjiCard = document.querySelector(".kanji-card");
+  const kanjiContainer = document.querySelector(".kanji-container");
   if (!kanjiCard || !kanjiContainer) return;
 
   const kanjiChars = kanjiContainer.querySelectorAll(".kanji-char");
@@ -264,11 +263,7 @@ function adjustKanjiLayout() {
 
 window.addEventListener("resize", adjustKanjiLayout);
 
-/* ========= Animation Buttons ========= */
-toggleBtn?.addEventListener("click", toggleAnimation);
-wandBtn?.addEventListener("click", toggleAnimation);
-
-/* Optional scoring system (commented out)
+/* Optional scoring system
 const correctScoreElement = document.getElementById("correct-score");
 const wrongScoreElement = document.getElementById("wrong-score");
 
