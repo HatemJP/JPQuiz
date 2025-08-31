@@ -21,6 +21,91 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="JS/animate.js"></script>
   <script src="JS/script.js" defer></script>
+  <style>
+    /* Correct slide animation */
+    .kanji-card.slide-right {
+      animation: slideRight 0.6s ease forwards;
+    }
+
+    @keyframes slideRight {
+      0% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+    }
+
+    .kanji-card.slide-in-left {
+      animation: slideInLeft 0.6s ease forwards;
+    }
+
+    @keyframes slideInLeft {
+      0% {
+        transform: translateX(-120%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Incorrect shake */
+    .kanji-card.shake-wrong {
+      animation: shakeWrong 0.6s ease;
+    }
+
+    @keyframes shakeWrong {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-10px);
+      }
+
+      40% {
+        transform: translateX(10px);
+      }
+
+      60% {
+        transform: translateX(-6px);
+      }
+
+      80% {
+        transform: translateX(6px);
+      }
+    }
+
+    /* Furigana drop */
+    .furigana.hidden {
+      visibility: hidden;
+    }
+
+    .furigana.drop-in {
+      visibility: visible;
+      animation: furiganaDrop 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    @keyframes furiganaDrop {
+      0% {
+        transform: translateY(-1.5em);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -106,9 +191,9 @@
     </div>
     <input type="text" placeholder="読み方を入力..." />
     <div class="controls">
-      <button>ヒント</button>
-      <button>辞書</button>
-      <button>答える</button>
+      <button class="hint-button">ヒント</button>
+      <button class="jisho-button">辞書</button>
+      <button class="answer-button">答える</button>
     </div>
   </div>
 

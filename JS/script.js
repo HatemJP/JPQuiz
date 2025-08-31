@@ -10,9 +10,7 @@ const wandBtn = document.getElementById("wand-action");
 
 /* ========= Animation Logic ========= */
 function startAnimation(state) {
-  // Stop all animations first
   document.body.classList.remove("snow-active", "sakura-active");
-
   if (state === 1) {
     document.body.classList.add("snow-active");
     window.startSnow?.();
@@ -27,17 +25,14 @@ function startAnimation(state) {
   }
 }
 
-/* ========= Sync Button States ========= */
 function syncAnimationButtons(state) {
   toggleBtn?.classList.remove("snow-retrigger", "sakura-retrigger");
   wandBtn?.classList.remove("snow-retrigger", "sakura-retrigger");
 
   const toggleIcon = toggleBtn?.querySelector("i");
   const wandIcon = wandBtn?.querySelector("i");
-
   if (!toggleIcon || !wandIcon) return;
 
-  // fade out
   toggleIcon.classList.add("fade-out");
   wandIcon.classList.add("fade-out");
 
@@ -61,18 +56,15 @@ function syncAnimationButtons(state) {
   }, 300);
 }
 
-/* ========= Toggle Function ========= */
 function toggleAnimation() {
   currentAnimationState = (currentAnimationState + 1) % 3;
   startAnimation(currentAnimationState);
   syncAnimationButtons(currentAnimationState);
 }
 
-/* ========= Event Listeners ========= */
 toggleBtn?.addEventListener("click", toggleAnimation);
 wandBtn?.addEventListener("click", toggleAnimation);
 
-// Toggle sub-actions on click
 mainActionBtn?.addEventListener("click", () => {
   if (!mainActionBtn.disabled) {
     actionWrapper.classList.toggle("active");
@@ -83,7 +75,6 @@ mainActionBtn?.addEventListener("click", () => {
   }
 });
 
-// Close sub-actions when any option is clicked
 document.querySelectorAll(".sub-action").forEach((btn) => {
   btn.addEventListener("click", () => {
     actionWrapper?.classList.remove("active");
@@ -91,7 +82,6 @@ document.querySelectorAll(".sub-action").forEach((btn) => {
   });
 });
 
-// Close sub-actions when clicking outside
 document.addEventListener("click", (event) => {
   if (
     !actionWrapper?.contains(event.target) &&
@@ -149,6 +139,61 @@ function setTheme(themeName) {
   closeThemeModal();
 }
 
+/* ========= Kanji Quiz Data ========= */
+const words = [
+  { kanji: "漢字", reading: ["かん", "じ"], romaji: "kanji" },
+  { kanji: "日本", reading: ["に", "ほん"], romaji: "nihon" },
+  { kanji: "学校", reading: ["がっ", "こう"], romaji: "gakkou" },
+  { kanji: "先生", reading: ["せん", "せい"], romaji: "sensei" },
+];
+let currentWordIndex = 0;
+
+function renderWord() {
+  const word = words[currentWordIndex];
+  const kanjiContainer = document.querySelector(".kanji-container");
+  if (!kanjiContainer) return;
+  kanjiContainer.innerHTML = "";
+  [...word.kanji].forEach((char, i) => {
+    const ruby = document.createElement("ruby");
+    ruby.className = "kanji-char";
+    ruby.innerHTML = `${char}<rt class="furigana hidden">${word.reading[i]}</rt>`;
+    kanjiContainer.appendChild(ruby);
+  });
+  adjustKanjiLayout();
+}
+
+function nextWord() {
+  currentWordIndex = (currentWordIndex + 1) % words.length;
+  renderWord();
+}
+
+function checkAnswer() {
+  const inputField = document.querySelector("input");
+  const input = inputField?.value.trim().toLowerCase();
+  const word = words[currentWordIndex];
+  const correctReading = word.reading.join("").toLowerCase();
+  const correctRomaji = word.romaji.toLowerCase();
+  const kanjiCard = document.querySelector(".kanji-card");
+
+  if (!kanjiCard) return;
+
+  if (input === correctReading || input === correctRomaji) {
+    if (inputField) inputField.value = ""; // clear immediately
+    kanjiCard.classList.add("slide-right");
+    setTimeout(() => {
+      nextWord();
+      kanjiCard.classList.remove("slide-right");
+      kanjiCard.classList.add("slide-in-left");
+      setTimeout(() => kanjiCard.classList.remove("slide-in-left"), 600);
+    }, 600);
+  } else {
+    if (inputField) inputField.value = ""; // clear wrong input immediately
+    kanjiCard.classList.add("shake-wrong");
+    setTimeout(() => kanjiCard.classList.remove("shake-wrong"), 600);
+  }
+}
+
+/* ========= DOM Ready ========= */
 window.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const savedTheme = localStorage.getItem(THEME_KEY);
@@ -160,22 +205,28 @@ window.addEventListener("DOMContentLoaded", () => {
     btn.classList.toggle("selected", btn.dataset.theme === savedTheme);
   });
 
-  const furiganaElements = [...document.querySelectorAll(".furigana")];
+  // Hint button
   let currentHintIndex = 0;
-  const hintButton = document.querySelector(".controls button:nth-child(1)");
+  const hintButton = document.querySelector(".hint-button");
   hintButton?.addEventListener("click", () => {
+    const furiganaElements = [...document.querySelectorAll(".furigana")];
     if (currentHintIndex >= furiganaElements.length) {
-      furiganaElements.forEach((el) => (el.style.visibility = "hidden"));
+      furiganaElements.forEach((el) => {
+        el.classList.add("hidden");
+        el.classList.remove("drop-in");
+      });
       currentHintIndex = 0;
     } else {
-      furiganaElements[currentHintIndex].style.visibility = "visible";
+      const el = furiganaElements[currentHintIndex];
+      el.classList.remove("hidden");
+      el.classList.add("drop-in");
       currentHintIndex++;
     }
     hintButton.blur();
   });
 
-  const jishoButton = document.querySelector(".controls button:nth-child(2)");
-  const answerButton = document.querySelector(".controls button:nth-child(3)");
+  const jishoButton = document.querySelector(".jisho-button");
+  const answerButton = document.querySelector(".answer-button");
 
   const isDetailPage = window.location.pathname.includes("word-details");
   const isIndexPage =
@@ -196,8 +247,16 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   answerButton?.addEventListener("click", () => {
-    alert("答えるボタンの機能は未だ実装されていません。");
+    checkAnswer();
     answerButton.blur();
+  });
+
+  // Enter key triggers answer check
+  const inputField = document.querySelector("input");
+  inputField?.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      checkAnswer();
+    }
   });
 
   themeModal?.addEventListener("click", (e) => {
@@ -232,6 +291,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  renderWord();
   adjustKanjiLayout();
 
   const observer = kanjiContainer
@@ -263,7 +323,7 @@ function adjustKanjiLayout() {
 
 window.addEventListener("resize", adjustKanjiLayout);
 
-/* Optional scoring system
+/* Optional scoring system (kept from new script.js)
 const correctScoreElement = document.getElementById("correct-score");
 const wrongScoreElement = document.getElementById("wrong-score");
 
