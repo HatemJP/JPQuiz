@@ -11,6 +11,7 @@
       document.documentElement.classList.add(savedTheme);
     })();
   </script>
+
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
     rel="stylesheet" />
@@ -19,10 +20,28 @@
   <link rel="stylesheet" href="CSS/themes.css" />
   <link rel="stylesheet" href="CSS/animation.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <script src="JS/animate.js"></script>
   <script src="JS/script.js" defer></script>
+  <script src="https://unpkg.com/wanakana@4.0.2/umd/wanakana.min.js"></script>
+
   <style>
-    /* Correct slide animation */
+    .main-navbar,
+    .container {
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      will-change: opacity, transform;
+    }
+
+    .main-navbar {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .main-navbar.hidden,
+    .container.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-5px);
+    }
+
     .kanji-card.slide-right {
       animation: slideRight 0.6s ease forwards;
     }
@@ -55,7 +74,6 @@
       }
     }
 
-    /* Incorrect shake */
     .kanji-card.shake-wrong {
       animation: shakeWrong 0.6s ease;
     }
@@ -84,7 +102,6 @@
       }
     }
 
-    /* Furigana drop */
     .furigana.hidden {
       visibility: hidden;
     }
@@ -105,52 +122,84 @@
         opacity: 1;
       }
     }
+
+    #notification-container {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: -1;
+      pointer-events: none;
+      max-height: 90vh;
+      overflow: hidden;
+    }
+
+    .notification {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 260px;
+      max-width: 320px;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 14px;
+      padding: 14px 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1rem;
+      opacity: 0;
+      transform: translateX(120%);
+      animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 6s;
+      pointer-events: auto;
+      position: relative;
+      border-left: 5px solid var(--accent-color);
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateX(120%);
+      }
+    }
   </style>
 </head>
 
 <body>
-  <!-- Modern Loading Screen -->
-  <!-- <div id="loading-screen">
-    <div class="loader-orbit">
-      <div class="dot dot1"></div>
-      <div class="dot dot2"></div>
-      <div class="dot dot3"></div>
-      <div class="dot dot4"></div>
-      <div class="dot dot5"></div>
-    </div>
-    <p class="loading-text">漢字冒険を読み込み中...</p>
-  </div> -->
-
   <header class="main-navbar">
     <div class="navbar-left">
       <h1 class="app-title"><a href="index.html">漢字冒険</a></h1>
     </div>
-
     <div class="navbar-right">
       <div class="action-btn-wrapper">
-        <!-- Main action button -->
         <button class="settings-btn" id="main-action-btn">
           <i class="fas fa-cog"></i>
         </button>
-
-        <!-- Sub-actions -->
         <div class="sub-actions">
-          <button class="sub-action" onclick="openThemeModal()">
+          <button class="sub-action implemented" onclick="openThemeModal()" data-name="趣">
             <i class="fas fa-palette"></i>
           </button>
-          <button class="sub-action" id="wand-action">
+          <button class="sub-action not-implemented" id="wand-action" data-name="舞">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
           </button>
-          <button class="sub-action" onclick="navigateTo('#')">
+          <button class="sub-action not-implemented" data-name="自己">
             <i class="fas fa-user"></i>
           </button>
-          <button class="sub-action" onclick="navigateTo('heatmap.html')">
+          <button class="sub-action not-implemented" data-name="熱図">
             <i class="fas fa-fire"></i>
           </button>
-          <button class="sub-action" onclick="navigateTo('player-records.html')">
+          <button class="sub-action not-implemented" data-name="記録">
             <i class="fas fa-trophy"></i>
           </button>
-          <button class="sub-action" onclick="navigateTo('#')">
+          <button class="sub-action not-implemented" data-name="設定">
             <i class="fas fa-sliders-h"></i>
           </button>
         </div>
@@ -170,22 +219,18 @@
       </div>
       <div class="score-item" id="total-score-item">
         <div class="score-label">問題</div>
-        <div class="score-value" id="total-score">9000</div>
+        <div class="score-value" id="total-score">0</div>
       </div>
     </div>
 
     <div class="kanji-card">
       <div class="kanji-container">
         <div class="ruby-wrapper">
-          <ruby class="kanji-char">
-            漢<rt class="furigana">かん</rt>
-          </ruby>
-          <ruby class="kanji-char">
-            字<rt class="furigana">じ</rt>
-          </ruby>
+          <!-- Kanji + Furigana rendered dynamically -->
         </div>
       </div>
     </div>
+
     <input type="text" placeholder="読み方を入力..." />
     <div class="controls">
       <button class="hint-button">ヒント</button>
@@ -221,36 +266,38 @@
     </div>
   </div>
 
+  <!-- Animations -->
   <div class="snow-animation"></div>
   <div class="sakura-animation"></div>
 
-  <footer class="site-footer">
-    <div class="footer-container">
-      <div class="footer-sections">
-        <div class="footer-section">
-          <ul>
-            <li><a href="index.html">初頁</a></li>
-            <li><a href="HTML/heatmap.html">熱図</a></li>
-            <li><a href="HTML/player-records.html">記録</a></li>
-            <li><a href="#">自己</a></li>
-            <li><a href="#">試練</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>© 2025 漢字冒険 - Kanji Quest. All Rights Reserved.</p>
-      </div>
-    </div>
-  </footer>
+  <!-- Notification container -->
+  <div id="notification-container"></div>
 
   <script>
-    // window.addEventListener('load', () => {
-    //   const loader = document.getElementById('loading-screen');
-    //   setTimeout(() => loader.classList.add('hidden'), 1500); // fade out smoothly
-    // });
-  </script>
+    // Notifications
+    function showNotification(message) {
+      const container = document.getElementById('notification-container');
+      const existing = container.querySelector('.notification');
+      if (existing) existing.remove();
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `<span>${message}</span>`;
+      container.appendChild(notification);
+      setTimeout(() => notification.remove(), 6500);
+    }
 
+    document.querySelectorAll('.sub-action.not-implemented').forEach(button => {
+      button.addEventListener('click', () => {
+        const name = button.dataset.name;
+        button.style.fontWeight = "bold";
+        showNotification(`${name}ボタンの機能は未だ実装されていません。`);
+      });
+    });
+
+    document.querySelector(".kanji-card").addEventListener("click", () => {
+      navigateWithTransition("../HTML/word-details.html");
+    });
+  </script>
 </body>
 
 </html>

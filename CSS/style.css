@@ -8,7 +8,7 @@
 
 html,
 body {
-    min-height: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -26,6 +26,10 @@ body {
 body.transition-out {
     opacity: 0;
     transform: scale(0.98) translateY(10px);
+}
+
+body.modal-open {
+    overflow: hidden;
 }
 
 /* Header */
@@ -72,10 +76,6 @@ header {
         0 0 2px var(--accent-color),
         0 0 4px var(--accent-color),
         0 0 6px var(--primary-color);
-}
-
-body.modal-open {
-    overflow: hidden;
 }
 
 /* FAB wrapper */
@@ -149,13 +149,13 @@ body.modal-open {
 #loading-screen {
     position: fixed;
     inset: 0;
-    background: var(--bg-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(135deg, var(--bg-color), var(--card-bg));
     z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
 }
 
 #loading-screen.hidden {
@@ -187,30 +187,6 @@ body.modal-open {
 
 .loader .dot3 {
     animation-delay: 0.4s;
-}
-
-.loading-text {
-    font-family: 'Outfit', 'Noto Sans JP', sans-serif;
-    color: var(--accent-color);
-    font-size: 1.2rem;
-    letter-spacing: 0.05em;
-}
-
-#loading-screen {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, var(--bg-color), var(--card-bg));
-    z-index: 9999;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
-}
-
-#loading-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
 }
 
 .loader-orbit {
@@ -399,41 +375,6 @@ ruby.kanji-char rt {
     visibility: hidden;
 }
 
-.meaning-box {
-    background: linear-gradient(135deg, var(--card-gradient-color), var(--card-bg));
-    border: 1px solid var(--card-border-color);
-    box-shadow: 0 4px 12px var(--card-shadow-color);
-    border-radius: 12px;
-    padding: 2rem;
-}
-
-.meaning-box span {
-    color: var(--primary-color);
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-}
-
-.meaning-box h2 {
-    color: var(--primary-color);
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.meaning-box .reading {
-    font-weight: bold;
-    color: var(--accent-color);
-}
-
-.meaning-box .example {
-    margin-top: 1rem;
-    font-style: italic;
-    color: var(--hint-color);
-}
-
-body.theme-tsukizumi .meaning-box .example {
-    color: var(--accent-color);
-}
-
 input[type="text"] {
     width: 100%;
     padding: 0.9rem;
@@ -550,160 +491,6 @@ input[type="text"]:focus::placeholder {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-}
-
-/* ================== Footer ================== */
-.site-footer {
-    position: fixed;
-    bottom: -25%;
-    /* partly hidden by default */
-    left: 0;
-    width: 100%;
-    padding: 1.2rem 2rem;
-    background: linear-gradient(135deg,
-            var(--card-bg) 0%,
-            rgba(255, 255, 255, 0.03) 100%);
-    border-top: 1px solid var(--card-border-color);
-    box-shadow: 0 -6px 15px var(--card-shadow-color);
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--muted);
-    transition: bottom 0.6s ease, opacity 0.6s ease;
-    z-index: 1000;
-    border-radius: 12px 12px 0 0;
-    opacity: 1;
-}
-
-/* Container */
-.footer-container {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-/* Footer Sections Layout */
-.footer-sections {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2rem;
-    /* more spacing between UL groups */
-    margin-bottom: 1rem;
-}
-
-/* Section */
-.footer-section {
-    text-align: center;
-}
-
-/* Section Titles */
-.footer-section h3 {
-    color: var(--text-color);
-    font-weight: 600;
-    margin-bottom: 0.6rem;
-    font-size: 0.95rem;
-}
-
-/* Lists inside Sections */
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 1.2rem;
-    /* wider spacing between links */
-    justify-content: center;
-}
-
-/* Links */
-.footer-section ul li a {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    text-decoration: none;
-    position: relative;
-    transition: all 0.3s ease;
-    padding: 0.2rem 0.4rem;
-    display: inline-block;
-}
-
-/* Hover Effects */
-.footer-section ul li a:hover {
-    color: var(--accent-color);
-    transform: translateY(-2px) scale(1.05);
-}
-
-/* Underline animation */
-.footer-section ul li a::after {
-    content: "";
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 100%;
-    height: 2px;
-    background: var(--accent-color);
-    border-radius: 2px;
-    transition: transform 0.3s ease;
-}
-
-.footer-section ul li a:hover::after {
-    transform: translateX(-50%) scaleX(1);
-}
-
-/* Divider Section (footer-bottom renamed) */
-.footer-bottom {
-    text-align: center;
-    border-top: 1px solid var(--input-border);
-    width: 36%;
-    margin: 0 auto;
-    padding-top: 0.8rem;
-    transition: border-color 0.3s ease, color 0.3s ease;
-}
-
-/* Dark themes use muted color for text */
-.footer-bottom p {
-    color: var(--muted);
-    font-weight: 500;
-    opacity: 0.9;
-    font-size: 0.8rem;
-    letter-spacing: 0.3px;
-}
-
-/* Light theme overrides for better visibility */
-body.theme-sakura .footer-bottom {
-    border-color: #e6a8b4;
-    /* stronger pinkish border */
-}
-
-body.theme-blue .footer-bottom {
-    border-color: #7fbfff;
-    /* stronger bluish border */
-}
-
-body.theme-sakura .footer-bottom p,
-body.theme-blue .footer-bottom p {
-    color: var(--text-color);
-    opacity: 1;
-}
-
-body.theme-uminami .site-footer .footer-links a:hover,
-body.theme-blue .site-footer .footer-links a:hover {
-    color: var(--hint-color);
-    transform: translateY(-2px);
-}
-
-body.theme-uminami .site-footer .footer-links a::after,
-body.theme-blue .site-footer .footer-links a::after {
-    background: var(--hint-color);
-}
-
-body.theme-tsukizumi .site-footer,
-body.theme-uminami .site-footer,
-body.theme-orange .site-footer {
-    border-top-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive */
