@@ -291,20 +291,6 @@
         showNotification(`${name}ボタンの機能は未だ実装されていません。`);
       });
     });
-
-    document.querySelector(".kanji-card").addEventListener("click", () => {
-      navigateWithTransition("HTML/word-details.html");
-    });
-
-    document.getElementById("logout-action").addEventListener("click", () => {
-      localStorage.removeItem("currentUser");
-      sessionStorage.clear();
-
-      showNotification("ログアウトしました。");
-      setTimeout(() => {
-        navigateWithTransition("https://hatemjp.github.io/HTML/login.html");
-      }, 1200);
-    });
   </script>
 </body>
 

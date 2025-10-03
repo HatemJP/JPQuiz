@@ -132,6 +132,25 @@ mainActionBtn?.addEventListener("click", () => {
   }
 });
 
+// Kanji card click
+document.querySelector(".kanji-card").addEventListener("click", () => {
+  navigateWithTransition("HTML/word-details.html");
+});
+
+document.getElementById("logout-action").addEventListener("click", () => {
+  const currentUser = localStorage.getItem("currentUser");
+
+  // Only remove currentUser; keep progress
+  localStorage.removeItem("currentUser");
+  sessionStorage.clear();
+
+  showNotification("ログアウトしました。");
+
+  document.getElementById(".logout-action").addEventListener("click", () => {
+    navigateWithTransition("../HTML/login.html");
+  });
+});
+
 document.querySelectorAll(".sub-action").forEach((btn) => {
   btn.addEventListener("click", () => {
     actionWrapper?.classList.remove("active");
