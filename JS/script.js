@@ -1,6 +1,6 @@
 const currentUser = localStorage.getItem("currentUser");
 if (!currentUser) {
-  window.location.href = "../HTML/login.html";
+  window.location.href = "./HTML/login.html";
 }
 
 const THEME_KEY = "kanjiQuestTheme";
