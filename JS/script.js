@@ -1,6 +1,6 @@
 const currentUser = localStorage.getItem("currentUser");
 if (!currentUser) {
-  window.location.href = "./HTML/login.html";
+  window.location.href = "../HTML/quiz-login.html";
 }
 
 const THEME_KEY = "kanjiQuestTheme";
@@ -147,7 +147,7 @@ document.getElementById("logout-action").addEventListener("click", () => {
   showNotification("ログアウトしました。");
 
   document.getElementById(".logout-action").addEventListener("click", () => {
-    navigateWithTransition("../HTML/login.html");
+    navigateWithTransition("../HTML/quiz-login.html");
   });
 });
 
