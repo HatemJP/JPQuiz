@@ -306,9 +306,9 @@
 
       showNotification("ログアウトしました。");
 
-      setTimeout(() => {
-        window.location.href = "../HTML/login.html";
-      }, 800);
+      document.getElementById(".logout-action").addEventListener("click", () => {
+        navigateWithTransition("HTML/login.html");
+      });
     });
   </script>
 </body>
