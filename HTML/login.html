@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>漢字冒険 - ログイン</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="shortcut icon" href="../Assets/japanese-gate.png" type="image/x-icon">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/themes.css">
+    <link rel="stylesheet" href="../CSS/animation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../JS/auth.js" defer></script>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--bg-color);
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+        }
+
+        body.theme-tsukizumi {
+            /* Basic */
+            --bg-color: #181818;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --primary-color: #cfcfcf;
+            --secondary-color: #8fc3bb;
+            /* new secondary color */
+            --accent-color: #a3d2ca;
+            --hint-color: #b5c9c3;
+            --muted: #707070;
+
+            /* Input */
+            --input-bg: #2a2a2a;
+            --input-border: #444444;
+            --input-border-focus: rgba(163, 210, 202, 0.4);
+            --input-box-shadow: rgba(163, 210, 202, 0.3);
+            --placeholder-color: #999999;
+
+            /* Button */
+            --button-bg: #242424;
+            --button-hover-bg: var(--accent-color);
+            --button-hover-color: #181818;
+
+            /* Card */
+            --card-gradient-color: rgba(163, 210, 202, 0.02);
+            --card-border-color: rgba(163, 210, 202, 0.05);
+            --card-shadow-color: rgba(163, 210, 202, 0.05);
+
+            /* Vocab Word */
+            --vocab-bg: var(--accent-color);
+            --vocab-color: #fff;
+            --vocab-hover-bg: rgba(163, 210, 202, 0.85);
+            --vocab-hover-color: #fff;
+            --vocab-hover-shadow: none;
+        }
+
+        .auth-container {
+            background: var(--card-bg);
+            color: var(--text-color);
+            width: 100%;
+            max-width: 420px;
+            padding: 2rem 1.8rem;
+            /* reduced padding = less height */
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.7s ease;
+        }
+
+        .auth-header {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .auth-subtext {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            color: var(--muted);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            position: relative;
+            z-index: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        .auth-form input {
+            padding: 0.9rem 1rem;
+            border: 2px solid var(--input-border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.25s ease;
+        }
+
+        .auth-form input:focus {
+            outline: none;
+            border: 2px solid var(--input-border-focus);
+            box-shadow: 0 0 8px var(--input-box-shadow);
+            transform: translateY(-2px);
+        }
+
+        .auth-button {
+            background: linear-gradient(145deg, var(--secondary-color) 0%, var(--card-gradient-color) 100%);
+            color: #fff;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-button::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25), 0 6px 12px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(145deg, var(--accent-color) 0%, var(--card-shadow-color) 100%);
+            color: #fff;
+        }
+
+        .auth-footer {
+            margin-top: 1.7rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .auth-footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.3rem;
+            transition: color 0.3s;
+        }
+
+        .auth-footer a:hover {
+            color: var(--primary-color);
+        }
+
+        .auth-container.register-mode .login-form {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+
+        .auth-container.register-mode .register-form {
+            display: flex;
+            opacity: 1;
+        }
+
+        .register-form {
+            display: none;
+            opacity: 0;
+            flex-direction: column;
+            gap: 1.2rem;
+            transition: opacity 0.4s ease;
+        }
+
+        .register-email {
+            margin-top: -1.5rem;
+        }
+
+        .login-form {
+            gap: 1.5rem;
+        }
+
+        .login-password {
+            margin-top: -1.5rem;
+        }
+
+        .auth-form input::placeholder {
+            color: var(--placeholder-color);
+            opacity: 1;
+            font-weight: 400;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="theme-tsukizumi">
+    <div class="auth-container" id="authBox">
+        <div class="auth-header">漢字冒険</div>
+        <div class="auth-subtext" id="authSubtext">ログインして冒険を始めよう！</div>
+
+        <!-- Login Form -->
+        <form class="auth-form login-form">
+            <input type="text" placeholder="ユーザー名またはメールアドレス" required style="margin-top: -0.05rem;">
+            <input type="password" class="login-password" placeholder="パスワード" required style>
+            <button type="submit" class="auth-button" style="margin-top: 0.3rem;">ログイン</button>
+        </form>
+
+        <!-- Register Form -->
+        <form class="auth-form register-form">
+            <input type="text" placeholder="ユーザー名" required style="margin-top: -0.05rem;">
+            <input type="email" class="register-email" placeholder="メールアドレス" required>
+            <input type="password" placeholder="パスワード" required>
+            <input type="password" placeholder="パスワード確認" required>
+            <button type="submit" class="auth-button" id="auth-button register" style="margin-top: 0.5rem;">登録する</button>
+        </form>
+
+        <div class="auth-footer">
+            <span id="toggleText">アカウントを持っていませんか？</span>
+            <a href="#" id="toggleAuth">登録する</a>
+        </div>
+    </div>
+
+    <script>
+        
+        const authBox = document.getElementById("authBox");
+        const toggleAuth = document.getElementById("toggleAuth");
+        const toggleText = document.getElementById("toggleText");
+        const authSubtext = document.getElementById("authSubtext");
+
+        toggleAuth.addEventListener("click", (e) => {
+            e.preventDefault();
+            authBox.classList.toggle("register-mode");
+
+            if (authBox.classList.contains("register-mode")) {
+                toggleAuth.textContent = "ログインする";
+                toggleText.textContent = "既にアカウントをお持ちですか？";
+                authSubtext.textContent = "新しい冒険の為にアカウントを作ろう！";
+            } else {
+                toggleAuth.textContent = "登録する";
+                toggleText.textContent = "アカウントを持っていませんか？";
+                authSubtext.textContent = "ログインして冒険を始めよう！";
+            }
+        });
+    </script>
+</body>
+
+</html>

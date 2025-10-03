@@ -1,5 +1,9 @@
+const currentUser = localStorage.getItem("currentUser");
+if (!currentUser) {
+  window.location.href = "../HTML/login.html";
+}
+
 const THEME_KEY = "kanjiQuestTheme";
-const PROGRESS_KEY = "kanjiQuestProgress";
 let currentAnimationState = 0;
 const mainActionBtn = document.getElementById("main-action-btn");
 const actionWrapper = mainActionBtn?.closest(".action-btn-wrapper");
@@ -10,11 +14,55 @@ const wandBtn = document.getElementById("wand-action");
 let words = [];
 let currentWordIndex = 0;
 
+// ----------------- USER-SPECIFIC STORAGE -----------------
+function getProgressKey(user) {
+  return `kanjiQuestProgress_${user}`;
+}
+
+function getScoreKey(user, type) {
+  return `kanjiScore_${type}_${user}`; // type = "Correct" or "Wrong"
+}
+
+function saveProgress(index) {
+  if (!currentUser) return;
+  localStorage.setItem(getProgressKey(currentUser), index);
+}
+
+function loadProgress() {
+  if (!currentUser) return 0;
+  const saved = parseInt(localStorage.getItem(getProgressKey(currentUser)));
+  return !isNaN(saved) ? saved : 0;
+}
+
+function saveScore(type, value) {
+  if (!currentUser) return;
+  localStorage.setItem(getScoreKey(currentUser, type), value);
+}
+
+function loadScore(type) {
+  if (!currentUser) return 0;
+  const saved = parseInt(localStorage.getItem(getScoreKey(currentUser, type)));
+  return !isNaN(saved) ? saved : 0;
+}
+
+// ----------------- SCORE -----------------
+const correctScoreElement = document.getElementById("correct-score");
+const wrongScoreElement = document.getElementById("wrong-score");
+
+let score = {
+  correct: loadScore("Correct"),
+  wrong: loadScore("Wrong"),
+};
+
+function updateScoreboard() {
+  correctScoreElement && (correctScoreElement.textContent = score.correct);
+  wrongScoreElement && (wrongScoreElement.textContent = score.wrong);
+}
+
+// ----------------- ANIMATION -----------------
 function navigateWithTransition(url) {
   document.body.classList.add("transition-out");
-  setTimeout(() => {
-    window.location.href = url;
-  }, 400); // matches CSS transition duration
+  setTimeout(() => (window.location.href = url), 400);
 }
 
 function startAnimation(state) {
@@ -73,6 +121,7 @@ function toggleAnimation() {
 toggleBtn?.addEventListener("click", toggleAnimation);
 wandBtn?.addEventListener("click", toggleAnimation);
 
+// ----------------- MAIN ACTION BUTTON -----------------
 mainActionBtn?.addEventListener("click", () => {
   if (!mainActionBtn.disabled) {
     actionWrapper.classList.toggle("active");
@@ -132,13 +181,14 @@ function setTheme(themeName) {
   closeThemeModal();
 }
 
+// ----------------- KANJI LAYOUT -----------------
 function adjustKanjiLayout() {
   const kanjiCard = document.querySelector(".kanji-card");
   const kanjiContainer = document.querySelector(".kanji-container");
   if (!kanjiCard || !kanjiContainer) return;
 
   const kanjiChars = kanjiContainer.querySelectorAll(".kanji-char");
-  if (kanjiChars.length === 0) return; // <--- safety check
+  if (kanjiChars.length === 0) return;
 
   kanjiContainer.style.padding = "1rem 2rem";
   kanjiContainer.style.flexWrap = "wrap";
@@ -157,7 +207,13 @@ function adjustKanjiLayout() {
 
 window.addEventListener("resize", adjustKanjiLayout);
 
-/* ========= DOM Ready ========= */
+// ----------------- DOM READY -----------------
+document.addEventListener("DOMContentLoaded", () => {
+  const savedTheme =
+    localStorage.getItem("kanjiQuestTheme") || "theme-tsukizumi";
+  document.body.classList.add(savedTheme);
+});
+
 window.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const savedTheme = localStorage.getItem(THEME_KEY);
@@ -180,7 +236,6 @@ window.addEventListener("DOMContentLoaded", () => {
       .filter((rt) => /[\u4E00-\u9FFF]/.test(rt.parentElement.textContent));
 
     if (currentHintIndex >= furiganaElements.length) {
-      // Reset all
       furiganaElements.forEach((el) => {
         el.classList.add("hidden");
         el.classList.remove("drop-in");
@@ -188,25 +243,17 @@ window.addEventListener("DOMContentLoaded", () => {
       currentHintIndex = 0;
     } else {
       const el = furiganaElements[currentHintIndex];
-
-      // Step 1: Make it visible
       el.classList.remove("hidden");
-
-      // Step 2: Wait for next paint to trigger animation
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           el.classList.add("drop-in");
         });
       });
-
       currentHintIndex++;
     }
 
-    // Preserve input focus
     const inputField = document.querySelector("input");
-    if (inputField && document.activeElement !== inputField) {
-      inputField.focus();
-    }
+    if (inputField && document.activeElement !== inputField) inputField.focus();
   });
 
   const jishoButton = document.querySelector(".jisho-button");
@@ -235,12 +282,9 @@ window.addEventListener("DOMContentLoaded", () => {
     answerButton.blur();
   });
 
-  // Enter key triggers answer check
   const inputField = document.querySelector("input");
   inputField?.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      checkAnswer();
-    }
+    if (e.key === "Enter") checkAnswer();
   });
 
   themeModal?.addEventListener("click", (e) => {
@@ -256,33 +300,42 @@ window.addEventListener("DOMContentLoaded", () => {
         const kanjiChars = [...document.querySelectorAll(".kanji-char")]
           .map((el) => el.childNodes[0].nodeValue.trim())
           .join("");
-        const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
-          kanjiChars
-        )}`;
-        window.open(url, "_blank");
+        window.open(
+          `https://jisho.hlorenzi.com/search/${encodeURIComponent(kanjiChars)}`,
+          "_blank"
+        );
       });
     });
   } else if (isIndexPage) {
-    document.querySelectorAll(".kanji-char").forEach((kanjiEl) => {
-      kanjiEl.addEventListener("click", (e) => e.stopPropagation());
-    });
+    document
+      .querySelectorAll(".kanji-char")
+      .forEach((kanjiEl) =>
+        kanjiEl.addEventListener("click", (e) => e.stopPropagation())
+      );
   }
 
-  renderWord();
-  adjustKanjiLayout();
+  // Load words and render
+  loadWords().then(() => {
+    currentWordIndex = loadProgress();
+    score.correct = loadScore("Correct");
+    score.wrong = loadScore("Wrong");
+    renderWord();
+    updateScoreboard();
+    adjustKanjiLayout();
+  });
 
-  const observer = kanjiContainer
-    ? new MutationObserver(adjustKanjiLayout)
-    : null;
-  observer?.observe(kanjiContainer, { childList: true, subtree: true });
+  if (kanjiContainer) {
+    const observer = new MutationObserver(adjustKanjiLayout);
+    observer.observe(kanjiContainer, { childList: true, subtree: true });
+  }
 });
 
+// ----------------- WORDS -----------------
 async function loadWords() {
   try {
     const csvPath = window.location.pathname.includes("word-details")
       ? "../quiz_db.csv"
       : "quiz_db.csv";
-
     const response = await fetch(csvPath);
     const csvText = await response.text();
 
@@ -296,10 +349,8 @@ async function loadWords() {
       const values = line
         .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
         .map((v) => v.replace(/^"|"$/g, "").trim());
-
       const obj = {};
       headers.forEach((header, i) => (obj[header] = values[i]));
-
       const readingHiragana = obj["Answer"].split(",").join("");
       const romaji = wanakana.toRomaji(readingHiragana);
 
@@ -312,35 +363,22 @@ async function loadWords() {
         romaji: romaji,
       };
     });
-
-    // Restore progress from localStorage
-    const savedIndex = parseInt(localStorage.getItem(PROGRESS_KEY));
-    currentWordIndex =
-      !isNaN(savedIndex) && savedIndex >= 0 && savedIndex < words.length
-        ? savedIndex
-        : 0;
-
-    renderWord(); // render after words are loaded
-    console.log("Loaded words:", words);
   } catch (err) {
     console.error("Failed to load words from CSV:", err);
   }
 }
 
+// ----------------- FURIGANA -----------------
 function splitFurigana(kanji, reading) {
   const kanjiChars = [...kanji];
   const readingChars = [...reading];
   const result = [];
-
   let readingIndex = 0;
 
   kanjiChars.forEach((char, i) => {
-    // If it's the last kanji, assign all remaining reading
     if (i === kanjiChars.length - 1) {
       result.push(readingChars.slice(readingIndex).join("") || " ");
     } else {
-      // Heuristic: assign up to 2 kana per kanji if possible
-      // Or use the next small chunk
       const remainingKanji = kanjiChars.length - i;
       const remainingReading = readingChars.length - readingIndex;
       const charsForThisKanji = Math.max(
@@ -359,24 +397,18 @@ function splitFurigana(kanji, reading) {
   return result;
 }
 
-/* Override renderWord to use dynamically loaded words */
+// ----------------- RENDER -----------------
 function renderWord() {
   if (!words || words.length === 0) return;
-
   const word = words[currentWordIndex];
 
-  // Containers may differ per page
   const kanjiContainer = document.querySelector(".kanji-container");
   const detailsBox = document.querySelector(".details-box");
   const progressText = document.querySelector("#progressBadge span");
 
-  if (!kanjiContainer && !detailsBox) return; // nothing to render
-
-  // === Kanji + Furigana ===
   if (kanjiContainer) {
     kanjiContainer.innerHTML = "";
     const furiganaArray = splitFurigana(word.kanji, word.reading.join(""));
-
     [...word.kanji].forEach((char, i) => {
       const ruby = document.createElement("ruby");
       ruby.className = "kanji-char";
@@ -385,46 +417,39 @@ function renderWord() {
       }</rt>`;
       kanjiContainer.appendChild(ruby);
     });
-
-    adjustKanjiLayout();
   }
 
-  // === Details Box ===
   if (detailsBox) {
     const kanjiTitle = detailsBox.querySelector(".kanji-title");
     const meaningEl = detailsBox.querySelector(".meaning");
     const exampleEl = detailsBox.querySelector(".example");
     const translationEl = detailsBox.querySelector(".translation");
 
-    if (kanjiTitle) {
+    if (kanjiTitle)
       kanjiTitle.innerHTML = `${
         word.kanji
       } <span class="reading">（${word.reading.join("")}）</span>`;
-    }
-
     if (meaningEl) meaningEl.textContent = `意味：${word.meaning || "空"}`;
     if (exampleEl) exampleEl.textContent = `例文：${word.example || "空"}`;
     if (translationEl)
       translationEl.textContent = `翻訳：${word.translation || "空"}`;
   }
 
-  // === Reset progress badge ===
-  const progressFill = document.getElementById("progressFill");
-  if (progressFill) progressFill.style.width = "0%";
-  if (progressText) progressText.textContent = `進行度: 0%`;
+  if (progressText)
+    progressText.textContent = `進行度: ${Math.floor(
+      (currentWordIndex / words.length) * 100
+    )}%`;
+  adjustKanjiLayout();
 }
 
-/* Call loadWords when DOM is ready */
-window.addEventListener("DOMContentLoaded", () => {
-  loadWords();
-});
-
+// ----------------- NEXT WORD -----------------
 function nextWord() {
   currentWordIndex = (currentWordIndex + 1) % words.length;
   renderWord();
-  localStorage.setItem(PROGRESS_KEY, currentWordIndex); // save progress
+  saveProgress(currentUser ? currentWordIndex : 0);
 }
 
+// ----------------- ROMAJI NORMALIZE -----------------
 function normalizeRomaji(str) {
   return str
     .toLowerCase()
@@ -436,23 +461,28 @@ function normalizeRomaji(str) {
     .replace(/ō/g, "o");
 }
 
+// ----------------- CHECK ANSWER -----------------
 function checkAnswer() {
   const inputField = document.querySelector("input");
   const input = (inputField?.value || "").trim().toLowerCase();
   const word = words[currentWordIndex];
-
   if (!word) return;
 
   const correctReading = word.reading.join("").toLowerCase();
   const correctRomaji = normalizeRomaji(word.romaji);
 
+  if (!inputField) return;
+  const normalizedInput = normalizeRomaji(input);
+
   const kanjiCard = document.querySelector(".kanji-card");
   if (!kanjiCard) return;
 
-  const normalizedInput = normalizeRomaji(input);
-
   if (input === correctReading || normalizedInput === correctRomaji) {
-    if (inputField) inputField.value = ""; // clear input
+    inputField.value = "";
+    score.correct++;
+    saveScore("Correct", score.correct);
+    updateScoreboard();
+
     kanjiCard.classList.add("slide-right");
     setTimeout(() => {
       nextWord();
@@ -461,7 +491,11 @@ function checkAnswer() {
       setTimeout(() => kanjiCard.classList.remove("slide-in-left"), 600);
     }, 600);
   } else {
-    if (inputField) inputField.value = ""; // clear wrong input
+    inputField.value = "";
+    score.wrong++;
+    saveScore("Wrong", score.wrong);
+    updateScoreboard();
+
     kanjiCard.classList.add("shake-wrong");
     setTimeout(() => kanjiCard.classList.remove("shake-wrong"), 600);
   }

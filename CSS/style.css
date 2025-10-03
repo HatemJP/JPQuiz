@@ -66,6 +66,7 @@ header {
     color: var(--primary-color);
     text-decoration: none;
     transition: transform 0.4s ease, text-shadow 0.8s ease;
+    outline: none;
 }
 
 .navbar-left .app-title a:hover {
@@ -102,7 +103,6 @@ header {
 
 /* Animation when menu is open (clicked) */
 .settings-btn.menu-open {
-    color: var(--accent-color);
     transform: rotate(90deg) scale(1.0);
 }
 

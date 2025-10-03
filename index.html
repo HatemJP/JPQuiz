@@ -2,15 +2,9 @@
 <html lang="ja">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>漢字冒険 - 初頁</title>
-  <script>
-    (function () {
-      const savedTheme = localStorage.getItem("kanjiQuestTheme") || "theme-tsukizumi";
-      document.documentElement.classList.add(savedTheme);
-    })();
-  </script>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
@@ -202,6 +196,9 @@
           <button class="sub-action not-implemented" data-name="設定">
             <i class="fas fa-sliders-h"></i>
           </button>
+          <button class="sub-action implemented" id="logout-action" data-name="ログアウト">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -286,6 +283,7 @@
       setTimeout(() => notification.remove(), 6500);
     }
 
+    // Not-implemented buttons
     document.querySelectorAll('.sub-action.not-implemented').forEach(button => {
       button.addEventListener('click', () => {
         const name = button.dataset.name;
@@ -294,8 +292,23 @@
       });
     });
 
+    // Kanji card click
     document.querySelector(".kanji-card").addEventListener("click", () => {
       navigateWithTransition("HTML/word-details.html");
+    });
+
+    document.getElementById("logout-action").addEventListener("click", () => {
+      const currentUser = localStorage.getItem("currentUser");
+
+      // Only remove currentUser; keep progress
+      localStorage.removeItem("currentUser");
+      sessionStorage.clear();
+
+      showNotification("ログアウトしました。");
+
+      setTimeout(() => {
+        window.location.href = "../HTML/login.html";
+      }, 800);
     });
   </script>
 </body>
