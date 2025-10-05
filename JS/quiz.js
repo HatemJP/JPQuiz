@@ -160,15 +160,12 @@ function renderWord() {
 
   // ----------------- word-details.html support -----------------
   if (detailsBox) {
-    const kanjiTitle = detailsBox.querySelector(".kanji-title");
+    const readingEl = detailsBox.querySelector(".reading");
     const meaningEl = detailsBox.querySelector(".meaning");
     const exampleEl = detailsBox.querySelector(".example");
     const translationEl = detailsBox.querySelector(".translation");
 
-    if (kanjiTitle)
-      kanjiTitle.innerHTML = `${
-        word.kanji
-      } <span class="reading">（${word.reading.join("")}）</span>`;
+    if (readingEl) readingEl.textContent = `読み方：${word.reading.join("")}`;
     if (meaningEl) meaningEl.textContent = `意味：${word.meaning || "空"}`;
     if (exampleEl) exampleEl.textContent = `例文：${word.example || "空"}`;
     if (translationEl)

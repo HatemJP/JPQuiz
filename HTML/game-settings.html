@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>漢字冒険 - ゲーム設定</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <link rel="shortcut icon" href="../Assets/japanese-gate.png" type="image/x-icon" />
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <link rel="stylesheet" href="../CSS/themes.css" />
+    <link rel="stylesheet" href="../CSS/animation.css" />
+    <script src="../JS/script.js" defer></script>
+
+    <style>
+        /* Container styling (glow aesthetic) */
+        .container {
+            margin: 6rem auto;
+            text-align: center;
+            max-width: 800px;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg,
+                    var(--card-gradient-color),
+                    var(--card-bg));
+            border: 1px solid var(--card-border-color);
+            box-shadow:
+                0 12px 28px var(--card-shadow-color),
+                0 4px 12px rgba(0, 0, 0, 0.25),
+                0 0 20px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: radial-gradient(circle at top left,
+                    rgba(255, 255, 255, 0.05),
+                    transparent 60%),
+                radial-gradient(circle at bottom right,
+                    rgba(255, 255, 255, 0.04),
+                    transparent 60%);
+            z-index: 0;
+        }
+
+        .container:hover {
+            transform: translateY(-6px);
+            box-shadow:
+                0 16px 36px rgba(0, 0, 0, 0.35),
+                0 6px 16px var(--card-shadow-color),
+                0 0 25px rgba(255, 255, 255, 0.06);
+        }
+
+        /* Title */
+        .settings-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(239, 131, 84, 0.25);
+        }
+
+        /* Setting groups */
+        .setting-group {
+            margin-bottom: 2.5rem;
+            text-align: left;
+            position: relative;
+            z-index: 2;
+        }
+
+        .setting-label {
+            display: block;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 0.6rem;
+        }
+
+        /* Dropdown wrapper with arrow */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: "▾";
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--text-color);
+            font-size: 1rem;
+            z-index: 2;
+        }
+
+        /* Styled select */
+        select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.25);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            z-index: 2;
+            position: relative;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--input-border-focus);
+            box-shadow: 0 0 8px var(--input-box-shadow), inset 0 0 12px rgba(0, 0, 0, 0.25);
+            outline: none;
+        }
+
+        /* Dropdown options */
+        select option {
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        /* Buttons (Reset & Save) */
+        .reset-btn {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                inset 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .reset-btn:hover {
+            background-color: var(--secondary-color);
+            color: #fff;
+        }
+
+        /* Footer Note */
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="main-navbar">
+        <div class="navbar-left">
+            <h1 class="app-title"><a href="../index.html">漢字冒険</a></h1>
+        </div>
+        <button class="header-btn" onclick="navigateWithTransition('../index.html')">戻る</button>
+    </header>
+
+    <div class="container">
+        <h2 class="settings-title">ゲーム設定</h2>
+
+        <!-- Question Count -->
+        <div class="setting-group">
+            <label class="setting-label" for="questionCount">問題数</label>
+            <div class="select-wrapper">
+                <select id="questionCount">
+                    <option value="10">10 問</option>
+                    <option value="20">20 問</option>
+                    <option value="all">全ての単語</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Hint Display -->
+        <div class="setting-group">
+            <label class="setting-label" for="hintDisplay">表示</label>
+            <div class="select-wrapper">
+                <select id="hintDisplay">
+                    <option value="on">有効</option>
+                    <option value="off">無効</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Reset & Save Buttons -->
+        <div class="setting-group" style="text-align: center; display: flex; justify-content: center; gap: 1rem;">
+            <button class="reset-btn" onclick="resetAllProgress()">全てリセット</button>
+            <button class="reset-btn" id="saveSettingsBtn">保存</button>
+        </div>
+
+        <p class="footer-note">全てのスコアと進行状況が削除され、最初の単語から再開します。</p>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem("currentUser");
+
+        // Load saved settings
+        window.addEventListener("DOMContentLoaded", () => {
+            const savedCount = localStorage.getItem("questionCount") || "10";
+            const savedHint = localStorage.getItem("hintDisplay") || "on";
+
+            document.getElementById("questionCount").value = savedCount;
+            document.getElementById("hintDisplay").value = savedHint;
+        });
+
+        // Save on dropdown change
+        document.getElementById("questionCount").addEventListener("change", (e) => {
+            localStorage.setItem("questionCount", e.target.value);
+        });
+
+        document.getElementById("hintDisplay").addEventListener("change", (e) => {
+            localStorage.setItem("hintDisplay", e.target.value);
+        });
+
+        // Save button logic
+        document.getElementById("saveSettingsBtn").addEventListener("click", () => {
+            const questionCount = document.getElementById("questionCount").value;
+            const hintDisplay = document.getElementById("hintDisplay").value;
+
+            localStorage.setItem("questionCount", questionCount);
+            localStorage.setItem("hintDisplay", hintDisplay);
+
+            alert("設定が保存されました！");
+        });
+
+        // Full reset logic
+        function resetAllProgress() {
+            if (!confirm("全てのスコアと進行状況が削除され、最初の単語から再開します。宜しいですか？")) return;
+
+            if (currentUser) {
+                const progressKey = `kanjiQuestProgress_${currentUser}`;
+                const scoreCorrectKey = `kanjiQuestScore_correct_${currentUser}`;
+                const scoreWrongKey = `kanjiQuestScore_wrong_${currentUser}`;
+                const scoreTotalKey = `kanjiQuestScore_total_${currentUser}`;
+
+                localStorage.removeItem(progressKey);
+                localStorage.removeItem(scoreCorrectKey);
+                localStorage.removeItem(scoreWrongKey);
+                localStorage.removeItem(scoreTotalKey);
+            }
+
+            localStorage.removeItem("quizCurrentIndex");
+            localStorage.removeItem("quizCompletedWords");
+
+            alert("すべてのデータがリセットされました。最初の単語から再開します。");
+            window.location.href = "../index.html";
+        }
+    </script>
+</body>
+
+</html>
