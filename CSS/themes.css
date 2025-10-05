@@ -74,8 +74,8 @@ body.theme-uminami {
     --vocab-hover-shadow: none;
 }
 
-/* Ultra-Dark New-Dark Theme */
-body.theme-new-dark {
+/* Mithril Dark Theme */
+body.theme-mithril {
     /* Basic */
     --bg-color: #0a0c14;
     --card-bg: #141823;
@@ -150,82 +150,6 @@ body.theme-orange {
     --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Sakura Light Theme */
-body.theme-sakura {
-    /* Basic */
-    --bg-color: #fff0f5;
-    --card-bg: #ffffff;
-    --text-color: #f4a8b1;
-    --primary-color: #f4a8b1;
-    --secondary-color: #d97b82;
-    /* new secondary color */
-    --accent-color: #d97b82;
-    --hint-color: #f4a8b1;
-    --muted: #a67878;
-
-    /* Input */
-    --input-bg: #fff5f7;
-    --input-border: #f9d7dc;
-    --input-border-focus: #f9d7dc;
-    --input-box-shadow: rgba(244, 168, 177, 0.2);
-    --placeholder-color: #f4a8b1;
-
-    /* Button */
-    --button-bg: #fde8ea;
-    --button-hover-bg: var(--primary-color);
-    --button-hover-color: #ffffff;
-
-    /* Card */
-    --card-gradient-color: rgba(255, 243, 248, 0.35);
-    --card-border-color: rgba(244, 168, 177, 0.25);
-    --card-shadow-color: rgba(244, 168, 177, 0.25);
-
-    /* Vocab Word */
-    --vocab-bg: rgba(244, 168, 177, 0.15);
-    --vocab-color: #f4a8b1;
-    --vocab-hover-bg: rgba(244, 168, 177, 0.25);
-    --vocab-hover-color: #f4a8b1;
-    --vocab-hover-shadow: none;
-}
-
-/* Soft Blue Light Theme */
-body.theme-blue {
-    /* Basic */
-    --bg-color: #e0f2fe;
-    --card-bg: #ffffff;
-    --text-color: #93c5fd;
-    --primary-color: #60a5fa;
-    --secondary-color: #3b82f6;
-    /* new secondary color */
-    --accent-color: #38bdf8;
-    --hint-color: #60a5fa;
-    --muted: #6b7280;
-
-    /* Input */
-    --input-bg: #f9fafb;
-    --input-border: #dbeafe;
-    --input-border-focus: #dbeafe;
-    --input-box-shadow: rgba(59, 130, 246, 0.12);
-    --placeholder-color: #93c5fd;
-
-    /* Button */
-    --button-bg: #dbeafe;
-    --button-hover-bg: var(--primary-color);
-    --button-hover-color: #ffffff;
-
-    /* Card */
-    --card-gradient-color: rgba(240, 248, 255, 0.35);
-    --card-border-color: rgba(59, 130, 246, 0.18);
-    --card-shadow-color: rgba(59, 130, 246, 0.18);
-
-    /* Vocab Word */
-    --vocab-bg: rgba(96, 165, 250, 0.12);
-    --vocab-color: #60a5fa;
-    --vocab-hover-bg: rgba(96, 165, 250, 0.22);
-    --vocab-hover-color: var(--primary-color);
-    --vocab-hover-shadow: none;
-}
-
 .theme-modal {
     display: none;
     position: fixed;
@@ -278,10 +202,9 @@ body.theme-blue {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Modern styling for all "dark" themes (ordered: tsukizumi → uminami → new-dark → orange) */
 body.theme-tsukizumi .theme-option,
 body.theme-uminami .theme-option,
-body.theme-new-dark .theme-option,
+body.theme-mithril .theme-option,
 body.theme-orange .theme-option {
     background: var(--card-bg);
     color: var(--text-color);
@@ -291,33 +214,10 @@ body.theme-orange .theme-option {
 
 body.theme-tsukizumi .theme-option:hover,
 body.theme-uminami .theme-option:hover,
-body.theme-new-dark .theme-option:hover,
+body.theme-mithril .theme-option:hover,
 body.theme-orange .theme-option:hover {
     box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
     transform: translateY(-5px);
-}
-
-/* Modern styling for all light themes (ordered: sakura → blue) */
-body.theme-sakura .theme-option,
-body.theme-blue .theme-option {
-    background: var(--card-bg);
-    color: black;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-}
-
-body.theme-sakura .theme-option:hover,
-body.theme-blue .theme-option:hover {
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
-}
-
-.theme-option:hover {
-    background-color: var(--primary-color);
-    color: var(--button-hover-color);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
 }
 
 .theme-option.selected {
@@ -329,7 +229,6 @@ body.theme-blue .theme-option:hover {
     transition: all 0.3s ease;
 }
 
-/* Theme Swatches (ordered: tsukizumi → uminami → new-dark → orange → sakura → blue) */
 .theme-swatch {
     width: 32px;
     height: 32px;
@@ -346,18 +245,10 @@ body.theme-blue .theme-option:hover {
     background: linear-gradient(135deg, #000000, #4dd0e1);
 }
 
-.theme-swatch.new-dark {
+.theme-swatch.mithril {
     background: linear-gradient(135deg, #000000, #7f9cf5);
 }
 
 .theme-swatch.orange {
     background: linear-gradient(135deg, #000000, #ef8354);
-}
-
-.theme-swatch.sakura {
-    background: linear-gradient(135deg, #ffffff, #f4a8b1);
-}
-
-.theme-swatch.blue {
-    background: linear-gradient(135deg, #ffffff, #60a5fa);
 }

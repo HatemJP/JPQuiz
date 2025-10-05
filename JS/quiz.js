@@ -1,6 +1,11 @@
+// ----------------- QUIZ VERSION -----------------
+const QUIZ_VERSION = "1"; // Increment this whenever quiz_db.csv changes
+
+// ----------------- CURRENT USER -----------------
 const currentUser = localStorage.getItem("currentUser");
-let words = [];
-let currentWordIndex = 0;
+if (!currentUser) {
+  window.location.href = "../HTML/login.html";
+}
 
 // ----------------- STORAGE KEYS -----------------
 function getProgressKey(user) {
@@ -11,8 +16,48 @@ function getScoreKey(user, type) {
   return `kanjiScore_${type}_${user}`;
 }
 
-function getShuffledKey(user) {
-  return `kanjiQuestShuffled_${user}`;
+function getVersionKey(user) {
+  return `kanjiQuestVersion_${user}`;
+}
+
+// ----------------- VERSION CHECK & RESET -----------------
+function resetQuizData() {
+  if (!currentUser) return;
+  localStorage.removeItem(getProgressKey(currentUser));
+  localStorage.removeItem(getScoreKey(currentUser, "Correct"));
+  localStorage.removeItem(getScoreKey(currentUser, "Wrong"));
+  localStorage.setItem(getVersionKey(currentUser), QUIZ_VERSION);
+  console.log("Quiz localStorage reset due to version change.");
+}
+
+function checkQuizVersion() {
+  if (!currentUser) return;
+  const savedVersion = localStorage.getItem(getVersionKey(currentUser));
+  if (savedVersion !== QUIZ_VERSION) {
+    resetQuizData();
+  }
+}
+
+// ----------------- SCORE DISPLAY -----------------
+let correctScoreElement, wrongScoreElement, totalScoreElement;
+
+function initScoreElements() {
+  correctScoreElement = document.getElementById("correct-score");
+  wrongScoreElement = document.getElementById("wrong-score");
+  totalScoreElement = document.getElementById("total-score");
+}
+
+let score = {
+  correct: 0,
+  wrong: 0,
+  total: 0, // total words in CSV
+};
+
+function updateScoreboard() {
+  if (!correctScoreElement || !wrongScoreElement || !totalScoreElement) return;
+  correctScoreElement.textContent = score.correct;
+  wrongScoreElement.textContent = score.wrong;
+  totalScoreElement.textContent = score.total;
 }
 
 // ----------------- PROGRESS & SCORE -----------------
@@ -38,32 +83,16 @@ function loadScore(type) {
   return !isNaN(saved) ? saved : 0;
 }
 
-function saveShuffledOrder(order) {
-  if (!currentUser) return;
-  localStorage.setItem(getShuffledKey(currentUser), JSON.stringify(order));
-}
-
-function loadShuffledOrder() {
-  if (!currentUser) return null;
-  const saved = localStorage.getItem(getShuffledKey(currentUser));
-  return saved ? JSON.parse(saved) : null;
-}
-
-// ----------------- SCORE DISPLAY -----------------
-const correctScoreElement = document.getElementById("correct-score");
-const wrongScoreElement = document.getElementById("wrong-score");
-
-let score = {
-  correct: loadScore("Correct"),
-  wrong: loadScore("Wrong"),
-};
-
-function updateScoreboard() {
-  correctScoreElement && (correctScoreElement.textContent = score.correct);
-  wrongScoreElement && (wrongScoreElement.textContent = score.wrong);
+// ----------------- UTILS -----------------
+function splitFurigana(furiganaStr) {
+  if (!furiganaStr) return [];
+  return String(furiganaStr).split(".");
 }
 
 // ----------------- LOAD QUIZ WORDS -----------------
+let words = [];
+let currentWordIndex = 0;
+
 async function loadWords() {
   try {
     const csvPath = window.location.pathname.includes("word-details")
@@ -79,14 +108,12 @@ async function loadWords() {
       .split(",")
       .map((h) => h.replace(/"/g, "").trim());
 
-    const allWords = lines.map((line) => {
+    words = lines.map((line) => {
       const values = line
         .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
         .map((v) => v.replace(/^"|"$/g, "").trim());
-
       const obj = {};
-      headers.forEach((header, i) => (obj[header] = values[i]));
-
+      headers.forEach((h, i) => (obj[h] = values[i]));
       return {
         kanji: obj["Question"],
         reading: obj["Answer"].split(","),
@@ -98,30 +125,12 @@ async function loadWords() {
       };
     });
 
-    let shuffled = loadShuffledOrder();
-    if (!shuffled) {
-      shuffled = shuffleArray([...Array(allWords.length).keys()]);
-      saveShuffledOrder(shuffled);
-    }
-
-    words = shuffled.map((i) => allWords[i]);
+    // Set total words count
+    score.total = words.length;
+    updateScoreboard();
   } catch (err) {
     console.error("Failed to load words from CSV:", err);
   }
-}
-
-// ----------------- UTILS -----------------
-function splitFurigana(furiganaStr) {
-  if (!furiganaStr) return [];
-  return String(furiganaStr).split(".");
-}
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
 }
 
 // ----------------- RENDER WORD -----------------
@@ -131,7 +140,6 @@ function renderWord() {
 
   const kanjiContainer = document.querySelector(".kanji-container");
   const detailsBox = document.querySelector(".details-box");
-  const progressText = document.querySelector("#progressBadge span");
 
   if (kanjiContainer) {
     kanjiContainer.innerHTML = "";
@@ -150,8 +158,7 @@ function renderWord() {
     });
   }
 
-  adjustKanjiLayout();
-
+  // ----------------- word-details.html support -----------------
   if (detailsBox) {
     const kanjiTitle = detailsBox.querySelector(".kanji-title");
     const meaningEl = detailsBox.querySelector(".meaning");
@@ -167,11 +174,6 @@ function renderWord() {
     if (translationEl)
       translationEl.textContent = `翻訳：${word.translation || "空"}`;
   }
-
-  if (progressText)
-    progressText.textContent = `進行度: ${Math.floor(
-      (currentWordIndex / words.length) * 100
-    )}%`;
 
   adjustKanjiLayout();
 }
@@ -227,25 +229,12 @@ function checkAnswer() {
 }
 
 // ----------------- NEXT WORD -----------------
-function nextWord(correct = true) {
-  const currentIndex = currentWordIndex;
-
-  if (correct) {
-    words.splice(currentWordIndex, 1);
-    const shuffled = loadShuffledOrder();
-    shuffled.splice(currentIndex, 1);
-    saveShuffledOrder(shuffled);
-  } else {
-    score.wrong++;
-    saveScore("Wrong", score.wrong);
-  }
-
-  if (words.length === 0) {
+function nextWord() {
+  currentWordIndex++;
+  if (currentWordIndex >= words.length) {
     alert("全ての単語を完了しました！");
-    return;
+    currentWordIndex = 0; // restart
   }
-
-  currentWordIndex = currentWordIndex % words.length;
 
   renderWord();
   updateScoreboard();
@@ -253,18 +242,21 @@ function nextWord(correct = true) {
 }
 
 // ----------------- INITIALIZE QUIZ -----------------
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
+  checkQuizVersion();
+
+  initScoreElements();
+
+  score.correct = loadScore("Correct");
+  score.wrong = loadScore("Wrong");
+
+  await loadWords();
+
+  currentWordIndex = loadProgress();
+  renderWord();
+  updateScoreboard();
+
   const kanjiContainer = document.querySelector(".kanji-container");
-
-  loadWords().then(() => {
-    currentWordIndex = loadProgress();
-    score.correct = loadScore("Correct");
-    score.wrong = loadScore("Wrong");
-    renderWord();
-    updateScoreboard();
-    adjustKanjiLayout();
-  });
-
   if (kanjiContainer) {
     const observer = new MutationObserver(adjustKanjiLayout);
     observer.observe(kanjiContainer, { childList: true, subtree: true });
