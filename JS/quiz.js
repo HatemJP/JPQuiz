@@ -193,18 +193,27 @@ function normalizeRomaji(str) {
 // ----------------- ANSWER CHECK -----------------
 function checkAnswer() {
   const inputField = document.querySelector("input");
-  const input = (inputField?.value || "").trim().toLowerCase();
+  if (!inputField) return;
+
+  const input = (inputField.value || "").trim();
+  if (input === "") {
+    alert("読み方を入力してください！");
+    return; // Stop here, don't update scoreboard
+  }
+
   const word = words[currentWordIndex];
   if (!word) return;
 
   const correctReading = word.reading.join("").toLowerCase();
   const correctRomaji = normalizeRomaji(word.romaji);
-  if (!inputField) return;
   const normalizedInput = normalizeRomaji(input);
   const kanjiCard = document.querySelector(".kanji-card");
   if (!kanjiCard) return;
 
-  if (input === correctReading || normalizedInput === correctRomaji) {
+  if (
+    input.toLowerCase() === correctReading ||
+    normalizedInput === correctRomaji
+  ) {
     inputField.value = "";
     score.correct++;
     saveScore("Correct", score.correct);
@@ -260,5 +269,19 @@ window.addEventListener("DOMContentLoaded", async () => {
   if (kanjiContainer) {
     const observer = new MutationObserver(adjustKanjiLayout);
     observer.observe(kanjiContainer, { childList: true, subtree: true });
+  }
+
+  // ----------------- BUTTON & ENTER KEY -----------------
+  const answerButton = document.querySelector(".answer-button");
+  if (answerButton) answerButton.addEventListener("click", checkAnswer);
+
+  const inputField = document.querySelector("input");
+  if (inputField) {
+    inputField.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault(); // Prevent double trigger
+        checkAnswer();
+      }
+    });
   }
 });

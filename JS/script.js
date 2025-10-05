@@ -161,17 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ----------------- INITIAL THEME LOAD -----------------
 document.addEventListener("DOMContentLoaded", () => {
-  const savedTheme =
-    localStorage.getItem("kanjiQuestTheme") || "theme-tsukizumi";
+  const savedTheme = localStorage.getItem(THEME_KEY) || "theme-tsukizumi";
   document.body.classList.add(savedTheme);
-});
-
-window.addEventListener("DOMContentLoaded", () => {
-  const body = document.body;
-  const savedTheme = localStorage.getItem(THEME_KEY);
-  if (savedTheme && !body.classList.contains(savedTheme)) {
-    body.classList.add(savedTheme);
-  }
 
   document.querySelectorAll(".theme-option").forEach((btn) => {
     btn.classList.toggle("selected", btn.dataset.theme === savedTheme);
@@ -210,36 +201,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // ----------------- JISHO BUTTON -----------------
   const jishoButton = document.querySelector(".jisho-button");
-  const answerButton = document.querySelector(".answer-button");
-
-  const isDetailPage = window.location.pathname.includes("word-details");
-  const isIndexPage =
-    window.location.pathname.includes("index.html") ||
-    window.location.pathname.endsWith("/");
 
   jishoButton?.addEventListener("click", () => {
-    if (isIndexPage) {
-      const kanjiChars = [...document.querySelectorAll(".kanji-char")]
-        .map((el) => el.childNodes[0].nodeValue.trim())
-        .join("");
-      const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
-        kanjiChars
-      )}`;
-      window.open(url, "_blank");
-      jishoButton.blur();
-    }
+    const kanjiChars = [...document.querySelectorAll(".kanji-char")]
+      .map((el) => el.childNodes[0].nodeValue.trim())
+      .join("");
+    const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
+      kanjiChars
+    )}`;
+    window.open(url, "_blank");
+    jishoButton.blur();
   });
 
-  answerButton?.addEventListener("click", () => {
-    checkAnswer();
-    answerButton.blur();
-  });
-
-  const inputField = document.querySelector("input");
-  inputField?.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") checkAnswer();
-  });
-
+  // ----------------- THEME MODAL CLOSE -----------------
   themeModal?.addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closeThemeModal();
   });
