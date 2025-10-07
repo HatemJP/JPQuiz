@@ -1,3 +1,10 @@
+const currentUser = localStorage.getItem("current-user");
+
+if (!currentUser) {
+  console.log("Redirecting to login.html");
+  window.location.href = "HTML/login.html";
+}
+
 // ----------------- CONSTANTS -----------------
 const THEME_KEY = "kanjiQuestTheme";
 let currentAnimationState = 0;
@@ -164,34 +171,63 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ----------------- HINT BUTTON -----------------
+  // inside DOMContentLoaded (replace your existing hint handler)
   let currentHintIndex = 0;
+  let lastKanjiKey = "";
+
   const hintButton = document.querySelector(".hint-button");
 
-  hintButton?.addEventListener("click", () => {
-    const furiganaElements = [...document.querySelectorAll(".kanji-char")]
-      .filter((ruby) => ruby.querySelector("rt")?.textContent)
-      .map((ruby) => ruby.querySelector("rt"))
-      .filter((rt) => /[\u4E00-\u9FFF]/.test(rt.parentElement.textContent));
+  hintButton?.addEventListener("mousedown", (e) => {
+    e.preventDefault();
 
+    // Build a simple key representing the currently shown kanji sequence
+    const kanjiChars = [...document.querySelectorAll(".kanji-char")]
+      .map((el) => {
+        // prefer the raw text node if present, otherwise fallback to textContent
+        return el.childNodes[0] && el.childNodes[0].nodeValue
+          ? el.childNodes[0].nodeValue.trim()
+          : el.textContent.trim();
+      })
+      .join("");
+
+    // Collect rt elements that actually have furigana text and are above kanji
+    const furiganaElements = [...document.querySelectorAll(".kanji-char")]
+      .map((ruby) => ruby.querySelector("rt"))
+      .filter(
+        (rt) =>
+          rt &&
+          rt.textContent &&
+          /[\u4E00-\u9FFF]/.test(rt.parentElement.textContent)
+      );
+
+    // If the shown kanji changed since last time, reset hint state so we start from the first furigana
+    if (kanjiChars !== lastKanjiKey) {
+      furiganaElements.forEach((el) => {
+        el.classList.add("hidden");
+        el.classList.remove("drop-in");
+      });
+      currentHintIndex = 0;
+      lastKanjiKey = kanjiChars;
+    }
+
+    // Cycle behavior (same as before) — if we've exhausted hints, hide and reset
     if (currentHintIndex >= furiganaElements.length) {
       furiganaElements.forEach((el) => {
         el.classList.add("hidden");
         el.classList.remove("drop-in");
       });
       currentHintIndex = 0;
-    } else {
-      const el = furiganaElements[currentHintIndex];
-      el.classList.remove("hidden");
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.classList.add("drop-in");
-        });
-      });
-      currentHintIndex++;
+      return;
     }
 
-    const inputField = document.querySelector("input");
-    if (inputField && document.activeElement !== inputField) inputField.focus();
+    // Reveal the next furigana immediately (force reflow so animation runs on first click)
+    const el = furiganaElements[currentHintIndex];
+    if (!el) return;
+    el.classList.remove("hidden");
+    el.classList.remove("drop-in"); // reset (safe)
+    void el.offsetWidth; // force reflow so animation will start
+    el.classList.add("drop-in");
+    currentHintIndex++;
   });
 
   // ----------------- JISHO BUTTON -----------------
@@ -207,6 +243,25 @@ document.addEventListener("DOMContentLoaded", () => {
     window.open(url, "_blank");
     jishoButton.blur();
   });
+
+  // ----------------- VOCAB WORD CLICK (only on word-details.html) -----------------
+  if (window.location.pathname.includes("word-details.html")) {
+    const vocabContainer = document.querySelector(".vocab-words");
+    if (vocabContainer) {
+      vocabContainer.addEventListener("click", (event) => {
+        const wordEl = event.target.closest(".vocab-word");
+        if (!wordEl) return;
+
+        const wordText = wordEl.textContent.trim();
+        if (wordText) {
+          const url = `https://jisho.hlorenzi.com/search/${encodeURIComponent(
+            wordText
+          )}`;
+          window.open(url, "_blank");
+        }
+      });
+    }
+  }
 
   // ----------------- THEME MODAL CLOSE -----------------
   themeModal?.addEventListener("click", (e) => {

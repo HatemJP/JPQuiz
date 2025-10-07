@@ -22,13 +22,17 @@
       font-size: 3.5rem !important;
     }
 
+    ruby.kanji-char rt {
+      visibility: visible;
+    }
+
     .kanji-container {
       cursor: pointer;
-      margin-top: -1rem;
+      margin-top: -0.5rem;
     }
 
     .container {
-      margin: 6rem auto;
+      margin: 7rem auto;
       text-align: center;
       max-width: 800px;
       padding: 3rem 2rem;
@@ -48,62 +52,6 @@
       transform: translateY(-6px);
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35),
         0 6px 16px var(--card-shadow-color);
-    }
-
-    .progress-badge {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-color);
-      padding: 0.8rem 2rem;
-      border-radius: 999px;
-      margin: 0.5rem auto 2rem auto;
-      min-width: 180px;
-      background: var(--card-bg);
-      overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 4px var(--card-gradient-color);
-    }
-
-    .progress-fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      border-radius: 999px;
-      z-index: 1;
-      transition: width 1.5s ease-in-out;
-    }
-
-    body.theme-sakura .progress-fill {
-      background: linear-gradient(90deg, rgba(244, 168, 177, 0.2), rgba(217, 123, 130, 0.2));
-    }
-
-    body.theme-blue .progress-fill {
-      background: linear-gradient(90deg, rgba(96, 165, 250, 0.15), rgba(56, 189, 248, 0.15));
-    }
-
-    body.theme-tsukizumi .progress-fill {
-      background: var(--secondary-color);
-    }
-
-    .progress-badge span {
-      position: relative;
-      z-index: 2;
-      white-space: nowrap;
-    }
-
-    .progress-badge::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 999px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.05), 0 0 40px rgba(0, 0, 0, 0.05);
-      z-index: 0;
     }
 
     .details-box {
@@ -126,21 +74,83 @@
       color: var(--primary-color);
     }
 
-    .details-box .meaning, .details-box .reading {
-      color: var(--hint-color);
-    }
-
+    .details-box .meaning,
     .details-box .example,
     .details-box .translation {
-      margin-top: 1.5rem;
+      margin-bottom: 1.2rem;
       font-style: italic;
       color: var(--secondary-color);
     }
 
-    .reading,
-    .definition,
-    .example {
-      margin-bottom: 1.2rem;
+    .details-box .meaning {
+      margin-top: -0.5rem;
+      color: var(--hint-color);
+    }
+
+    .vocab-words {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .vocab-word {
+      position: relative;
+      background: var(--vocab-bg, var(--primary-color));
+      color: var(--vocab-color, var(--text-color));
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 12px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease, opacity 0.6s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      animation: fadeIn 0.6s forwards;
+    }
+
+    .vocab-word:hover {
+      transform: scale(1.08) translateY(-2px);
+      background: var(--vocab-hover-bg, var(--secondary-color));
+      color: var(--vocab-hover-color, #fff);
+      box-shadow: var(--vocab-hover-shadow, 0 6px 12px rgba(0, 0, 0, 0.25));
+    }
+
+    .vocab-word::after {
+      content: attr(data-meaning);
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-bg);
+      color: var(--text-color);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+
+    .vocab-word:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    .vocab-word:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .vocab-word:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .vocab-word:nth-child(3) {
+      animation-delay: 0.3s;
     }
   </style>
 </head>
@@ -154,45 +164,16 @@
   </header>
 
   <div class="container">
-    <div class="kanji-container">
-      <!-- Kanji + furigana will be injected here -->
-    </div>
-
-    <div class="progress-badge" id="progressBadge">
-      <div class="progress-fill" id="progressFill"></div>
-      <span>進行度: 0%</span>
-    </div>
+    <div class="kanji-container"></div>
+    <br>
 
     <div class="details-box">
-      <p class="reading"></p>
       <p class="meaning"></p>
       <p class="example"></p>
       <p class="translation"></p>
+      <div class="vocab-words"></div>
     </div>
   </div>
-
-  <script>
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.querySelector('#progressBadge span');
-
-    const userProgress = 90; // target percent
-    let currentProgress = 0;
-    const duration = 1500;
-    const intervalTime = 15;
-    const step = (userProgress / (duration / intervalTime));
-
-    progressFill.style.transition = 'none';
-
-    const progressInterval = setInterval(() => {
-      currentProgress += step;
-      if (currentProgress >= userProgress) {
-        currentProgress = userProgress;
-        clearInterval(progressInterval);
-      }
-      progressFill.style.width = `${currentProgress}%`;
-      progressText.textContent = `進行度: ${Math.floor(currentProgress)}%`;
-    }, intervalTime);
-  </script>
 </body>
 
 </html>

@@ -153,6 +153,9 @@ async function loadWords() {
         example: obj["Example"],
         translation: obj["Translation"],
         romaji: wanakana.toRomaji(obj["Answer"].replace(/,/g, "")),
+        vocabWords: obj["VocabWords"]
+          ? obj["VocabWords"].split(",").map((w) => w.trim())
+          : [],
       };
     });
 
@@ -181,7 +184,7 @@ function renderWord() {
     [...word.kanji].forEach((char, i) => {
       const ruby = document.createElement("ruby");
       ruby.className = "kanji-char";
-      ruby.innerHTML = `${char}<rt class="furigana hidden">${
+      ruby.innerHTML = `${char}<rt class="furigana">${
         furiganaArray[i] || ""
       }</rt>`;
       kanjiContainer.appendChild(ruby);
@@ -189,12 +192,28 @@ function renderWord() {
   }
 
   if (detailsBox) {
-    const readingEl = detailsBox.querySelector(".reading");
     const meaningEl = detailsBox.querySelector(".meaning");
     const exampleEl = detailsBox.querySelector(".example");
     const translationEl = detailsBox.querySelector(".translation");
+    const vocabContainer = detailsBox.querySelector(".vocab-words");
 
-    if (readingEl) readingEl.textContent = `読み方：${word.reading.join("")}`;
+    if (vocabContainer) {
+      vocabContainer.innerHTML = "";
+      if (word.vocabWords && word.vocabWords.length > 0) {
+        const limitedWords = word.vocabWords.slice(0, 5); // limit to 5 words max
+        limitedWords.forEach((vw, i) => {
+          const div = document.createElement("div");
+          div.className = "vocab-word";
+          div.textContent = vw;
+          div.style.animationDelay = `${0.1 * (i + 1)}s`;
+          vocabContainer.appendChild(div);
+        });
+      } else {
+        vocabContainer.innerHTML =
+          '<p style="color: var(--muted); font-style: italic;">関連語なし</p>';
+      }
+    }
+
     if (meaningEl) meaningEl.textContent = `意味：${word.meaning || "空"}`;
     if (exampleEl) exampleEl.textContent = `例文：${word.example || "空"}`;
     if (translationEl)

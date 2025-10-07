@@ -13,11 +13,11 @@
     <link rel="stylesheet" href="../CSS/style.css" />
     <link rel="stylesheet" href="../CSS/themes.css" />
     <link rel="stylesheet" href="../CSS/animation.css" />
-    <script src="../JS/script.js" defer></script>
+    <script src="../JS/script.js"></script>
 
     <style>
         .container {
-            margin: 5rem auto;
+            margin: 3rem auto;
             text-align: center;
             max-width: 600px;
             padding: 2rem;
@@ -226,7 +226,6 @@
 
     <div class="container">
         <h2 class="settings-title">プロフィール設定</h2>
-
         <!-- Profile Picture -->
         <div class="profile-pic-wrapper" id="profile-picture-wrapper">
             <img id="profile-picture" src="../Assets/Gender/man.png" alt="プロフィール画像">
@@ -239,7 +238,7 @@
         </div>
 
         <!-- Gender Selection -->
-        <div class="setting-group">
+        <div class="setting-group" style="margin-top: -20px;">
             <label class="setting-label" for="gender-select">性別</label>
             <div class="select-wrapper">
                 <select id="gender-select">
@@ -254,21 +253,13 @@
             <label class="setting-label">アバター選択</label>
             <div class="avatar-selection" id="avatar-selection"></div>
         </div>
-
-        <!-- Save Button -->
-        <div class="setting-group" style="text-align: center; margin-top: 2rem;">
-            <button class="save-btn" id="save-btn">保存</button>
-        </div>
     </div>
 
     <script>
-        const currentUser = localStorage.getItem("current-user");
-
         const profilePic = document.getElementById("profile-picture");
         const nicknameInput = document.getElementById("nickname-input");
         const genderSelect = document.getElementById("gender-select");
         const avatarSelection = document.getElementById("avatar-selection");
-        const saveBtn = document.getElementById("save-btn");
 
         // Restore nickname and gender
         const savedNickname = localStorage.getItem(`nickname_${currentUser}`);
@@ -342,18 +333,6 @@
         // Nickname input
         nicknameInput.addEventListener("input", (e) => {
             localStorage.setItem(`nickname_${currentUser}`, e.target.value);
-        });
-
-        // Save button
-        saveBtn.addEventListener("click", () => {
-            const nickname = nicknameInput.value.trim();
-            if (!nickname) {
-                alert("ニックネームを入力してください。");
-                return;
-            }
-            localStorage.setItem(`nickname_${currentUser}`, nickname);
-            localStorage.setItem(`gender_${currentUser}`, currentGender);
-            alert("プロフィールが保存されました！");
         });
     </script>
 </body>

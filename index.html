@@ -225,16 +225,15 @@
     <div class="kanji-card">
       <div class="kanji-container">
         <div class="ruby-wrapper">
-          <!-- Kanji + Furigana rendered dynamically -->
         </div>
       </div>
     </div>
 
     <input type="text" placeholder="読み方を入力..." />
     <div class="controls">
-      <button class="hint-button">ヒント</button>
-      <button class="jisho-button">辞書</button>
-      <button class="answer-button">答える</button>
+      <button type="button" class="hint-button">ヒント</button>
+      <button type="button" class="jisho-button">辞書</button>
+      <button type="button" class="answer-button">答える</button>
     </div>
   </div>
 
@@ -254,6 +253,12 @@
         </button>
         <button class="theme-option" id="orange" data-theme="theme-orange" onclick="setTheme('theme-orange')">
           <div class="theme-swatch orange"></div> 橙
+        </button>
+        <button class="theme-option" id="violet-night" data-theme="theme-violet-night" onclick="setTheme('theme-violet-night')">
+          <div class="theme-swatch violet-night"></div> 紫夜
+        </button>
+        <button class="theme-option" id="celestial" data-theme="theme-celestial" onclick="setTheme('theme-celestial')">
+          <div class="theme-swatch celestial"></div> 天宙
         </button>
       </div>
     </div>
@@ -287,13 +292,6 @@
         showNotification(`${name}ボタンの機能は未だ実装されていません。`);
       });
     });
-
-    const currentUser = localStorage.getItem("current-user");
-
-    if (!currentUser) {
-      console.log("Redirecting to login.html");
-      window.location.href = "HTML/login.html";
-    }
   </script>
 </body>
 

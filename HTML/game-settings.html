@@ -13,15 +13,14 @@
     <link rel="stylesheet" href="../CSS/style.css" />
     <link rel="stylesheet" href="../CSS/themes.css" />
     <link rel="stylesheet" href="../CSS/animation.css" />
-    <script src="../JS/script.js" defer></script>
+    <script src="../JS/script.js"></script>
 
     <style>
-        /* Container styling (glow aesthetic) */
         .container {
             margin: 5rem auto;
             text-align: center;
             max-width: 800px;
-            padding: 1.5rem 1.5rem;
+            padding: 1.5rem;
             border-radius: 20px;
             background: linear-gradient(135deg, var(--card-gradient-color), var(--card-bg));
             border: 1px solid var(--card-border-color);
@@ -32,11 +31,6 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
-        }
-
-        .setting-group:last-child,
-        .footer-note {
-            margin-bottom: 1rem;
         }
 
         .container::before {
@@ -55,7 +49,6 @@
                 0 0 25px rgba(255, 255, 255, 0.06);
         }
 
-        /* Title */
         .settings-title {
             font-size: 1.8rem;
             font-weight: 700;
@@ -63,15 +56,17 @@
             color: var(--primary-color);
             position: relative;
             z-index: 2;
-            text-shadow: 0 0 10px rgba(239, 131, 84, 0.25);
         }
 
-        /* Setting groups */
         .setting-group {
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             text-align: left;
             position: relative;
             z-index: 2;
+        }
+
+        .setting-group:last-child {
+            margin-bottom: 0;
         }
 
         .setting-label {
@@ -82,7 +77,6 @@
             margin-bottom: 0.6rem;
         }
 
-        /* Dropdown wrapper with arrow */
         .select-wrapper {
             position: relative;
         }
@@ -99,7 +93,6 @@
             z-index: 2;
         }
 
-        /* Styled select */
         select {
             width: 100%;
             padding: 0.8rem 1rem;
@@ -111,10 +104,6 @@
             transition: all 0.3s ease;
             box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.25);
             appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            z-index: 2;
-            position: relative;
             cursor: pointer;
         }
 
@@ -129,7 +118,6 @@
             color: var(--text-color);
         }
 
-        /* Buttons (Reset & Save) */
         .reset-btn {
             display: inline-block;
             background-color: var(--button-bg);
@@ -151,10 +139,6 @@
             background-color: var(--secondary-color);
             color: #fff;
         }
-
-        #custom-file {
-            margin-top: 0.5rem;
-        }
     </style>
 </head>
 
@@ -175,15 +159,8 @@
             <div class="select-wrapper">
                 <select id="listSource">
                     <option value="default">普通</option>
-                    <option value="custom">自作</option>
                 </select>
             </div>
-        </div>
-
-        <!-- Upload Section (hidden initially) -->
-        <div class="setting-group" id="customUploadGroup" style="display: none;">
-            <label class="setting-label" for="custom-file">自作一覧アップロード</label>
-            <input type="file" id="custom-file" accept=".txt,.tsv,.csv" />
         </div>
 
         <!-- Reset & Save Buttons -->
@@ -194,56 +171,22 @@
     </div>
 
     <script>
-        const currentUser = localStorage.getItem("currentUser");
-
-        // ----------------- LIST SOURCE -----------------
         const listSourceDropdown = document.getElementById("listSource");
-        const customUploadGroup = document.getElementById("customUploadGroup");
+        listSourceDropdown.value = "default";
 
-        const savedSource = localStorage.getItem(`listSource_${currentUser}`) || "default";
-        listSourceDropdown.value = savedSource;
-        customUploadGroup.style.display = savedSource === "custom" ? "block" : "none";
-
-        listSourceDropdown.addEventListener("change", (e) => {
-            const value = e.target.value;
-            localStorage.setItem(`listSource_${currentUser}`, value);
-            customUploadGroup.style.display = value === "custom" ? "block" : "none";
-        });
-
-        // ----------------- CUSTOM FILE UPLOAD -----------------
-        document.getElementById("custom-file").addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const text = event.target.result;
-                localStorage.setItem(`customQuizFile_${currentUser}`, text);
-                alert("カスタム単語リストがアップロードされました！");
-            };
-            reader.readAsText(file, "UTF-8");
-        });
-
-        // ----------------- SAVE BUTTON -----------------
         document.getElementById("saveSettingsBtn").addEventListener("click", () => {
             localStorage.setItem(`listSource_${currentUser}`, listSourceDropdown.value);
             alert("設定が保存されました！");
         });
 
-        // ----------------- RESET PROGRESS -----------------
         function resetAllProgress() {
             if (!confirm("全てのスコアと進行状況が削除され、最初の単語から再開します。宜しいですか？")) return;
 
             if (currentUser) {
-                const progressKey = `kanjiQuestProgress_${currentUser}`;
-                const scoreCorrectKey = `kanjiScore_Correct_${currentUser}`;
-                const scoreWrongKey = `kanjiScore_Wrong_${currentUser}`;
+                localStorage.removeItem(`kanjiQuestProgress_${currentUser}`);
+                localStorage.removeItem(`kanjiScore_Correct_${currentUser}`);
+                localStorage.removeItem(`kanjiScore_Wrong_${currentUser}`);
 
-                localStorage.removeItem(progressKey);
-                localStorage.removeItem(scoreCorrectKey);
-                localStorage.removeItem(scoreWrongKey);
-
-                // Reset in-memory scores (calls quiz.js function)
                 if (window.resetQuizScores) window.resetQuizScores();
             }
 

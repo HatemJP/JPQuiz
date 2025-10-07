@@ -301,7 +301,9 @@ body.theme-blue .settings-option:hover {
 body.theme-tsukizumi .container,
 body.theme-uminami .container,
 body.theme-mithril .container,
-body.theme-orange .container {
+body.theme-orange .container,
+body.theme-violet-night .container,
+body.theme-celestial .container {
     background-image: none;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(var(--accent-color-rgb, 163, 210, 202), 0.15);

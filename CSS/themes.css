@@ -150,6 +150,75 @@ body.theme-orange {
     --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
+/* Violet Night Dark Theme */
+body.theme-violet-night {
+    /* Basic */
+    --bg-color: #0a0a12;
+    --card-bg: #151526;
+    --text-color: #e0d8ff;
+    --primary-color: #9b5de5;
+    --secondary-color: #7a3fd6;
+    --accent-color: #b06aff;
+    --hint-color: #c9a7ff;
+    --muted: #6d5d7c;
+
+    /* Input */
+    --input-bg: #1b1b33;
+    --input-border: #3b3b5c;
+    --input-border-focus: rgba(155, 93, 229, 0.4);
+    --input-box-shadow: rgba(155, 93, 229, 0.3);
+    --placeholder-color: #aaa0c6;
+
+    /* Button */
+    --button-bg: #222244;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #0a0a12;
+
+    /* Card */
+    --card-gradient-color: rgba(155, 93, 229, 0.05);
+    --card-border-color: rgba(155, 93, 229, 0.1);
+    --card-shadow-color: rgba(155, 93, 229, 0.12);
+
+    /* Vocab Word */
+    --vocab-bg: var(--primary-color);
+    --vocab-color: #fff;
+    --vocab-hover-bg: var(--accent-color);
+    --vocab-hover-color: #fff;
+    --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Forest Twilight Dark Theme */
+body.theme-celestial {
+    --bg-color: #0b0c1c;
+    --card-bg: #141528;
+    --text-color: #e2e6f0;
+    --primary-color: #5fc3ff;
+    --secondary-color: #3a95d9;
+    --accent-color: #7fd0ff;
+    --hint-color: #99ccff;
+    --muted: #6c7180;
+
+    --input-bg: #1a1c2e;
+    --input-border: #2f3a55;
+    --input-border-focus: rgba(95, 195, 255, 0.4);
+    --input-box-shadow: rgba(95, 195, 255, 0.3);
+    --placeholder-color: #a0a8c0;
+
+    --button-bg: #1f2233;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #0b0c1c;
+
+    --card-gradient-color: rgba(95, 195, 255, 0.05);
+    --card-border-color: rgba(95, 195, 255, 0.1);
+    --card-shadow-color: rgba(95, 195, 255, 0.1);
+
+    --vocab-bg: var(--primary-color);
+    --vocab-color: #fff;
+    --vocab-hover-bg: var(--accent-color);
+    --vocab-hover-color: #fff;
+    --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
 .theme-modal {
     display: none;
     position: fixed;
@@ -205,7 +274,11 @@ body.theme-orange {
 body.theme-tsukizumi .theme-option,
 body.theme-uminami .theme-option,
 body.theme-mithril .theme-option,
-body.theme-orange .theme-option {
+body.theme-orange .theme-option,
+body.theme-sakura .theme-option,
+body.theme-forest .theme-option,
+body.theme-violet-night .theme-option,
+body.theme-celestial .theme-option {
     background: var(--card-bg);
     color: var(--text-color);
     box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
@@ -215,7 +288,11 @@ body.theme-orange .theme-option {
 body.theme-tsukizumi .theme-option:hover,
 body.theme-uminami .theme-option:hover,
 body.theme-mithril .theme-option:hover,
-body.theme-orange .theme-option:hover {
+body.theme-orange .theme-option:hover,
+body.theme-sakura .theme-option:hover,
+body.theme-forest .theme-option:hover,
+body.theme-violet-night .theme-option:hover,
+body.theme-celestial .theme-option:hover {
     box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
     transform: translateY(-5px);
 }
@@ -251,4 +328,12 @@ body.theme-orange .theme-option:hover {
 
 .theme-swatch.orange {
     background: linear-gradient(135deg, #000000, #ef8354);
+}
+
+.theme-swatch.violet-night {
+    background: linear-gradient(135deg, #000000, #9b5de5);
+}
+
+.theme-swatch.celestial {
+    background: linear-gradient(135deg, #000000, #99ccff);
 }
