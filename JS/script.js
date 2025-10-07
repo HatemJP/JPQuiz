@@ -2,7 +2,7 @@ const currentUser = localStorage.getItem("current-user");
 
 if (!currentUser) {
   console.log("Redirecting to login.html");
-  window.location.href = "HTML/login.html";
+  window.location.href = "login.html";
 }
 
 // ----------------- CONSTANTS -----------------
