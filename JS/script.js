@@ -1,9 +1,9 @@
 const currentUser = localStorage.getItem("current-user");
 
 if (!currentUser) {
-  window.location.href = "../login.html";
+  window.location.href = "login.html";
 } else {
-  window.location.href = "../index.html";
+  window.location.href = "index.html";
 }
 
 // ----------------- CONSTANTS -----------------
