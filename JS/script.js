@@ -1,9 +1,7 @@
 const currentUser = localStorage.getItem("current-user");
 
 if (!currentUser) {
-  window.location.href = "login.html";
-} else {
-  window.location.href = "index.html";
+  window.location.href = "../HTML/login.html";
 }
 
 // ----------------- CONSTANTS -----------------
@@ -21,11 +19,6 @@ const wandBtn = document.getElementById("wand-action");
 function navigateWithTransition(url) {
   document.body.classList.add("transition-out");
   setTimeout(() => (window.location.href = url), 400);
-}
-
-function navigateTo(url) {
-  if (url === "index.html") window.location.href = "../index.html";
-  else window.location.href = `HTML/${url}`;
 }
 
 // ----------------- MAIN ACTION BUTTON -----------------

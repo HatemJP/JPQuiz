@@ -172,8 +172,6 @@ const checkCurrentUser = () => {
   if (!currentUser || currentUser === "null" || currentUser === "undefined") {
     if (typeof navigateWithTransition === "function") {
       navigateWithTransition("login.html");
-    } else {
-      window.location.href = "login.html";
     }
     return null;
   }
@@ -201,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }さん！ログイン成功しました。`
         );
         loginForm.reset();
-        window.location.href = "../HTML/quiz.html";
+        window.location.href = "../HTML/index.html";
       } else {
         alert("ユーザー名/メールまたはパスワードが間違っています。");
       }
