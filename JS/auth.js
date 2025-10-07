@@ -171,9 +171,9 @@ const checkCurrentUser = () => {
   const currentUser = localStorage.getItem("current-user");
   if (!currentUser || currentUser === "null" || currentUser === "undefined") {
     if (typeof navigateWithTransition === "function") {
-      navigateWithTransition("HTML/login.html");
+      navigateWithTransition("login.html");
     } else {
-      window.location.href = "HTML/login.html";
+      window.location.href = "login.html";
     }
     return null;
   }
@@ -234,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Auto-login after registration
       const result = await loginUser(username, password);
       if (result.success) {
-        window.location.href = "../HTML/quiz.html";
+        window.location.href = "../HTML/index.html";
       }
     } catch (err) {
       if (err.name === "ConstraintError") {
