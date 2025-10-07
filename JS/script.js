@@ -1,8 +1,9 @@
 const currentUser = localStorage.getItem("current-user");
 
 if (!currentUser) {
-  console.log("Redirecting to login.html");
-  window.location.href = "login.html";
+  window.location.href = "../login.html";
+} else {
+  window.location.href = "../index.html";
 }
 
 // ----------------- CONSTANTS -----------------
@@ -149,17 +150,17 @@ toggleBtn?.addEventListener("click", toggleAnimation);
 wandBtn?.addEventListener("click", toggleAnimation);
 
 // ----------------- LOGOUT -----------------
-document.addEventListener("DOMContentLoaded", () => {
+function logout(url) {
   const logoutAction = document.getElementById("logout-action");
   if (logoutAction) {
     logoutAction.addEventListener("click", () => {
       localStorage.removeItem("currentUser");
       sessionStorage.clear();
       showNotification("ログアウトしました。");
-      navigateWithTransition("../HTML/login.html");
+      navigateWithTransition(url);
     });
   }
-});
+}
 
 // ----------------- INITIAL THEME LOAD -----------------
 document.addEventListener("DOMContentLoaded", () => {

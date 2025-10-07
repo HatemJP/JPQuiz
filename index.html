@@ -198,7 +198,7 @@
             data-name="設定">
             <i class="fas fa-sliders-h"></i>
           </button>
-          <button class="sub-action implemented" id="logout-action" data-name="ログアウト">
+          <button class="sub-action implemented" id="logout-action" onclick="logout('login.html')" data-name="ログアウト">
             <i class="fas fa-right-from-bracket"></i>
           </button>
         </div>
@@ -254,7 +254,8 @@
         <button class="theme-option" id="orange" data-theme="theme-orange" onclick="setTheme('theme-orange')">
           <div class="theme-swatch orange"></div> 橙
         </button>
-        <button class="theme-option" id="violet-night" data-theme="theme-violet-night" onclick="setTheme('theme-violet-night')">
+        <button class="theme-option" id="violet-night" data-theme="theme-violet-night"
+          onclick="setTheme('theme-violet-night')">
           <div class="theme-swatch violet-night"></div> 紫夜
         </button>
         <button class="theme-option" id="celestial" data-theme="theme-celestial" onclick="setTheme('theme-celestial')">

@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }さん！ログイン成功しました。`
         );
         loginForm.reset();
-        window.location.href = "../index.html";
+        window.location.href = "../HTML/quiz.html";
       } else {
         alert("ユーザー名/メールまたはパスワードが間違っています。");
       }
@@ -234,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Auto-login after registration
       const result = await loginUser(username, password);
       if (result.success) {
-        window.location.href = "../index.html";
+        window.location.href = "../HTML/quiz.html";
       }
     } catch (err) {
       if (err.name === "ConstraintError") {
