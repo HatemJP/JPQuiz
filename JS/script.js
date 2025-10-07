@@ -1,7 +1,13 @@
 const currentUser = localStorage.getItem("current-user");
 
-if (!currentUser) {
+// Only redirect if no user and we're not already on login.html
+if (!currentUser && !window.location.pathname.includes("login.html")) {
   window.location.href = "../HTML/login.html";
+}
+
+// Optional: Prevent login page from redirecting if already logged in
+if (currentUser && window.location.pathname.includes("login.html")) {
+  window.location.href = "../index.html";
 }
 
 // ----------------- CONSTANTS -----------------
@@ -19,6 +25,11 @@ const wandBtn = document.getElementById("wand-action");
 function navigateWithTransition(url) {
   document.body.classList.add("transition-out");
   setTimeout(() => (window.location.href = url), 400);
+}
+
+function navigateTo(url) {
+  if (url === "index.html") window.location.href = "../index.html";
+  else window.location.href = `HTML/${url}`;
 }
 
 // ----------------- MAIN ACTION BUTTON -----------------
@@ -143,17 +154,26 @@ toggleBtn?.addEventListener("click", toggleAnimation);
 wandBtn?.addEventListener("click", toggleAnimation);
 
 // ----------------- LOGOUT -----------------
-function logout(url) {
+document.addEventListener("DOMContentLoaded", () => {
   const logoutAction = document.getElementById("logout-action");
-  if (logoutAction) {
-    logoutAction.addEventListener("click", () => {
-      localStorage.removeItem("currentUser");
-      sessionStorage.clear();
-      showNotification("ログアウトしました。");
-      navigateWithTransition(url);
-    });
-  }
-}
+  if (!logoutAction) return;
+
+  logoutAction.addEventListener("click", () => {
+    // Clear user data
+    localStorage.removeItem("current-user");
+    sessionStorage.clear();
+
+    // Optional: show a small notification
+    showNotification("ログアウトしました。");
+
+    // Redirect to login page safely
+    setTimeout(() => {
+      if (!window.location.pathname.includes("login.html")) {
+        window.location.href = "../HTML/login.html";
+      }
+    }, 300);
+  });
+});
 
 // ----------------- INITIAL THEME LOAD -----------------
 document.addEventListener("DOMContentLoaded", () => {
