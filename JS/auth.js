@@ -1,3 +1,4 @@
+// -------------------- IndexedDB Setup --------------------
 const DB_NAME = "KanjiAdventureDB";
 const DB_VERSION = 1;
 let db;
@@ -28,18 +29,22 @@ const openDB = () =>
     };
   });
 
-// Register user (plaintext password)
-const registerUser = async (username, email, password) => {
+// -------------------- Register User --------------------
+const registerUser = async (username, email, password, nickname) => {
   await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction("users", "readwrite");
     const store = tx.objectStore("users");
-    const user = { username, email, password }; // plaintext
+    const user = { username, email, password, nickname };
     console.log("Attempting to register user:", user);
 
     const addReq = store.add(user);
     addReq.onsuccess = () => {
       console.log("User registered successfully:", user);
+
+      // Save nickname in localStorage
+      localStorage.setItem(`nickname_${username}`, nickname);
+
       resolve(true);
     };
     addReq.onerror = (e) => {
@@ -49,7 +54,7 @@ const registerUser = async (username, email, password) => {
   });
 };
 
-// Login user
+// -------------------- Login User --------------------
 const loginUser = async (usernameOrEmail, password) => {
   await openDB();
   return new Promise((resolve, reject) => {
@@ -58,15 +63,22 @@ const loginUser = async (usernameOrEmail, password) => {
 
     const finishLogin = (userObj) => {
       console.log("Login successful:", userObj);
-      localStorage.setItem("currentUser", userObj.username);
+      localStorage.setItem("current-user", userObj.username);
+
+      // Store nickname in localStorage
+      if (userObj.nickname) {
+        localStorage.setItem(`nickname_${userObj.username}`, userObj.nickname);
+      }
+
       if (!localStorage.getItem(`firstLogin_${userObj.username}`)) {
         localStorage.setItem(`progress_${userObj.username}`, 0);
         localStorage.setItem(`firstLogin_${userObj.username}`, "done");
       }
+
       resolve({ success: true, username: userObj.username });
     };
 
-    // First try username
+    // Try username first
     const getReq = store.get(usernameOrEmail);
     getReq.onsuccess = (e) => {
       const user = e.target.result;
@@ -97,60 +109,139 @@ const loginUser = async (usernameOrEmail, password) => {
   });
 };
 
-// Forms
-const loginForm = document.querySelector(".login-form");
-const registerForm = document.querySelector(".register-form");
+// -------------------- Delete User --------------------
+const deleteUser = async (username) => {
+  await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("users", "readwrite");
+    const store = tx.objectStore("users");
 
-// Login
-loginForm?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const usernameOrEmail = loginForm[0].value.trim();
-  const password = loginForm[1].value;
+    const deleteReq = store.delete(username);
 
-  try {
-    const result = await loginUser(usernameOrEmail, password);
-    if (result.success) {
-      alert(`ようこそ、${result.username}さん！ログイン成功しました。`);
-      loginForm.reset();
-      window.location.href = "../index.html";
+    deleteReq.onsuccess = () => {
+      console.log(`Delete request successful for ${username}`);
+    };
+
+    deleteReq.onerror = (err) => {
+      console.error(`Delete request failed for ${username}:`, err);
+      reject(err);
+    };
+
+    tx.oncomplete = () => {
+      console.log(`Transaction complete: ${username} deleted.`);
+
+      // Remove all localStorage data for this user
+      const keysToRemove = [
+        "current-user",
+        `username_${username}`,
+        `nickname_${username}`,
+        `gender_${username}`,
+        `progress_${username}`,
+        `firstLogin_${username}`,
+        `correct_${username}`,
+        `wrong_${username}`,
+        `total_${username}`,
+      ];
+
+      ["male", "female"].forEach((gender) => {
+        keysToRemove.push(`avatar_${gender}_${username}`);
+      });
+
+      Object.keys(localStorage).forEach((key) => {
+        if (key.includes(`_${username}`) && !keysToRemove.includes(key)) {
+          keysToRemove.push(key);
+        }
+      });
+
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+      console.log(`All localStorage data for ${username} deleted.`);
+
+      resolve(true);
+    };
+
+    tx.onerror = (err) => {
+      console.error("Transaction error:", err);
+      reject(err);
+    };
+  });
+};
+
+// -------------------- Utility: Check if User is Logged In --------------------
+const checkCurrentUser = () => {
+  const currentUser = localStorage.getItem("current-user");
+  if (!currentUser || currentUser === "null" || currentUser === "undefined") {
+    if (typeof navigateWithTransition === "function") {
+      navigateWithTransition("HTML/login.html");
     } else {
-      alert("ユーザー名/メールまたはパスワードが間違っています。");
+      window.location.href = "HTML/login.html";
     }
-  } catch (err) {
-    console.error(err);
-    alert("ログイン中にエラーが発生しました。");
+    return null;
   }
-});
+  return currentUser;
+};
 
-// Register
-registerForm?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const username = registerForm[0].value.trim();
-  const email = registerForm[1].value.trim();
-  const password = registerForm[2].value;
-  const confirmPassword = registerForm[3].value;
+// -------------------- Forms Handling --------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.querySelector(".login-form");
+  const registerForm = document.querySelector(".register-form");
 
-  if (password !== confirmPassword) {
-    alert("パスワードが一致しません。");
-    return;
-  }
+  // Login form submit
+  loginForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const usernameOrEmail = loginForm[0].value.trim();
+    const password = loginForm[1].value;
 
-  try {
-    await registerUser(username, email, password);
-    alert("登録成功！ログインして冒険を始めよう！");
-    registerForm.reset();
-    document.getElementById("authBox")?.classList.remove("register-mode");
-
-    // Auto-login after registration
-    const result = await loginUser(username, password);
-    if (result.success) {
-      window.location.href = "../index.html";
+    try {
+      const result = await loginUser(usernameOrEmail, password);
+      if (result.success) {
+        alert(
+          `ようこそ、${
+            localStorage.getItem(`nickname_${result.username}`) ||
+            result.username
+          }さん！ログイン成功しました。`
+        );
+        loginForm.reset();
+        window.location.href = "../index.html";
+      } else {
+        alert("ユーザー名/メールまたはパスワードが間違っています。");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("ログイン中にエラーが発生しました。");
     }
-  } catch (err) {
-    if (err.name === "ConstraintError") {
-      alert("このユーザー名またはメールアドレスは既に使われています。");
-    } else {
-      alert("登録に失敗しました: " + err);
+  });
+
+  // Register form submit
+  registerForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = registerForm[0].value.trim();
+    const email = registerForm[1].value.trim();
+    const password = registerForm[2].value;
+    const confirmPassword = registerForm[3].value;
+    const nickname = registerForm[4]?.value.trim() || username; // Optional nickname field, fallback to username
+
+    if (password !== confirmPassword) {
+      alert("パスワードが一致しません。");
+      return;
     }
-  }
+
+    try {
+      await registerUser(username, email, password, nickname);
+      alert("登録成功！ログインして冒険を始めよう！");
+      registerForm.reset();
+      document.getElementById("authBox")?.classList.remove("register-mode");
+
+      // Auto-login after registration
+      const result = await loginUser(username, password);
+      if (result.success) {
+        window.location.href = "../index.html";
+      }
+    } catch (err) {
+      if (err.name === "ConstraintError") {
+        alert("このユーザー名またはメールアドレスは既に使われています。");
+      } else {
+        alert("登録に失敗しました: " + err);
+      }
+    }
+  });
 });

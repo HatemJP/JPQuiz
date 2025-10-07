@@ -185,7 +185,7 @@
           <button class="sub-action not-implemented" id="wand-action" data-name="舞">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
           </button>
-          <button class="sub-action not-implemented" data-name="自己">
+          <button class="sub-action implemented" onclick="navigateWithTransition('HTML/profile.html')" data-name="自己">
             <i class="fas fa-user"></i>
           </button>
           <button class="sub-action not-implemented" data-name="熱図">
@@ -194,7 +194,8 @@
           <button class="sub-action not-implemented" data-name="記録">
             <i class="fas fa-trophy"></i>
           </button>
-          <button class="sub-action implemented" onclick="navigateWithTransition('HTML/game-settings.html')" data-name="設定">
+          <button class="sub-action implemented" onclick="navigateWithTransition('HTML/game-settings.html')"
+            data-name="設定">
             <i class="fas fa-sliders-h"></i>
           </button>
           <button class="sub-action implemented" id="logout-action" data-name="ログアウト">
@@ -248,8 +249,8 @@
         <button class="theme-option" id="uminami" data-theme="theme-uminami" onclick="setTheme('theme-uminami')">
           <div class="theme-swatch uminami"></div> 海青
         </button>
-        <button class="theme-option" id="new-dark" data-theme="theme-new-dark" onclick="setTheme('theme-new-dark')">
-          <div class="theme-swatch new-dark"></div> 闇
+        <button class="theme-option" id="mithril" data-theme="theme-mithril" onclick="setTheme('theme-mithril')">
+          <div class="theme-swatch mithril"></div> 闇
         </button>
         <button class="theme-option" id="orange" data-theme="theme-orange" onclick="setTheme('theme-orange')">
           <div class="theme-swatch orange"></div> 橙
@@ -286,6 +287,13 @@
         showNotification(`${name}ボタンの機能は未だ実装されていません。`);
       });
     });
+
+    const currentUser = localStorage.getItem("current-user");
+
+    if (!currentUser) {
+      console.log("Redirecting to login.html");
+      window.location.href = "HTML/login.html";
+    }
   </script>
 </body>
 

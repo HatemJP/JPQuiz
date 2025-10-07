@@ -1,11 +1,5 @@
 // ----------------- QUIZ VERSION -----------------
-const QUIZ_VERSION = "1"; // Increment this whenever quiz_db.csv changes
-
-// ----------------- CURRENT USER -----------------
-const currentUser = localStorage.getItem("currentUser");
-if (!currentUser) {
-  window.location.href = "../HTML/login.html";
-}
+const QUIZ_VERSION = "1";
 
 // ----------------- STORAGE KEYS -----------------
 function getProgressKey(user) {
@@ -23,10 +17,20 @@ function getVersionKey(user) {
 // ----------------- VERSION CHECK & RESET -----------------
 function resetQuizData() {
   if (!currentUser) return;
+
   localStorage.removeItem(getProgressKey(currentUser));
   localStorage.removeItem(getScoreKey(currentUser, "Correct"));
   localStorage.removeItem(getScoreKey(currentUser, "Wrong"));
   localStorage.setItem(getVersionKey(currentUser), QUIZ_VERSION);
+
+  // Reset in-memory score
+  score.correct = 0;
+  score.wrong = 0;
+  score.total = words.length;
+  saveScore("Correct", 0);
+  saveScore("Wrong", 0);
+  updateScoreboard();
+
   console.log("Quiz localStorage reset due to version change.");
 }
 
@@ -50,7 +54,7 @@ function initScoreElements() {
 let score = {
   correct: 0,
   wrong: 0,
-  total: 0, // total words in CSV
+  total: 0, // total words in CSV/custom file, never changes
 };
 
 function updateScoreboard() {
@@ -83,6 +87,16 @@ function loadScore(type) {
   return !isNaN(saved) ? saved : 0;
 }
 
+// ----------------- GLOBAL RESET FUNCTION -----------------
+window.resetQuizScores = function () {
+  score.correct = 0;
+  score.wrong = 0;
+  score.total = words.length;
+  saveScore("Correct", 0);
+  saveScore("Wrong", 0);
+  updateScoreboard();
+};
+
 // ----------------- UTILS -----------------
 function splitFurigana(furiganaStr) {
   if (!furiganaStr) return [];
@@ -95,12 +109,29 @@ let currentWordIndex = 0;
 
 async function loadWords() {
   try {
-    const csvPath = window.location.pathname.includes("word-details")
-      ? "../quiz_db.csv"
-      : "quiz_db.csv";
+    let csvText = null;
 
-    const response = await fetch(csvPath);
-    const csvText = await response.text();
+    const listSource =
+      localStorage.getItem(`listSource_${currentUser}`) || "default";
+
+    if (listSource === "custom") {
+      const customText = localStorage.getItem(`customQuizFile_${currentUser}`);
+      if (!customText) {
+        alert(
+          "カスタム単語リストが見つかりません。デフォルトリストを使用します。"
+        );
+      } else {
+        csvText = customText;
+      }
+    }
+
+    if (!csvText) {
+      const csvPath = window.location.pathname.includes("word-details")
+        ? "../quiz_db.csv"
+        : "quiz_db.csv";
+      const response = await fetch(csvPath);
+      csvText = await response.text();
+    }
 
     const lines = csvText.trim().split(/\r?\n/);
     const headers = lines
@@ -125,11 +156,10 @@ async function loadWords() {
       };
     });
 
-    // Set total words count
     score.total = words.length;
     updateScoreboard();
   } catch (err) {
-    console.error("Failed to load words from CSV:", err);
+    console.error("Failed to load words:", err);
   }
 }
 
@@ -158,7 +188,6 @@ function renderWord() {
     });
   }
 
-  // ----------------- word-details.html support -----------------
   if (detailsBox) {
     const readingEl = detailsBox.querySelector(".reading");
     const meaningEl = detailsBox.querySelector(".meaning");
@@ -172,7 +201,7 @@ function renderWord() {
       translationEl.textContent = `翻訳：${word.translation || "空"}`;
   }
 
-  adjustKanjiLayout();
+  adjustKanjiLayout?.();
 }
 
 // ----------------- ROMAJI NORMALIZATION -----------------
@@ -195,7 +224,7 @@ function checkAnswer() {
   const input = (inputField.value || "").trim();
   if (input === "") {
     alert("読み方を入力してください！");
-    return; // Stop here, don't update scoreboard
+    return;
   }
 
   const word = words[currentWordIndex];
@@ -239,12 +268,12 @@ function nextWord() {
   currentWordIndex++;
   if (currentWordIndex >= words.length) {
     alert("全ての単語を完了しました！");
-    currentWordIndex = 0; // restart
+    currentWordIndex = 0;
   }
 
   renderWord();
   updateScoreboard();
-  saveProgress(currentUser ? currentWordIndex : 0);
+  saveProgress(currentWordIndex);
 }
 
 // ----------------- INITIALIZE QUIZ -----------------
@@ -253,6 +282,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   initScoreElements();
 
+  // Load scores
   score.correct = loadScore("Correct");
   score.wrong = loadScore("Wrong");
 
@@ -268,15 +298,14 @@ window.addEventListener("DOMContentLoaded", async () => {
     observer.observe(kanjiContainer, { childList: true, subtree: true });
   }
 
-  // ----------------- BUTTON & ENTER KEY -----------------
   const answerButton = document.querySelector(".answer-button");
   if (answerButton) answerButton.addEventListener("click", checkAnswer);
 
   const inputField = document.querySelector("input");
   if (inputField) {
-    inputField.addEventListener("keydown", function (e) {
+    inputField.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        e.preventDefault(); // Prevent double trigger
+        e.preventDefault();
         checkAnswer();
       }
     });

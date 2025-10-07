@@ -18,18 +18,14 @@
     <style>
         /* Container styling (glow aesthetic) */
         .container {
-            margin: 6rem auto;
+            margin: 5rem auto;
             text-align: center;
             max-width: 800px;
-            padding: 3rem 2rem;
+            padding: 1.5rem 1.5rem;
             border-radius: 20px;
-            background: linear-gradient(135deg,
-                    var(--card-gradient-color),
-                    var(--card-bg));
+            background: linear-gradient(135deg, var(--card-gradient-color), var(--card-bg));
             border: 1px solid var(--card-border-color);
-            box-shadow:
-                0 12px 28px var(--card-shadow-color),
-                0 4px 12px rgba(0, 0, 0, 0.25),
+            box-shadow: 0 12px 28px var(--card-shadow-color), 0 4px 12px rgba(0, 0, 0, 0.25),
                 0 0 20px rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -38,25 +34,24 @@
             overflow: hidden;
         }
 
+        .setting-group:last-child,
+        .footer-note {
+            margin-bottom: 1rem;
+        }
+
         .container::before {
             content: "";
             position: absolute;
             inset: 0;
             border-radius: 20px;
-            background: radial-gradient(circle at top left,
-                    rgba(255, 255, 255, 0.05),
-                    transparent 60%),
-                radial-gradient(circle at bottom right,
-                    rgba(255, 255, 255, 0.04),
-                    transparent 60%);
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 60%),
+                radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.04), transparent 60%);
             z-index: 0;
         }
 
         .container:hover {
             transform: translateY(-6px);
-            box-shadow:
-                0 16px 36px rgba(0, 0, 0, 0.35),
-                0 6px 16px var(--card-shadow-color),
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35), 0 6px 16px var(--card-shadow-color),
                 0 0 25px rgba(255, 255, 255, 0.06);
         }
 
@@ -129,7 +124,6 @@
             outline: none;
         }
 
-        /* Dropdown options */
         select option {
             background-color: var(--input-bg);
             color: var(--text-color);
@@ -150,9 +144,7 @@
             position: relative;
             overflow: hidden;
             z-index: 2;
-            box-shadow:
-                0 4px 12px rgba(0, 0, 0, 0.3),
-                inset 0 0 10px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.05);
         }
 
         .reset-btn:hover {
@@ -160,13 +152,8 @@
             color: #fff;
         }
 
-        /* Footer Note */
-        .footer-note {
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: var(--muted);
-            position: relative;
-            z-index: 2;
+        #custom-file {
+            margin-top: 0.5rem;
         }
     </style>
 </head>
@@ -182,27 +169,21 @@
     <div class="container">
         <h2 class="settings-title">ゲーム設定</h2>
 
-        <!-- Question Count -->
+        <!-- List source selection -->
         <div class="setting-group">
-            <label class="setting-label" for="questionCount">問題数</label>
+            <label class="setting-label" for="listSource">単語一覧</label>
             <div class="select-wrapper">
-                <select id="questionCount">
-                    <option value="10">10 問</option>
-                    <option value="20">20 問</option>
-                    <option value="all">全ての単語</option>
+                <select id="listSource">
+                    <option value="default">普通</option>
+                    <option value="custom">自作</option>
                 </select>
             </div>
         </div>
 
-        <!-- Hint Display -->
-        <div class="setting-group">
-            <label class="setting-label" for="hintDisplay">表示</label>
-            <div class="select-wrapper">
-                <select id="hintDisplay">
-                    <option value="on">有効</option>
-                    <option value="off">無効</option>
-                </select>
-            </div>
+        <!-- Upload Section (hidden initially) -->
+        <div class="setting-group" id="customUploadGroup" style="display: none;">
+            <label class="setting-label" for="custom-file">自作一覧アップロード</label>
+            <input type="file" id="custom-file" accept=".txt,.tsv,.csv" />
         </div>
 
         <!-- Reset & Save Buttons -->
@@ -210,56 +191,60 @@
             <button class="reset-btn" onclick="resetAllProgress()">全てリセット</button>
             <button class="reset-btn" id="saveSettingsBtn">保存</button>
         </div>
-
-        <p class="footer-note">全てのスコアと進行状況が削除され、最初の単語から再開します。</p>
     </div>
 
     <script>
         const currentUser = localStorage.getItem("currentUser");
 
-        // Load saved settings
-        window.addEventListener("DOMContentLoaded", () => {
-            const savedCount = localStorage.getItem("questionCount") || "10";
-            const savedHint = localStorage.getItem("hintDisplay") || "on";
+        // ----------------- LIST SOURCE -----------------
+        const listSourceDropdown = document.getElementById("listSource");
+        const customUploadGroup = document.getElementById("customUploadGroup");
 
-            document.getElementById("questionCount").value = savedCount;
-            document.getElementById("hintDisplay").value = savedHint;
+        const savedSource = localStorage.getItem(`listSource_${currentUser}`) || "default";
+        listSourceDropdown.value = savedSource;
+        customUploadGroup.style.display = savedSource === "custom" ? "block" : "none";
+
+        listSourceDropdown.addEventListener("change", (e) => {
+            const value = e.target.value;
+            localStorage.setItem(`listSource_${currentUser}`, value);
+            customUploadGroup.style.display = value === "custom" ? "block" : "none";
         });
 
-        // Save on dropdown change
-        document.getElementById("questionCount").addEventListener("change", (e) => {
-            localStorage.setItem("questionCount", e.target.value);
+        // ----------------- CUSTOM FILE UPLOAD -----------------
+        document.getElementById("custom-file").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const text = event.target.result;
+                localStorage.setItem(`customQuizFile_${currentUser}`, text);
+                alert("カスタム単語リストがアップロードされました！");
+            };
+            reader.readAsText(file, "UTF-8");
         });
 
-        document.getElementById("hintDisplay").addEventListener("change", (e) => {
-            localStorage.setItem("hintDisplay", e.target.value);
-        });
-
-        // Save button logic
+        // ----------------- SAVE BUTTON -----------------
         document.getElementById("saveSettingsBtn").addEventListener("click", () => {
-            const questionCount = document.getElementById("questionCount").value;
-            const hintDisplay = document.getElementById("hintDisplay").value;
-
-            localStorage.setItem("questionCount", questionCount);
-            localStorage.setItem("hintDisplay", hintDisplay);
-
+            localStorage.setItem(`listSource_${currentUser}`, listSourceDropdown.value);
             alert("設定が保存されました！");
         });
 
-        // Full reset logic
+        // ----------------- RESET PROGRESS -----------------
         function resetAllProgress() {
             if (!confirm("全てのスコアと進行状況が削除され、最初の単語から再開します。宜しいですか？")) return;
 
             if (currentUser) {
                 const progressKey = `kanjiQuestProgress_${currentUser}`;
-                const scoreCorrectKey = `kanjiQuestScore_correct_${currentUser}`;
-                const scoreWrongKey = `kanjiQuestScore_wrong_${currentUser}`;
-                const scoreTotalKey = `kanjiQuestScore_total_${currentUser}`;
+                const scoreCorrectKey = `kanjiScore_Correct_${currentUser}`;
+                const scoreWrongKey = `kanjiScore_Wrong_${currentUser}`;
 
                 localStorage.removeItem(progressKey);
                 localStorage.removeItem(scoreCorrectKey);
                 localStorage.removeItem(scoreWrongKey);
-                localStorage.removeItem(scoreTotalKey);
+
+                // Reset in-memory scores (calls quiz.js function)
+                if (window.resetQuizScores) window.resetQuizScores();
             }
 
             localStorage.removeItem("quizCurrentIndex");

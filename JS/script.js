@@ -1,8 +1,3 @@
-// ----------------- USER SESSION -----------------
-if (!currentUser) {
-  window.location.href = "../HTML/login.html";
-}
-
 // ----------------- CONSTANTS -----------------
 const THEME_KEY = "kanjiQuestTheme";
 let currentAnimationState = 0;
