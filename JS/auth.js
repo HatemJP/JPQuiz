@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = registerForm[1].value.trim();
     const password = registerForm[2].value;
     const confirmPassword = registerForm[3].value;
-    const nickname = registerForm[4]?.value.trim() || username; // Optional nickname field, fallback to username
+    const nickname = registerForm[4]?.value.trim() || "";
 
     if (password !== confirmPassword) {
       alert("パスワードが一致しません。");
