@@ -2,7 +2,7 @@ const currentUser = localStorage.getItem("current-user");
 
 // Only redirect if no user and we're not already on login.html
 if (!currentUser && !window.location.pathname.includes("login.html")) {
-  window.location.href = "../HTML/login.html";
+  window.location.href = "./HTML/login.html";
 }
 
 // Optional: Prevent login page from redirecting if already logged in
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Redirect to login page safely
     setTimeout(() => {
       if (!window.location.pathname.includes("login.html")) {
-        window.location.href = "../HTML/login.html";
+        window.location.href = "./HTML/login.html";
       }
     }, 300);
   });

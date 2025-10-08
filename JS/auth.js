@@ -171,7 +171,7 @@ const checkCurrentUser = () => {
   const currentUser = localStorage.getItem("current-user");
   if (!currentUser || currentUser === "null" || currentUser === "undefined") {
     if (typeof navigateWithTransition === "function") {
-      navigateWithTransition("../HTML/login.html");
+      navigateWithTransition("./HTML/login.html");
     }
     return null;
   }
