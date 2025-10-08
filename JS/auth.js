@@ -1,7 +1,6 @@
 // -------------------- IndexedDB Setup --------------------
 const DB_NAME = "KanjiAdventureDB";
 const DB_VERSION = 1;
-const BASE_URL = "https://hatemjp.github.io/JPQuiz/";
 let db;
 
 // Open IndexedDB
@@ -172,7 +171,7 @@ const checkCurrentUser = () => {
   const currentUser = localStorage.getItem("current-user");
   if (!currentUser || currentUser === "null" || currentUser === "undefined") {
     if (typeof navigateWithTransition === "function") {
-      navigateWithTransition(BASE_URL + "HTML/login.html");
+      navigateWithTransition(window.BASE_URL + "HTML/login.html");
     }
     return null;
   }
@@ -200,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }さん！ログイン成功しました。`
         );
         loginForm.reset();
-        window.location.href = BASE_URL + "index.html";
+        window.location.href = window.BASE_URL + "index.html";
       } else {
         alert("ユーザー名/メールまたはパスワードが間違っています。");
       }
@@ -233,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Auto-login after registration
       const result = await loginUser(username, password);
       if (result.success) {
-        window.location.href = BASE_URL + "index.html";
+        window.location.href = window.BASE_URL + "index.html";
       }
     } catch (err) {
       if (err.name === "ConstraintError") {
