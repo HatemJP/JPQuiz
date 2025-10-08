@@ -1,14 +1,13 @@
-window.BASE_URL = "https://hatemjp.github.io/JPQuiz/";
 const currentUser = localStorage.getItem("current-user");
 
-// Redirect immediately if not logged in and not on login page
+// Only redirect if no user and we're not already on login.html
 if (!currentUser && !window.location.pathname.includes("login.html")) {
-  window.location.href = window.BASE_URL + "HTML/login.html";
+  window.location.href = "../HTML/login.html";
 }
 
-// Redirect if logged in and currently on login page
+// Optional: Prevent login page from redirecting if already logged in
 if (currentUser && window.location.pathname.includes("login.html")) {
-  window.location.href = window.BASE_URL + "index.html";
+  window.location.href = "../index.html";
 }
 
 // ----------------- CONSTANTS -----------------
@@ -25,7 +24,12 @@ const wandBtn = document.getElementById("wand-action");
 // ----------------- NAVIGATION -----------------
 function navigateWithTransition(url) {
   document.body.classList.add("transition-out");
-  setTimeout(() => (window.location.href = window.BASE_URL + url), 400);
+  setTimeout(() => (window.location.href = url), 400);
+}
+
+function navigateTo(url) {
+  if (url === "index.html") window.location.href = "../index.html";
+  else window.location.href = `HTML/${url}`;
 }
 
 // ----------------- MAIN ACTION BUTTON -----------------
@@ -165,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Redirect to login page safely
     setTimeout(() => {
       if (!window.location.pathname.includes("login.html")) {
-        window.location.href = window.BASE_URL + "HTML/login.html";
+        window.location.href = "../HTML/login.html";
       }
     }, 300);
   });
