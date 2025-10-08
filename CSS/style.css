@@ -261,17 +261,6 @@ header {
     transform: scale(1.05);
 }
 
-body.theme-sakura #toggle-animation-btn:hover,
-body.theme-sakura .settings-option:hover {
-    box-shadow: 0 8px 24px rgba(244, 168, 177, 0.5);
-}
-
-/* Stronger hover shadows for Blue light theme */
-body.theme-blue #toggle-animation-btn:hover,
-body.theme-blue .settings-option:hover {
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
-}
-
 /* Container and Kanji Cards */
 .container {
     margin: 4rem auto;
