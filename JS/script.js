@@ -1,18 +1,18 @@
-// ----------------- BASE URL DETECTION -----------------
 const BASE_URL =
   window.location.hostname === "hatemjp.github.io"
     ? "https://hatemjp.github.io/JPQuiz"
-    : ""; // empty for local dev
+    : "";
 
-// ----------------- USER SESSION -----------------
 const currentUser = localStorage.getItem("current-user");
 
-// ----------------- REDIRECT HANDLING -----------------
 if (!currentUser && !window.location.pathname.includes("login.html")) {
-  window.location.href = `${BASE_URL}/HTML/login.html`;
-}
-if (currentUser && window.location.pathname.includes("login.html")) {
-  window.location.href = `${BASE_URL}/index.html`;
+  // Immediately redirect
+  window.location.replace(`${BASE_URL}/HTML/login.html`);
+} else {
+  // Show body instantly if logged in
+  document.addEventListener("DOMContentLoaded", () => {
+    document.body.style.visibility = "visible";
+  });
 }
 
 // ----------------- CONSTANTS -----------------
