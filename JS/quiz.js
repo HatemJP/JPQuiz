@@ -1,5 +1,5 @@
 // ----------------- QUIZ VERSION -----------------
-const QUIZ_VERSION = "1";
+const QUIZ_VERSION = "1.1";
 
 // ----------------- STORAGE KEYS -----------------
 function getProgressKey(user) {
