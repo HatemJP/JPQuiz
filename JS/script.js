@@ -2,6 +2,7 @@ const BASE_URL =
   window.location.hostname === "hatemjp.github.io"
     ? "https://hatemjp.github.io/JPQuiz"
     : "";
+    
 const currentUser = localStorage.getItem("current-user");
 const THEME_KEY = "kanjiQuestTheme";
 const mainActionBtn = document.getElementById("main-action-btn");
