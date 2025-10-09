@@ -17,17 +17,14 @@ function hideLoader() {
   const loader = document.getElementById("loading-screen");
   if (!loader) return;
 
-  loader.classList.add("hidden"); // fade out
-  setTimeout(() => loader.remove(), 1500); // remove from DOM
+  loader.classList.add("hidden");
+  setTimeout(() => loader.remove(), 1500);
 }
 
-// Only run loader logic if we are NOT redirecting to login
 if (currentUser || window.location.pathname.includes("login.html")) {
   document.addEventListener("DOMContentLoaded", () => {
     const loader = document.getElementById("loading-screen");
     if (!loader) return;
-
-    // Keep loader at least 2s on first load
     setTimeout(hideLoader, 2000);
   });
 }
