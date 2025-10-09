@@ -54,6 +54,62 @@
         0 6px 16px var(--card-shadow-color);
     }
 
+    .progress-badge {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-color);
+      padding: 0.8rem 2rem;
+      border-radius: 999px;
+      margin: 0.5rem auto 2rem auto;
+      min-width: 180px;
+      background: var(--card-bg);
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 4px var(--card-gradient-color);
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 999px;
+      z-index: 1;
+      transition: width 1.5s ease-in-out;
+    }
+
+    body.theme-sakura .progress-fill {
+      background: linear-gradient(90deg, rgba(244, 168, 177, 0.2), rgba(217, 123, 130, 0.2));
+    }
+
+    body.theme-blue .progress-fill {
+      background: linear-gradient(90deg, rgba(96, 165, 250, 0.15), rgba(56, 189, 248, 0.15));
+    }
+
+    body.theme-tsukizumi .progress-fill {
+      background: var(--secondary-color);
+    }
+
+    .progress-badge span {
+      position: relative;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    .progress-badge::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.05), 0 0 40px rgba(0, 0, 0, 0.05);
+      z-index: 0;
+    }
+
     .details-box {
       background: linear-gradient(135deg, var(--card-gradient-color), var(--card-bg));
       border: 1px solid var(--card-border-color);
@@ -97,7 +153,7 @@
 
     .vocab-word {
       position: relative;
-      background: var(--vocab-bg, var(--primary-color));
+      background: var(--vocab-bg, var(--secondary-color));
       color: var(--vocab-color, var(--text-color));
       font-weight: 600;
       font-size: 0.95rem;
@@ -165,7 +221,11 @@
 
   <div class="container">
     <div class="kanji-container"></div>
-    <br>
+
+    <div class="progress-badge" id="progressBadge">
+      <div class="progress-fill" id="progressFill"></div>
+      <span>進行度: 0%</span>
+    </div>
 
     <div class="details-box">
       <p class="meaning"></p>
@@ -174,6 +234,28 @@
       <div class="vocab-words"></div>
     </div>
   </div>
+  <script>
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.querySelector('#progressBadge span');
+
+    function updateProgressBar() {
+      if (!score.total || score.total === 0) return;
+
+      const progressPercent = Math.floor((score.correct / score.total) * 100);
+      progressFill.style.width = `${progressPercent}%`;
+      progressText.textContent = `進行度: ${progressPercent}%`;
+    }
+
+    // Update progress whenever scores change
+    const originalUpdateScoreboard = updateScoreboard;
+    updateScoreboard = function () {
+      originalUpdateScoreboard();
+      updateProgressBar();
+    };
+
+    // Initial progress on load
+    updateProgressBar();
+  </script>
 </body>
 
 </html>

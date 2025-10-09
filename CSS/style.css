@@ -292,7 +292,9 @@ body.theme-uminami .container,
 body.theme-mithril .container,
 body.theme-orange .container,
 body.theme-violet-night .container,
-body.theme-celestial .container {
+body.theme-celestial .container,
+body.theme-mint-blue .container,
+body.theme-koutei .container {
     background-image: none;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(var(--accent-color-rgb, 163, 210, 202), 0.15);
@@ -380,7 +382,7 @@ input[type="text"] {
             var(--input-bg),
             var(--input-bg));
 
-    color: var(--text-color);
+    color: var(--primary-color);
     transition: all 0.4s ease;
     outline: none;
     position: relative;
@@ -395,7 +397,7 @@ input[type="text"]:focus {
             var(--input-bg),
             rgba(255, 255, 255, 0.02));
 
-    color: var(--text-color);
+    color: var(--primary-color);
 
     box-shadow:
         0 0 0 3px rgba(var(--accent-color-rgb), 0.2),

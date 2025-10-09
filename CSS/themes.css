@@ -150,41 +150,57 @@ body.theme-orange {
     --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Violet Night Dark Theme */
+/* Violet Night Dark - Japanese Inspired */
 body.theme-violet-night {
     /* Basic */
-    --bg-color: #0a0a12;
-    --card-bg: #151526;
-    --text-color: #e0d8ff;
-    --primary-color: #9b5de5;
-    --secondary-color: #7a3fd6;
-    --accent-color: #b06aff;
-    --hint-color: #c9a7ff;
-    --muted: #6d5d7c;
+    --bg-color: #12111f;
+    /* deeper night indigo background */
+    --card-bg: #1a1a33;
+    /* darker card background */
+    --text-color: #ded0ff;
+    /* soft, elegant text */
+    --primary-color: #9a5ee0;
+    /* deep Japanese violet */
+    --secondary-color: #7a3fb8;
+    /* richer secondary purple */
+    --accent-color: #c08fff;
+    /* soft sakura-inspired accent */
+    --hint-color: #d5baff;
+    /* subtle glowing hint */
+    --muted: #6b5a85;
+    /* darker muted tone */
 
     /* Input */
-    --input-bg: #1b1b33;
-    --input-border: #3b3b5c;
-    --input-border-focus: rgba(155, 93, 229, 0.4);
-    --input-box-shadow: rgba(155, 93, 229, 0.3);
-    --placeholder-color: #aaa0c6;
+    --input-bg: #1e1e3b;
+    /* darker input background */
+    --input-border: #3f3f70;
+    /* deeper border */
+    --input-border-focus: rgba(154, 94, 224, 0.5);
+    /* more visible focus */
+    --input-box-shadow: rgba(154, 94, 224, 0.35);
+    /* subtle glow */
+    --placeholder-color: #bfaaff;
+    /* slightly softer placeholder */
 
     /* Button */
-    --button-bg: #222244;
+    --button-bg: #242450;
+    /* darker button background */
     --button-hover-bg: var(--primary-color);
-    --button-hover-color: #0a0a12;
+    --button-hover-color: #12111f;
+    --button-box-shadow: 0 4px 10px rgba(154, 94, 224, 0.3);
+    /* soft glow shadow */
 
     /* Card */
-    --card-gradient-color: rgba(155, 93, 229, 0.05);
-    --card-border-color: rgba(155, 93, 229, 0.1);
-    --card-shadow-color: rgba(155, 93, 229, 0.12);
+    --card-gradient-color: rgba(154, 94, 224, 0.05);
+    --card-border-color: rgba(154, 94, 224, 0.2);
+    --card-shadow-color: rgba(154, 94, 224, 0.25);
 
     /* Vocab Word */
     --vocab-bg: var(--primary-color);
     --vocab-color: #fff;
     --vocab-hover-bg: var(--accent-color);
     --vocab-hover-color: #fff;
-    --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    --vocab-hover-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Forest Twilight Dark Theme */
@@ -217,6 +233,101 @@ body.theme-celestial {
     --vocab-hover-bg: var(--accent-color);
     --vocab-hover-color: #fff;
     --vocab-hover-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+body.theme-mint-blue {
+    /* Basic */
+    --bg-color: #0f1014;
+    /* Deep dark background */
+    --card-bg: #1a1c23;
+    /* Slightly lighter cards */
+    --text-color: #e0f7f4;
+    /* Soft minty text */
+    --primary-color: #4fd1c5;
+    /* Mint blue */
+    --secondary-color: #3dbbb3;
+    /* Deeper mint accent */
+    --accent-color: #62e0d8;
+    /* Vibrant mint glow */
+    --hint-color: #80f0ea;
+    /* Hint / tooltip color */
+    --muted: #6c6c6c;
+    /* Muted text for secondary info */
+
+    /* Input */
+    --input-bg: #1c1e28;
+    --input-border: #3a5058;
+    --input-border-focus: rgba(79, 209, 197, 0.5);
+    --input-box-shadow: rgba(79, 209, 197, 0.3);
+    --placeholder-color: #8fbfc0;
+
+    /* Button */
+    --button-bg: #20232c;
+    --button-hover-bg: var(--accent-color);
+    --button-hover-color: #0f1014;
+    --button-box-shadow: 0 0 12px rgba(79, 209, 197, 0.6);
+    /* glow effect */
+    --button-hover-box-shadow: 0 0 20px rgba(79, 209, 197, 0.9);
+
+    /* Card */
+    --card-gradient-color: rgba(79, 209, 197, 0.05);
+    --card-border-color: rgba(79, 209, 197, 0.1);
+    --card-shadow-color: rgba(79, 209, 197, 0.15);
+
+    /* Vocab Word */
+    --vocab-bg: var(--primary-color);
+    --vocab-color: #fff;
+    --vocab-hover-bg: var(--accent-color);
+    --vocab-hover-color: #fff;
+    --vocab-hover-shadow: none;
+}
+
+body.theme-koutei {
+    /* Base */
+    --bg-color: #101014;
+    /* Softer deep charcoal-blue */
+    --card-bg: #1a1a1f;
+    /* Gentle lift from background */
+    --text-color: #f4eedd;
+    /* Warmer ivory parchment tone */
+    --primary-color: #e8c75f;
+    /* Elegant muted imperial gold */
+    --secondary-color: #d9b24c;
+    /* Desaturated deep gold amber */
+    --accent-color: #f0d37a;
+    /* Soft luminescent gold */
+    --hint-color: #ffe9a3;
+    /* Gentle light-gold hint */
+    --muted: #8a8775;
+    /* Muted grey-beige for contrast */
+
+    /* Input */
+    --input-bg: #202026;
+    --input-border: #3d3d45;
+    --input-border-focus: rgba(232, 199, 95, 0.4);
+    --input-box-shadow: rgba(232, 199, 95, 0.25);
+    --placeholder-color: #bcb8a1;
+
+    /* Buttons */
+    --button-bg: #222019;
+    --button-hover-bg: var(--primary-color);
+    --button-hover-color: #0d0d11;
+    --button-shadow-glow:
+        0 0 8px rgba(232, 199, 95, 0.4),
+        0 0 18px rgba(232, 199, 95, 0.2),
+        inset 0 0 6px rgba(232, 199, 95, 0.15);
+
+    /* Cards */
+    --card-gradient-color: rgba(232, 199, 95, 0.05);
+    --card-border-color: rgba(232, 199, 95, 0.08);
+    --card-shadow-color: rgba(232, 199, 95, 0.12);
+
+    /* Vocab Word */
+    --vocab-bg: var(--secondary-color);
+    --vocab-color: #fff;
+    --vocab-hover-bg: var(--accent-color);
+    --vocab-hover-color: #fff;
+    --vocab-hover-shadow: none;
 }
 
 .theme-modal {
@@ -278,7 +389,9 @@ body.theme-orange .theme-option,
 body.theme-sakura .theme-option,
 body.theme-forest .theme-option,
 body.theme-violet-night .theme-option,
-body.theme-celestial .theme-option {
+body.theme-celestial .theme-option,
+body.theme-mint-blue .theme-option,
+body.theme-koutei .theme-option {
     background: var(--card-bg);
     color: var(--text-color);
     box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
@@ -292,7 +405,9 @@ body.theme-orange .theme-option:hover,
 body.theme-sakura .theme-option:hover,
 body.theme-forest .theme-option:hover,
 body.theme-violet-night .theme-option:hover,
-body.theme-celestial .theme-option:hover {
+body.theme-celestial .theme-option:hover,
+body.theme-mint-blue .theme-option:hover,
+body.theme-koutei .theme-option:hover {
     box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
     transform: translateY(-5px);
 }
@@ -315,25 +430,33 @@ body.theme-celestial .theme-option:hover {
 }
 
 .theme-swatch.tsukizumi {
-    background: linear-gradient(135deg, #000000, #a3d2ca);
+    background: linear-gradient(135deg, #181818, #a3d2ca);
 }
 
 .theme-swatch.uminami {
-    background: linear-gradient(135deg, #000000, #4dd0e1);
+    background: linear-gradient(135deg, #0a0f14, #4dd0e1);
 }
 
 .theme-swatch.mithril {
-    background: linear-gradient(135deg, #000000, #7f9cf5);
+    background: linear-gradient(135deg, #0a0c14, #7f9cf5);
 }
 
 .theme-swatch.orange {
-    background: linear-gradient(135deg, #000000, #ef8354);
+    background: linear-gradient(135deg, #121212, #ef8354);
 }
 
 .theme-swatch.violet-night {
-    background: linear-gradient(135deg, #000000, #9b5de5);
+    background: linear-gradient(135deg, #0a0a12, #9b5de5);
 }
 
 .theme-swatch.celestial {
-    background: linear-gradient(135deg, #000000, #99ccff);
+    background: linear-gradient(135deg, #0b0c1c, #99ccff);
+}
+
+.theme-swatch.mint-blue {
+    background: linear-gradient(135deg, #0f1014, #3dbbb3);
+}
+
+.theme-swatch.koutei {
+    background: linear-gradient(135deg, #101014, #e8c75f);
 }

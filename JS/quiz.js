@@ -210,7 +210,7 @@ function renderWord() {
         });
       } else {
         vocabContainer.innerHTML =
-          '<p style="color: var(--muted); font-style: italic;">関連語なし</p>';
+          '<p style="color: var(--secondary-color); font-style: italic;">関連語なし</p>';
       }
     }
 
