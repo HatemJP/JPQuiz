@@ -54,7 +54,7 @@ mainActionBtn?.addEventListener("click", () => {
 if (!window.location.pathname.includes("word-details")) {
   const kanjiCardEl = document.querySelector(".kanji-card");
   kanjiCardEl?.addEventListener("click", () => {
-    navigateWithTransition(BASE_URL + "HTML/word-details.html");
+    navigateWithTransition("HTML/word-details.html");
   });
 }
 
