@@ -2,7 +2,7 @@ const BASE_URL =
   window.location.hostname === "hatemjp.github.io"
     ? "https://hatemjp.github.io/JPQuiz"
     : "";
-    
+
 const currentUser = localStorage.getItem("current-user");
 const THEME_KEY = "kanjiQuestTheme";
 const mainActionBtn = document.getElementById("main-action-btn");
@@ -32,10 +32,16 @@ if (currentUser || window.location.pathname.includes("login.html")) {
 
 // ----------------- NAVIGATION -----------------
 function navigateWithTransition(relativeUrl) {
-  const fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
+  let fullUrl = relativeUrl;
 
-  // Only hide loader if not navigating to login page
+  // Only prepend BASE_URL if it's a relative path
+  if (!/^https?:\/\//.test(relativeUrl) && !relativeUrl.startsWith("/")) {
+    fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
+  }
+
+  // Hide loader for non-login pages
   if (!fullUrl.includes("login.html")) hideLoader();
+
   document.body.classList.add("transition-out");
   setTimeout(() => (window.location.href = fullUrl), 400);
 }
