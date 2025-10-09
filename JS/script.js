@@ -45,7 +45,12 @@ mainActionBtn?.addEventListener("click", () => {
 if (!window.location.pathname.includes("word-details")) {
   const kanjiCardEl = document.querySelector(".kanji-card");
   kanjiCardEl?.addEventListener("click", () => {
-    navigateWithTransition(`${BASE_URL}/HTML/word-details.html`);
+    const relativePath = "./HTML/word-details.html"; // <- note the "./"
+    const url =
+      typeof BASE_URL !== "undefined" && BASE_URL
+        ? `${BASE_URL}/HTML/word-details.html`
+        : relativePath;
+    navigateWithTransition(url);
   });
 }
 
