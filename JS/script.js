@@ -1,11 +1,18 @@
+// ----------------- BASE URL DETECTION -----------------
+const BASE_URL =
+  window.location.hostname === "hatemjp.github.io"
+    ? "https://hatemjp.github.io/JPQuiz"
+    : ""; // empty for local dev
+
+// ----------------- USER SESSION -----------------
 const currentUser = localStorage.getItem("current-user");
 
 // ----------------- REDIRECT HANDLING -----------------
 if (!currentUser && !window.location.pathname.includes("login.html")) {
-  window.location.href = "./HTML/login.html";
+  window.location.href = `${BASE_URL}/HTML/login.html`;
 }
 if (currentUser && window.location.pathname.includes("login.html")) {
-  window.location.href = "../index.html";
+  window.location.href = `${BASE_URL}/index.html`;
 }
 
 // ----------------- CONSTANTS -----------------
@@ -17,9 +24,10 @@ const actionWrapper = mainActionBtn?.closest(".action-btn-wrapper");
 const themeModal = document.querySelector(".theme-modal");
 
 // ----------------- NAVIGATION -----------------
-function navigateWithTransition(url) {
+function navigateWithTransition(relativeUrl) {
+  const fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
   document.body.classList.add("transition-out");
-  setTimeout(() => (window.location.href = url), 400);
+  setTimeout(() => (window.location.href = fullUrl), 400);
 }
 
 // ----------------- MAIN ACTION BUTTON -----------------
@@ -37,7 +45,7 @@ mainActionBtn?.addEventListener("click", () => {
 if (!window.location.pathname.includes("word-details")) {
   const kanjiCardEl = document.querySelector(".kanji-card");
   kanjiCardEl?.addEventListener("click", () => {
-    navigateWithTransition("HTML/word-details.html");
+    navigateWithTransition(`${BASE_URL}/HTML/word-details.html`);
   });
 }
 
@@ -53,7 +61,7 @@ document.addEventListener("click", (e) => {
 
 // ----------------- SUB-ACTION CLICK HANDLING -----------------
 document.querySelectorAll(".sub-action").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
+  btn.addEventListener("click", () => {
     actionWrapper?.classList.remove("active");
     mainActionBtn?.classList.remove("menu-open");
   });
@@ -113,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showNotification("ログアウトしました。");
     setTimeout(() => {
       if (!window.location.pathname.includes("login.html")) {
-        window.location.href = "./HTML/login.html";
+        window.location.href = `${BASE_URL}/HTML/login.html`;
       }
     }, 300);
   });

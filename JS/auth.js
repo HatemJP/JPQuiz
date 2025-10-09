@@ -65,7 +65,6 @@ const loginUser = async (usernameOrEmail, password) => {
       console.log("Login successful:", userObj);
       localStorage.setItem("current-user", userObj.username);
 
-      // Store nickname in localStorage
       if (userObj.nickname) {
         localStorage.setItem(`nickname_${userObj.username}`, userObj.nickname);
       }
@@ -166,18 +165,6 @@ const deleteUser = async (username) => {
   });
 };
 
-// -------------------- Utility: Check if User is Logged In --------------------
-const checkCurrentUser = () => {
-  const currentUser = localStorage.getItem("current-user");
-  if (!currentUser || currentUser === "null" || currentUser === "undefined") {
-    if (typeof navigateWithTransition === "function") {
-      navigateWithTransition("../HTML/login.html");
-    }
-    return null;
-  }
-  return currentUser;
-};
-
 // -------------------- Forms Handling --------------------
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.querySelector(".login-form");
@@ -199,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }さん！ログイン成功しました。`
         );
         loginForm.reset();
-        window.location.href = "../index.html";
+        window.location.href = `${BASE_URL}/index.html`;
       } else {
         alert("ユーザー名/メールまたはパスワードが間違っています。");
       }
@@ -216,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = registerForm[1].value.trim();
     const password = registerForm[2].value;
     const confirmPassword = registerForm[3].value;
-    const nickname = registerForm[4]?.value.trim() || ""; // Optional nickname field, fallback to username
+    const nickname = registerForm[4]?.value.trim() || "";
 
     if (password !== confirmPassword) {
       alert("パスワードが一致しません。");
@@ -232,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Auto-login after registration
       const result = await loginUser(username, password);
       if (result.success) {
-        window.location.href = "../index.html";
+        window.location.href = `${BASE_URL}/index.html`;
       }
     } catch (err) {
       if (err.name === "ConstraintError") {
