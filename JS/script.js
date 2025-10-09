@@ -2,30 +2,42 @@ const BASE_URL =
   window.location.hostname === "hatemjp.github.io"
     ? "https://hatemjp.github.io/JPQuiz"
     : "";
-
 const currentUser = localStorage.getItem("current-user");
-
-if (!currentUser && !window.location.pathname.includes("login.html")) {
-  // Immediately redirect
-  window.location.replace(`${BASE_URL}/HTML/login.html`);
-} else {
-  // Show body instantly if logged in
-  document.addEventListener("DOMContentLoaded", () => {
-    document.body.style.visibility = "visible";
-  });
-}
-
-// ----------------- CONSTANTS -----------------
 const THEME_KEY = "kanjiQuestTheme";
-
-// ----------------- ELEMENTS -----------------
 const mainActionBtn = document.getElementById("main-action-btn");
 const actionWrapper = mainActionBtn?.closest(".action-btn-wrapper");
 const themeModal = document.querySelector(".theme-modal");
 
+if (!currentUser && !window.location.pathname.includes("login.html")) {
+  window.location.replace(`${BASE_URL}/HTML/login.html`);
+}
+
+// ----------------- LOADER -----------------
+function hideLoader() {
+  const loader = document.getElementById("loading-screen");
+  if (!loader) return;
+
+  loader.classList.add("hidden"); // fade out
+  setTimeout(() => loader.remove(), 1500); // remove from DOM
+}
+
+// Only run loader logic if we are NOT redirecting to login
+if (currentUser || window.location.pathname.includes("login.html")) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const loader = document.getElementById("loading-screen");
+    if (!loader) return;
+
+    // Keep loader at least 2s on first load
+    setTimeout(hideLoader, 2000);
+  });
+}
+
 // ----------------- NAVIGATION -----------------
 function navigateWithTransition(relativeUrl) {
   const fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
+
+  // Only hide loader if not navigating to login page
+  if (!fullUrl.includes("login.html")) hideLoader();
   document.body.classList.add("transition-out");
   setTimeout(() => (window.location.href = fullUrl), 400);
 }

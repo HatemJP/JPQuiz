@@ -23,11 +23,6 @@ body {
     transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-body.transition-out {
-    opacity: 0;
-    transform: scale(0.98) translateY(10px);
-}
-
 body.modal-open {
     overflow: hidden;
 }
@@ -155,12 +150,21 @@ header {
     align-items: center;
     background: linear-gradient(135deg, var(--bg-color), var(--card-bg));
     z-index: 9999;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1.2s ease, visibility 1.2s ease; /* smoother */
 }
 
 #loading-screen.hidden {
     opacity: 0;
     visibility: hidden;
+    transition: opacity 1.2s ease, visibility 1.2s ease; /* match */
+}
+
+body.transition-out {
+    opacity: 0;
+    transform: scale(0.98) translateY(10px);
+    transition: opacity 0.8s ease, transform 0.8s ease; /* smoother */
 }
 
 .loader {
