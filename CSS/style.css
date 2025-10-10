@@ -53,6 +53,24 @@ header {
     z-index: 2000;
 }
 
+.main-navbar,
+.container {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    will-change: opacity, transform;
+}
+
+.main-navbar {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.main-navbar.hidden,
+.container.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-5px);
+}
+
 /* ================= App Title ================= */
 .navbar-left .app-title a {
     font-family: 'Outfit', sans-serif;
@@ -152,19 +170,67 @@ header {
     z-index: 9999;
     opacity: 1;
     visibility: visible;
-    transition: opacity 1.2s ease, visibility 1.2s ease; /* smoother */
+    transition: opacity 1.2s ease, visibility 1.2s ease;
 }
 
 #loading-screen.hidden {
     opacity: 0;
     visibility: hidden;
-    transition: opacity 1.2s ease, visibility 1.2s ease; /* match */
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+}
+
+#notification-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: -1;
+    pointer-events: none;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 260px;
+    max-width: 320px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-radius: 14px;
+    padding: 14px 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1rem;
+    opacity: 0;
+    transform: translateX(120%);
+    animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 6s;
+    pointer-events: auto;
+    position: relative;
+    border-left: 5px solid var(--accent-color);
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(120%);
+    }
 }
 
 body.transition-out {
     opacity: 0;
     transform: scale(0.98) translateY(10px);
-    transition: opacity 0.8s ease, transform 0.8s ease; /* smoother */
+    transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
 .loader {
@@ -326,12 +392,92 @@ body.theme-koutei .container {
     box-shadow: 0 6px 16px var(--card-shadow-color, rgba(0, 0, 0, 0.08));
 }
 
-/* Ruby wrapper inside container */
+.kanji-card.slide-right {
+    animation: slideRight 0.6s ease forwards;
+}
+
+@keyframes slideRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+.kanji-card.slide-in-left {
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-120%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.kanji-card.shake-wrong {
+    animation: shakeWrong 0.6s ease;
+}
+
+@keyframes shakeWrong {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-10px);
+    }
+
+    40% {
+        transform: translateX(10px);
+    }
+
+    60% {
+        transform: translateX(-6px);
+    }
+
+    80% {
+        transform: translateX(6px);
+    }
+}
+
 .ruby-wrapper {
     display: flex;
     justify-content: center;
     gap: 0rem;
     text-align: center;
+}
+
+.furigana.hidden {
+    visibility: hidden;
+}
+
+.furigana.drop-in {
+    visibility: visible;
+    animation: furiganaDrop 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes furiganaDrop {
+    0% {
+        transform: translateY(-1.5em);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .kanji-container {

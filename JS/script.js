@@ -22,6 +22,14 @@ function hideLoader() {
   setTimeout(() => loader.remove(), 1000);
 }
 
+function showLoader() {
+  const loader = document.getElementById("loading-screen");
+  if (!loader) return;
+
+  loader.style.display = "flex";
+  loader.classList.remove("hidden");
+}
+
 if (currentUser || window.location.pathname.includes("login.html")) {
   document.addEventListener("DOMContentLoaded", () => {
     const loader = document.getElementById("loading-screen");
@@ -39,8 +47,8 @@ function navigateWithTransition(relativeUrl) {
     fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
   }
 
-  // Hide loader for non-login pages
-  if (!fullUrl.includes("login.html")) hideLoader();
+  // Ensure loader is visible during transition
+  showLoader();
 
   document.body.classList.add("transition-out");
   setTimeout(() => (window.location.href = fullUrl), 400);
@@ -58,10 +66,22 @@ mainActionBtn?.addEventListener("click", () => {
 });
 
 // ----------------- KANJI CARD NAVIGATION -----------------
-if (!window.location.pathname.includes("word-details")) {
+if (!window.location.pathname.includes("word-details.html")) {
   const kanjiCardEl = document.querySelector(".kanji-card");
   kanjiCardEl?.addEventListener("click", () => {
     navigateWithTransition("HTML/word-details.html");
+  });
+}
+
+// ----------------- BACK NAVIGATION FROM WORD-DETAILS -----------------
+if (window.location.pathname.includes("word-details.html")) {
+  const containerEl = document.querySelector(".container");
+  containerEl?.addEventListener("click", () => {
+    navigateWithTransition("index.html");
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    hideLoader();
   });
 }
 
@@ -151,6 +171,27 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".theme-option").forEach((btn) => {
     btn.classList.toggle("selected", btn.dataset.theme === savedTheme);
   });
+
+  // ----------------- NOTIFICATIONS MANAGEMENT -----------------
+  function showNotification(message) {
+      const container = document.getElementById('notification-container');
+      const existing = container.querySelector('.notification');
+      if (existing) existing.remove();
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `<span>${message}</span>`;
+      container.appendChild(notification);
+      setTimeout(() => notification.remove(), 6500);
+    }
+
+    // Not-implemented buttons
+    document.querySelectorAll('.sub-action.not-implemented').forEach(button => {
+      button.addEventListener('click', () => {
+        const name = button.dataset.name;
+        button.style.fontWeight = "bold";
+        showNotification(`${name}ボタンの機能は未だ実装されていません。`);
+      });
+    });
 
   // ----------------- HINT BUTTON -----------------
   let currentHintIndex = 0;
