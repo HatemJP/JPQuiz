@@ -19,9 +19,22 @@ function navigateWithTransition(relativeUrl) {
     fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
   }
 
+  // Add the transition-out class
   document.body.classList.add("transition-out");
-  setTimeout(() => (window.location.href = fullUrl), 400);
+
+  // Wait for the transition to finish
+  setTimeout(() => {
+    window.location.href = fullUrl;
+  }, 400);
 }
+
+// On page load: fade in smoothly
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.classList.add("transition-in");
+  requestAnimationFrame(() => {
+    document.body.classList.add("active");
+  });
+});
 
 // ----------------- MAIN ACTION BUTTON -----------------
 mainActionBtn?.addEventListener("click", () => {
