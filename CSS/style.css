@@ -249,6 +249,7 @@ header {
     background-image: linear-gradient(135deg,
             rgba(var(--accent-color-rgb, 163, 210, 202), 0.03),
             rgba(var(--accent-color-rgb, 163, 210, 202), 0.06));
+    cursor: pointer;
 }
 
 .container.hidden {

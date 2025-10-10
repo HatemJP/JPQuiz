@@ -13,17 +13,14 @@ if (!currentUser && !window.location.pathname.includes("login.html")) {
   window.location.replace(`${BASE_URL}/HTML/login.html`);
 }
 
-// ----------------- NAVIGATION -----------------
 function navigateWithTransition(relativeUrl) {
   let fullUrl = relativeUrl;
-
-  // Only prepend BASE_URL if it's a relative path
   if (!/^https?:\/\//.test(relativeUrl) && !relativeUrl.startsWith("/")) {
     fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
   }
 
-  // Directly navigate without loader
-  window.location.href = fullUrl;
+  document.body.classList.add("transition-out");
+  setTimeout(() => (window.location.href = fullUrl), 400);
 }
 
 // ----------------- MAIN ACTION BUTTON -----------------
