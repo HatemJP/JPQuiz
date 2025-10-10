@@ -15,26 +15,14 @@ if (!currentUser && !window.location.pathname.includes("login.html")) {
 
 function navigateWithTransition(relativeUrl) {
   let fullUrl = relativeUrl;
+
   if (!/^https?:\/\//.test(relativeUrl) && !relativeUrl.startsWith("/")) {
     fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
   }
 
-  // Add the transition-out class
   document.body.classList.add("transition-out");
-
-  // Wait for the transition to finish
-  setTimeout(() => {
-    window.location.href = fullUrl;
-  }, 400);
+  setTimeout(() => (window.location.href = fullUrl), 400);
 }
-
-// On page load: fade in smoothly
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.classList.add("transition-in");
-  requestAnimationFrame(() => {
-    document.body.classList.add("active");
-  });
-});
 
 // ----------------- MAIN ACTION BUTTON -----------------
 mainActionBtn?.addEventListener("click", () => {
