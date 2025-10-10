@@ -13,31 +13,6 @@ if (!currentUser && !window.location.pathname.includes("login.html")) {
   window.location.replace(`${BASE_URL}/HTML/login.html`);
 }
 
-// ----------------- LOADER -----------------
-function hideLoader() {
-  const loader = document.getElementById("loading-screen");
-  if (!loader) return;
-
-  loader.classList.add("hidden");
-  setTimeout(() => loader.remove(), 1000);
-}
-
-function showLoader() {
-  const loader = document.getElementById("loading-screen");
-  if (!loader) return;
-
-  loader.style.display = "flex";
-  loader.classList.remove("hidden");
-}
-
-if (currentUser || window.location.pathname.includes("login.html")) {
-  document.addEventListener("DOMContentLoaded", () => {
-    const loader = document.getElementById("loading-screen");
-    if (!loader) return;
-    setTimeout(hideLoader, 1000);
-  });
-}
-
 // ----------------- NAVIGATION -----------------
 function navigateWithTransition(relativeUrl) {
   let fullUrl = relativeUrl;
@@ -47,11 +22,8 @@ function navigateWithTransition(relativeUrl) {
     fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
   }
 
-  // Ensure loader is visible during transition
-  showLoader();
-
-  document.body.classList.add("transition-out");
-  setTimeout(() => (window.location.href = fullUrl), 400);
+  // Directly navigate without loader
+  window.location.href = fullUrl;
 }
 
 // ----------------- MAIN ACTION BUTTON -----------------
@@ -78,10 +50,6 @@ if (window.location.pathname.includes("word-details.html")) {
   const containerEl = document.querySelector(".container");
   containerEl?.addEventListener("click", () => {
     navigateWithTransition("index.html");
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    hideLoader();
   });
 }
 
@@ -174,24 +142,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----------------- NOTIFICATIONS MANAGEMENT -----------------
   function showNotification(message) {
-      const container = document.getElementById('notification-container');
-      const existing = container.querySelector('.notification');
-      if (existing) existing.remove();
-      const notification = document.createElement('div');
-      notification.className = 'notification';
-      notification.innerHTML = `<span>${message}</span>`;
-      container.appendChild(notification);
-      setTimeout(() => notification.remove(), 6500);
-    }
+    const container = document.getElementById("notification-container");
+    const existing = container.querySelector(".notification");
+    if (existing) existing.remove();
+    const notification = document.createElement("div");
+    notification.className = "notification";
+    notification.innerHTML = `<span>${message}</span>`;
+    container.appendChild(notification);
+    setTimeout(() => notification.remove(), 6500);
+  }
 
-    // Not-implemented buttons
-    document.querySelectorAll('.sub-action.not-implemented').forEach(button => {
-      button.addEventListener('click', () => {
-        const name = button.dataset.name;
-        button.style.fontWeight = "bold";
-        showNotification(`${name}ボタンの機能は未だ実装されていません。`);
-      });
+  // Not-implemented buttons
+  document.querySelectorAll(".sub-action.not-implemented").forEach((button) => {
+    button.addEventListener("click", () => {
+      const name = button.dataset.name;
+      button.style.fontWeight = "bold";
+      showNotification(`${name}ボタンの機能は未だ実装されていません。`);
     });
+  });
 
   // ----------------- HINT BUTTON -----------------
   let currentHintIndex = 0;
@@ -253,29 +221,3 @@ document.addEventListener("DOMContentLoaded", () => {
     jishoButton.blur();
   });
 });
-
-// ----------------- KANJI LAYOUT -----------------
-function adjustKanjiLayout() {
-  const kanjiCard = document.querySelector(".kanji-card");
-  const kanjiContainer = document.querySelector(".kanji-container");
-  if (!kanjiCard || !kanjiContainer) return;
-
-  const kanjiChars = kanjiContainer.querySelectorAll(".kanji-char");
-  if (kanjiChars.length === 0) return;
-
-  kanjiContainer.style.padding = "1rem 2rem";
-  kanjiContainer.style.flexWrap = "wrap";
-
-  kanjiChars.forEach((el) => (el.style.fontSize = ""));
-  const maxWidth = window.innerWidth * 0.95;
-  let containerRect = kanjiContainer.getBoundingClientRect();
-  let fontSize = parseFloat(getComputedStyle(kanjiChars[0]).fontSize);
-
-  while (containerRect.width > maxWidth && fontSize > 1.2) {
-    fontSize -= 0.1;
-    kanjiChars.forEach((el) => (el.style.fontSize = fontSize + "px"));
-    containerRect = kanjiContainer.getBoundingClientRect();
-  }
-}
-
-window.addEventListener("resize", adjustKanjiLayout);

@@ -15,21 +15,11 @@
   <link rel="stylesheet" href="CSS/animation.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="JS/script.js" defer></script>
-  <script src="JS/quiz.js" defer></script>
+  <script type="module" src="JS/quiz.js"></script>
   <script src="https://unpkg.com/wanakana@4.0.2/umd/wanakana.min.js"></script>
 </head>
 
 <body>
-  <div id="loading-screen">
-    <div class="loader-orbit">
-      <div class="dot dot1"></div>
-      <div class="dot dot2"></div>
-      <div class="dot dot3"></div>
-      <div class="dot dot4"></div>
-      <div class="dot dot5"></div>
-    </div>
-    <div class="loading-text">読み込み中…</div>
-  </div>
   <header class="main-navbar">
     <div class="navbar-left">
       <h1 class="app-title"><a href="index.html">漢字冒険</a></h1>
@@ -86,6 +76,7 @@
         </div>
       </div>
     </div>
+
     <input id="home-input" type="text" placeholder="読み方を入力..." />
     <div class="controls">
       <button type="button" class="hint-button">ヒント</button>
@@ -93,6 +84,7 @@
       <button type="button" class="answer-button">答える</button>
     </div>
   </div>
+
   <div class="theme-modal">
     <div class="theme-box">
       <h2>テーマを選択</h2>

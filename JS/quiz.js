@@ -1,5 +1,5 @@
 // ----------------- QUIZ VERSION -----------------
-const QUIZ_VERSION = "1.2";
+const QUIZ_VERSION = "1.3"; // updated due to performance improvements
 
 // ----------------- STORAGE KEYS -----------------
 function getProgressKey(user, level) {
@@ -23,7 +23,6 @@ function resetQuizData(level) {
   localStorage.removeItem(getScoreKey(currentUser, "Wrong", level));
   localStorage.setItem(getVersionKey(currentUser), QUIZ_VERSION);
 
-  // Reset in-memory score
   score.correct = 0;
   score.wrong = 0;
   score.total = words.length;
@@ -67,11 +66,8 @@ function updateScoreboard() {
   const percentage =
     score.total > 0 ? Math.round((currentWordIndex / score.total) * 100) : 0;
 
-  if (progressBar) {
-    progressBar.style.width = `${percentage}%`;
-  }
+  if (progressBar) progressBar.style.width = `${percentage}%`;
 
-  // --- Dynamically create or update centered label ---
   const progressContainer = document.getElementById("quiz-progress");
   if (progressContainer) {
     let label = progressContainer.querySelector(".progress-label");
@@ -130,60 +126,57 @@ function splitFurigana(furiganaStr) {
   return String(furiganaStr).split(".");
 }
 
-// ----------------- LOAD WORDS -----------------
+function normalizeRomaji(str) {
+  return str
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/ā/g, "a")
+    .replace(/ī/g, "i")
+    .replace(/ū/g, "u")
+    .replace(/ē/g, "e")
+    .replace(/ō/g, "o");
+}
+
+// ----------------- WORD DATA -----------------
 let words = [];
 let currentWordIndex = 0;
 let currentLevel = "default";
 
+// ----------------- LOAD WORDS (with Web Worker) -----------------
 async function loadWords() {
   try {
-    let csvText = null;
     currentLevel =
       localStorage.getItem(`selected-level_${currentUser}`) || "default";
 
-    if (currentLevel === "default") {
-      const csvPath = window.location.pathname.includes("word-details")
-        ? "../Custom/quiz_db.csv"
-        : "Custom/quiz_db.csv";
-      const response = await fetch(csvPath);
-      csvText = await response.text();
-    } else {
-      const csvPath = `${BASE_URL}/JLPT/${currentLevel}.csv`;
-      const response = await fetch(csvPath);
-      csvText = await response.text();
-    }
+    const csvPath =
+      currentLevel === "default"
+        ? window.location.pathname.includes("word-details")
+          ? "../Custom/quiz_db.csv"
+          : "Custom/quiz_db.csv"
+        : `${BASE_URL}/JLPT/${currentLevel}.csv`;
 
-    const lines = csvText.trim().split(/\r?\n/);
-    const headers = lines
-      .shift()
-      .split(",")
-      .map((h) => h.replace(/"/g, "").trim());
+    const response = await fetch(csvPath);
+    const csvText = await response.text();
 
-    words = lines.map((line) => {
-      const values = line
-        .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-        .map((v) => v.replace(/^"|"$/g, "").trim());
+    console.time("WorkerParse");
+    const workerPath = new URL("./worker-quiz-parser.js", import.meta.url);
+    const worker = new Worker(workerPath, { type: "module" });
 
-      const obj = {};
-      headers.forEach((h, i) => (obj[h] = values[i] || ""));
+    worker.postMessage({ csvText });
+    worker.onmessage = (e) => {
+      words = e.data.words || [];
+      score.total = words.length;
+      console.timeEnd("WorkerParse");
+      console.log(
+        `Loaded ${words.length} words from ${currentLevel} (via worker).`
+      );
+      renderWord();
+      updateScoreboard();
+    };
 
-      return {
-        kanji: obj["Question"] || "",
-        reading: obj["Answer"] ? obj["Answer"].split(",") : [],
-        furigana: splitFurigana(obj["Furigana"] || ""),
-        meaning: obj["Meaning"] || "",
-        example: obj["Example"] || "",
-        translation: obj["Translation"] || "",
-        romaji: wanakana.toRomaji((obj["Answer"] || "").replace(/,/g, "")),
-        vocabWords: obj["VocabWords"]
-          ? obj["VocabWords"].split(",").map((w) => w.trim())
-          : [],
-      };
-    });
-
-    score.total = words.length;
-    updateScoreboard();
-    console.log(`Loaded ${words.length} words from ${currentLevel}.`);
+    worker.onerror = (err) => {
+      console.error("Worker parsing failed:", err);
+    };
   } catch (err) {
     console.error("Failed to load words:", err);
   }
@@ -243,20 +236,7 @@ function renderWord() {
       translationEl.textContent = `翻訳：${word.translation || "空"}`;
   }
 
-  adjustKanjiLayout?.();
   updateScoreboard();
-}
-
-// ----------------- ROMAJI NORMALIZATION -----------------
-function normalizeRomaji(str) {
-  return str
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/ā/g, "a")
-    .replace(/ī/g, "i")
-    .replace(/ū/g, "u")
-    .replace(/ē/g, "e")
-    .replace(/ō/g, "o");
 }
 
 // ----------------- ANSWER CHECK -----------------
@@ -327,7 +307,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     localStorage.getItem(`selected-level_${currentUser}`) || "default";
   checkQuizVersion(currentLevel);
 
-  // Load user data for that specific level
   score.correct = loadScore("Correct", currentLevel);
   score.wrong = loadScore("Wrong", currentLevel);
 
@@ -336,12 +315,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   currentWordIndex = loadProgress(currentLevel);
   renderWord();
   updateScoreboard();
-
-  const kanjiContainer = document.querySelector(".kanji-container");
-  if (kanjiContainer) {
-    const observer = new MutationObserver(adjustKanjiLayout);
-    observer.observe(kanjiContainer, { childList: true, subtree: true });
-  }
 
   const answerButton = document.querySelector(".answer-button");
   if (answerButton) answerButton.addEventListener("click", checkAnswer);
