@@ -13,6 +13,23 @@ if (!currentUser && !window.location.pathname.includes("login.html")) {
   window.location.replace(`${BASE_URL}/HTML/login.html`);
 }
 
+// ----------------- LOADER -----------------
+function hideLoader() {
+  const loader = document.getElementById("loading-screen");
+  if (!loader) return;
+
+  loader.classList.add("hidden");
+  setTimeout(() => loader.remove(), 1000);
+}
+
+if (currentUser || window.location.pathname.includes("login.html")) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const loader = document.getElementById("loading-screen");
+    if (!loader) return;
+    setTimeout(hideLoader, 1000);
+  });
+}
+
 // ----------------- NAVIGATION -----------------
 function navigateWithTransition(relativeUrl) {
   let fullUrl = relativeUrl;
@@ -21,6 +38,9 @@ function navigateWithTransition(relativeUrl) {
   if (!/^https?:\/\//.test(relativeUrl) && !relativeUrl.startsWith("/")) {
     fullUrl = `${BASE_URL}/${relativeUrl.replace(/^(\.\.\/)+/, "")}`;
   }
+
+  // Hide loader for non-login pages
+  if (!fullUrl.includes("login.html")) hideLoader();
 
   document.body.classList.add("transition-out");
   setTimeout(() => (window.location.href = fullUrl), 400);
@@ -38,18 +58,10 @@ mainActionBtn?.addEventListener("click", () => {
 });
 
 // ----------------- KANJI CARD NAVIGATION -----------------
-if (!window.location.pathname.includes("word-details.html")) {
+if (!window.location.pathname.includes("word-details")) {
   const kanjiCardEl = document.querySelector(".kanji-card");
   kanjiCardEl?.addEventListener("click", () => {
     navigateWithTransition("HTML/word-details.html");
-  });
-}
-
-// ----------------- BACK NAVIGATION FROM WORD-DETAILS -----------------
-if (window.location.pathname.includes("word-details.html")) {
-  const containerEl = document.querySelector(".container");
-  containerEl?.addEventListener("click", () => {
-    navigateWithTransition("index.html");
   });
 }
 
