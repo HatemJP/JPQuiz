@@ -27,6 +27,12 @@ body.modal-open {
     overflow: hidden;
 }
 
+body.transition-out {
+    opacity: 0;
+    transform: scale(0.98) translateY(10px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
 /* Header */
 header {
     background: var(--card-bg);
