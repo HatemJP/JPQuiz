@@ -153,17 +153,22 @@
     <div class="container">
         <h2 class="settings-title">ゲーム設定</h2>
 
-        <!-- List source selection -->
+        <!-- Level selection -->
         <div class="setting-group">
-            <label class="setting-label" for="listSource">単語一覧</label>
+            <label class="setting-label" for="level">単語一覧</label>
             <div class="select-wrapper">
-                <select id="listSource">
+                <select id="level" name="level">
                     <option value="default">普通</option>
+                    <option value="N5">N5</option>
+                    <option value="N4">N4</option>
+                    <option value="N3">N3</option>
+                    <option value="N2">N2</option>
+                    <option value="N1">N1</option>
                 </select>
             </div>
         </div>
 
-        <!-- Reset & Save Buttons -->
+        <!-- Buttons -->
         <div class="setting-group" style="text-align: center; display: flex; justify-content: center; gap: 1rem;">
             <button class="reset-btn" onclick="resetAllProgress()">全てリセット</button>
             <button class="reset-btn" id="saveSettingsBtn">保存</button>
@@ -171,12 +176,16 @@
     </div>
 
     <script>
-        const listSourceDropdown = document.getElementById("listSource");
-        listSourceDropdown.value = "default";
+        const levelDropdown = document.getElementById("level");
+        const savedLevel = localStorage.getItem(`selected-level_${currentUser}`) || "default";
+        levelDropdown.value = savedLevel;
 
+        // When "保存" is clicked → save & go to quiz
         document.getElementById("saveSettingsBtn").addEventListener("click", () => {
-            localStorage.setItem(`listSource_${currentUser}`, listSourceDropdown.value);
-            alert("設定が保存されました！");
+            const level = levelDropdown.value;
+            localStorage.setItem(`selected-level_${currentUser}`, level);
+            alert(`「${level === "default" ? "普通" : level}」レベルが保存されました！`);
+            navigateWithTransition(`${BASE_URL}/index.html`);
         });
 
         function resetAllProgress() {
@@ -186,15 +195,13 @@
                 localStorage.removeItem(`kanjiQuestProgress_${currentUser}`);
                 localStorage.removeItem(`kanjiScore_Correct_${currentUser}`);
                 localStorage.removeItem(`kanjiScore_Wrong_${currentUser}`);
-
-                if (window.resetQuizScores) window.resetQuizScores();
             }
 
             localStorage.removeItem("quizCurrentIndex");
             localStorage.removeItem("quizCompletedWords");
 
             alert("すべてのデータがリセットされました。最初の単語から再開します。");
-            window.location.href = "../index.html";
+            navigateWithTransition("../index.html");
         }
     </script>
 </body>

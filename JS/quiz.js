@@ -1,13 +1,13 @@
 // ----------------- QUIZ VERSION -----------------
-const QUIZ_VERSION = "1.1";
+const QUIZ_VERSION = "1.2";
 
 // ----------------- STORAGE KEYS -----------------
-function getProgressKey(user) {
-  return `kanjiQuestProgress_${user}`;
+function getProgressKey(user, level) {
+  return `kanjiQuestProgress_${user}_${level}`;
 }
 
-function getScoreKey(user, type) {
-  return `kanjiScore_${type}_${user}`;
+function getScoreKey(user, type, level) {
+  return `kanjiScore_${type}_${user}_${level}`;
 }
 
 function getVersionKey(user) {
@@ -15,120 +15,140 @@ function getVersionKey(user) {
 }
 
 // ----------------- VERSION CHECK & RESET -----------------
-function resetQuizData() {
+function resetQuizData(level) {
   if (!currentUser) return;
 
-  localStorage.removeItem(getProgressKey(currentUser));
-  localStorage.removeItem(getScoreKey(currentUser, "Correct"));
-  localStorage.removeItem(getScoreKey(currentUser, "Wrong"));
+  localStorage.removeItem(getProgressKey(currentUser, level));
+  localStorage.removeItem(getScoreKey(currentUser, "Correct", level));
+  localStorage.removeItem(getScoreKey(currentUser, "Wrong", level));
   localStorage.setItem(getVersionKey(currentUser), QUIZ_VERSION);
 
   // Reset in-memory score
   score.correct = 0;
   score.wrong = 0;
   score.total = words.length;
-  saveScore("Correct", 0);
-  saveScore("Wrong", 0);
+  saveScore("Correct", 0, level);
+  saveScore("Wrong", 0, level);
   updateScoreboard();
 
-  console.log("Quiz localStorage reset due to version change.");
+  console.log(`Quiz reset for level ${level} due to version change.`);
 }
 
-function checkQuizVersion() {
+function checkQuizVersion(level) {
   if (!currentUser) return;
   const savedVersion = localStorage.getItem(getVersionKey(currentUser));
   if (savedVersion !== QUIZ_VERSION) {
-    resetQuizData();
+    resetQuizData(level);
   }
 }
 
 // ----------------- SCORE DISPLAY -----------------
-let correctScoreElement, wrongScoreElement, totalScoreElement;
+let correctScoreElement, wrongScoreElement, totalScoreElement, progressBar;
 
 function initScoreElements() {
   correctScoreElement = document.getElementById("correct-score");
   wrongScoreElement = document.getElementById("wrong-score");
   totalScoreElement = document.getElementById("total-score");
+  progressBar = document.getElementById("quiz-progress-bar");
 }
 
 let score = {
   correct: 0,
   wrong: 0,
-  total: 0, // total words in CSV/custom file, never changes
+  total: 0,
 };
 
+// ----------------- SCOREBOARD -----------------
 function updateScoreboard() {
-  if (!correctScoreElement || !wrongScoreElement || !totalScoreElement) return;
-  correctScoreElement.textContent = score.correct;
-  wrongScoreElement.textContent = score.wrong;
-  totalScoreElement.textContent = score.total;
+  if (correctScoreElement) correctScoreElement.textContent = score.correct;
+  if (wrongScoreElement) wrongScoreElement.textContent = score.wrong;
+  if (totalScoreElement) totalScoreElement.textContent = score.total;
+
+  const percentage =
+    score.total > 0 ? Math.round((currentWordIndex / score.total) * 100) : 0;
+
+  if (progressBar) {
+    progressBar.style.width = `${percentage}%`;
+  }
+
+  // --- Dynamically create or update centered label ---
+  const progressContainer = document.getElementById("quiz-progress");
+  if (progressContainer) {
+    let label = progressContainer.querySelector(".progress-label");
+    if (!label) {
+      label = document.createElement("span");
+      label.className = "progress-label";
+      label.style.position = "relative";
+      label.style.zIndex = "2";
+      label.style.whiteSpace = "nowrap";
+      progressContainer.appendChild(label);
+    }
+    label.textContent = `進行度: ${percentage}%`;
+  }
 }
 
-// ----------------- PROGRESS & SCORE -----------------
-function saveProgress(index) {
+// ----------------- SAVE / LOAD -----------------
+function saveProgress(index, level) {
   if (!currentUser) return;
-  localStorage.setItem(getProgressKey(currentUser), index);
+  localStorage.setItem(getProgressKey(currentUser, level), index);
 }
 
-function loadProgress() {
+function loadProgress(level) {
   if (!currentUser) return 0;
-  const saved = parseInt(localStorage.getItem(getProgressKey(currentUser)));
+  const saved = parseInt(
+    localStorage.getItem(getProgressKey(currentUser, level))
+  );
   return !isNaN(saved) ? saved : 0;
 }
 
-function saveScore(type, value) {
+function saveScore(type, value, level) {
   if (!currentUser) return;
-  localStorage.setItem(getScoreKey(currentUser, type), value);
+  localStorage.setItem(getScoreKey(currentUser, type, level), value);
 }
 
-function loadScore(type) {
+function loadScore(type, level) {
   if (!currentUser) return 0;
-  const saved = parseInt(localStorage.getItem(getScoreKey(currentUser, type)));
+  const saved = parseInt(
+    localStorage.getItem(getScoreKey(currentUser, type, level))
+  );
   return !isNaN(saved) ? saved : 0;
 }
 
-// ----------------- GLOBAL RESET FUNCTION -----------------
-window.resetQuizScores = function () {
+// ----------------- GLOBAL RESET -----------------
+window.resetQuizScores = function (level) {
   score.correct = 0;
   score.wrong = 0;
   score.total = words.length;
-  saveScore("Correct", 0);
-  saveScore("Wrong", 0);
+  saveScore("Correct", 0, level);
+  saveScore("Wrong", 0, level);
   updateScoreboard();
 };
 
-// ----------------- UTILS -----------------
+// ----------------- UTILITIES -----------------
 function splitFurigana(furiganaStr) {
   if (!furiganaStr) return [];
   return String(furiganaStr).split(".");
 }
 
-// ----------------- LOAD QUIZ WORDS -----------------
+// ----------------- LOAD WORDS -----------------
 let words = [];
 let currentWordIndex = 0;
+let currentLevel = "default";
 
 async function loadWords() {
   try {
     let csvText = null;
+    currentLevel =
+      localStorage.getItem(`selected-level_${currentUser}`) || "default";
 
-    const listSource =
-      localStorage.getItem(`listSource_${currentUser}`) || "default";
-
-    if (listSource === "custom") {
-      const customText = localStorage.getItem(`customQuizFile_${currentUser}`);
-      if (!customText) {
-        alert(
-          "カスタム単語リストが見つかりません。デフォルトリストを使用します。"
-        );
-      } else {
-        csvText = customText;
-      }
-    }
-
-    if (!csvText) {
+    if (currentLevel === "default") {
       const csvPath = window.location.pathname.includes("word-details")
-        ? "../quiz_db.csv"
-        : "quiz_db.csv";
+        ? "../Custom/quiz_db.csv"
+        : "Custom/quiz_db.csv";
+      const response = await fetch(csvPath);
+      csvText = await response.text();
+    } else {
+      const csvPath = `${BASE_URL}/JLPT/${currentLevel}.csv`;
       const response = await fetch(csvPath);
       csvText = await response.text();
     }
@@ -143,16 +163,18 @@ async function loadWords() {
       const values = line
         .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
         .map((v) => v.replace(/^"|"$/g, "").trim());
+
       const obj = {};
-      headers.forEach((h, i) => (obj[h] = values[i]));
+      headers.forEach((h, i) => (obj[h] = values[i] || ""));
+
       return {
-        kanji: obj["Question"],
-        reading: obj["Answer"].split(","),
-        furigana: splitFurigana(obj["Furigana"]),
-        meaning: obj["Meaning"],
-        example: obj["Example"],
-        translation: obj["Translation"],
-        romaji: wanakana.toRomaji(obj["Answer"].replace(/,/g, "")),
+        kanji: obj["Question"] || "",
+        reading: obj["Answer"] ? obj["Answer"].split(",") : [],
+        furigana: splitFurigana(obj["Furigana"] || ""),
+        meaning: obj["Meaning"] || "",
+        example: obj["Example"] || "",
+        translation: obj["Translation"] || "",
+        romaji: wanakana.toRomaji((obj["Answer"] || "").replace(/,/g, "")),
         vocabWords: obj["VocabWords"]
           ? obj["VocabWords"].split(",").map((w) => w.trim())
           : [],
@@ -161,6 +183,7 @@ async function loadWords() {
 
     score.total = words.length;
     updateScoreboard();
+    console.log(`Loaded ${words.length} words from ${currentLevel}.`);
   } catch (err) {
     console.error("Failed to load words:", err);
   }
@@ -200,7 +223,7 @@ function renderWord() {
     if (vocabContainer) {
       vocabContainer.innerHTML = "";
       if (word.vocabWords && word.vocabWords.length > 0) {
-        const limitedWords = word.vocabWords.slice(0, 5); // limit to 5 words max
+        const limitedWords = word.vocabWords.slice(0, 5);
         limitedWords.forEach((vw, i) => {
           const div = document.createElement("div");
           div.className = "vocab-word";
@@ -221,6 +244,7 @@ function renderWord() {
   }
 
   adjustKanjiLayout?.();
+  updateScoreboard();
 }
 
 // ----------------- ROMAJI NORMALIZATION -----------------
@@ -261,7 +285,7 @@ function checkAnswer() {
   ) {
     inputField.value = "";
     score.correct++;
-    saveScore("Correct", score.correct);
+    saveScore("Correct", score.correct, currentLevel);
     updateScoreboard();
 
     kanjiCard.classList.add("slide-right");
@@ -274,7 +298,7 @@ function checkAnswer() {
   } else {
     inputField.value = "";
     score.wrong++;
-    saveScore("Wrong", score.wrong);
+    saveScore("Wrong", score.wrong, currentLevel);
     updateScoreboard();
 
     kanjiCard.classList.add("shake-wrong");
@@ -291,23 +315,25 @@ function nextWord() {
   }
 
   renderWord();
+  saveProgress(currentWordIndex, currentLevel);
   updateScoreboard();
-  saveProgress(currentWordIndex);
 }
 
 // ----------------- INITIALIZE QUIZ -----------------
 window.addEventListener("DOMContentLoaded", async () => {
-  checkQuizVersion();
-
   initScoreElements();
 
-  // Load scores
-  score.correct = loadScore("Correct");
-  score.wrong = loadScore("Wrong");
+  currentLevel =
+    localStorage.getItem(`selected-level_${currentUser}`) || "default";
+  checkQuizVersion(currentLevel);
+
+  // Load user data for that specific level
+  score.correct = loadScore("Correct", currentLevel);
+  score.wrong = loadScore("Wrong", currentLevel);
 
   await loadWords();
 
-  currentWordIndex = loadProgress();
+  currentWordIndex = loadProgress(currentLevel);
   renderWord();
   updateScoreboard();
 

@@ -19,14 +19,14 @@ function hideLoader() {
   if (!loader) return;
 
   loader.classList.add("hidden");
-  setTimeout(() => loader.remove(), 1500);
+  setTimeout(() => loader.remove(), 1000);
 }
 
 if (currentUser || window.location.pathname.includes("login.html")) {
   document.addEventListener("DOMContentLoaded", () => {
     const loader = document.getElementById("loading-screen");
     if (!loader) return;
-    setTimeout(hideLoader, 2000);
+    setTimeout(hideLoader, 1000);
   });
 }
 

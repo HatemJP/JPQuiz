@@ -54,7 +54,7 @@
         0 6px 16px var(--card-shadow-color);
     }
 
-    .progress-badge {
+    .quiz-progress {
       position: relative;
       display: inline-flex;
       align-items: center;
@@ -71,7 +71,7 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 4px var(--card-gradient-color);
     }
 
-    .progress-fill {
+    .quiz-progress-bar {
       position: absolute;
       top: 0;
       left: 0;
@@ -83,17 +83,17 @@
       transition: width 1.5s ease-in-out;
     }
 
-    body.theme-tsukizumi .progress-fill {
+    body.theme-tsukizumi .quiz-progress-bar {
       background: var(--secondary-color);
     }
 
-    .progress-badge span {
+    .quiz-progress span {
       position: relative;
       z-index: 2;
       white-space: nowrap;
     }
 
-    .progress-badge::after {
+    .quiz-progress::after {
       content: '';
       position: absolute;
       inset: 0;
@@ -214,9 +214,8 @@
   <div class="container">
     <div class="kanji-container"></div>
 
-    <div class="progress-badge" id="progressBadge">
-      <div class="progress-fill" id="progressFill"></div>
-      <span>進行度: 0%</span>
+    <div class="quiz-progress" id="quiz-progress">
+      <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
     </div>
 
     <div class="details-box">
@@ -226,28 +225,6 @@
       <div class="vocab-words"></div>
     </div>
   </div>
-  <script>
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.querySelector('#progressBadge span');
-
-    function updateProgressBar() {
-      if (!score.total || score.total === 0) return;
-
-      const progressPercent = Math.floor((score.correct / score.total) * 100);
-      progressFill.style.width = `${progressPercent}%`;
-      progressText.textContent = `進行度: ${progressPercent}%`;
-    }
-
-    // Update progress whenever scores change
-    const originalUpdateScoreboard = updateScoreboard;
-    updateScoreboard = function () {
-      originalUpdateScoreboard();
-      updateProgressBar();
-    };
-
-    // Initial progress on load
-    updateProgressBar();
-  </script>
 </body>
 
 </html>
